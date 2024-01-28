@@ -21,9 +21,9 @@ import {
 } from '@mui/x-data-grid-generator';
 import * as React from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import SixSigma from '../../six-sigma-web/src/assets/images/sixSigma.png';
-import Problem from '../../six-sigma-web/src/assets/images/solve-the-problem.svg';
-import Training from '../../six-sigma-web/src/assets/images/training.svg';
+import SixSigma from '../src/assets/images/sixSigma.png';
+import Problem from '../src/assets/images/solve-the-problem.svg';
+import Training from '../src/assets/images/training.svg';
 const drawerWidth = 200;
 
 interface MenuItem {
