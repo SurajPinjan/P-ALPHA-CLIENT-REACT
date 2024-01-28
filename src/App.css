@@ -1,0 +1,211 @@
+.outerContainer {
+  margin: 20px 0 !important;
+}
+
+.columnWidth {
+  margin: 12px 0;
+  min-height: 48px;
+  padding: 0px 16px;
+}
+
+.columnStyle {
+  background-color: #f0f0f0;
+  padding: 8px;
+  text-align: left;
+  align-items: center;
+  font-size: 12px;
+  color: #000;
+  height: 35px;
+  margin: 1px !important;
+  /* word-break: break-word; */
+  display: flex;
+}
+
+.lessPadding {
+  /* padding: 2px 4px !important; */
+}
+
+.extraBorder {
+  border: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  height: 46px;
+  align-items: center;
+}
+
+.extraPadding {
+  padding: 5px;
+}
+
+.alignTableData {
+  padding: 0 !important;
+  line-height: 5px !important;
+  border-bottom: transparent !important
+}
+
+.dialogAlign {
+  display: grid;
+  justify-content: center;
+}
+
+.outerContainer {
+  margin: 20px 0 !important;
+}
+
+.columnWidth {
+  margin: 12px 0;
+  min-height: 48px;
+  padding: 0px 16px;
+}
+
+.fontWeightBold {
+  font-weight: bold !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.boldTextStyle {
+  font-weight: 600;
+  /* background-color: #00B0AB; */
+  color: #115e6e;
+  padding: 3px 15px !important;
+  align-items: center;
+  font-size: 1rem;
+  display: flex;
+  position: absolute;
+  width: 98%;
+  margin: 0 1rem 0 0.8rem !important;
+}
+
+.MuiInputBase-formControl {
+  height: 40px;
+}
+
+.MuiTableCell-head {
+  background-color: #00B0AB !important;
+  color: #fff !important;
+  /* border: 1px solid #ddd; */
+  /* padding:10px !important; */
+}
+
+.tableHeaderStyle {
+  padding-left: 15px !important;
+}
+
+.iconsStyleEdit {
+  width: 35px !important;
+  height: 35px !important;
+  border-radius: 100%;
+  background: #f3f3f3 !important;
+  padding: 7px;
+  color: #0e8512 !important;
+  margin-right: 10px;
+  font-size: 1rem !important;
+}
+
+.iconsStyleDelete {
+  width: 35px !important;
+  height: 35px !important;
+  border-radius: 100%;
+  background: #f3f3f3 !important;
+  padding: 7px;
+  color: #bd1414 !important;
+  margin-right: 10px;
+  font-size: 1rem !important;
+}
+
+.iconsStyleAdd {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 100%;
+  background: #005f71 !important;
+  padding: 7px;
+  color: #fff !important;
+  right: 8rem;
+  top: 16rem;
+  /* float: right; */
+  /* left: 0; */
+  position: fixed;
+}
+
+.iconsStyleSave {
+  width: 35px !important;
+  height: 35px !important;
+  border-radius: 100%;
+  background: #f3f3f3 !important;
+  padding: 7px;
+  color: #1963c4 !important;
+  margin-right: 10px;
+  font-size: 1rem !important;
+}
+
+.iconsStyleCancel {
+  width: 35px !important;
+  height: 35px !important;
+  border-radius: 100%;
+  background: #f3f3f3 !important;
+  padding: 7px;
+  color: #131212 !important;
+  margin-right: 10px;
+  font-size: 1rem !important;
+}
+
+.tabsBg {
+  /* background:#03a4c3ad!important; */
+  /* border-Right: 1; */
+  border-color: divider;
+  width: 135px;
+  color: #000000 !important;
+  /* opacity: 0.7; */
+}
+
+.tabsBg:hover {
+  background: #e0e0e069 !important;
+  color: #000 !important;
+}
+
+.Mui-selected {
+  /* background: #00B0AB !important; */
+  font-weight: 600 !important;
+  background: #005f71 !important;
+  color: #fff !important;
+  /* border-bottom: 1px solid #fff !important; */
+  /* color: ; */
+}
+
+/* .MuiButtonBase-root:hover{
+    border-color: #fff !important;
+      background:#e0e0e069!important;
+  } */
+.MuiBox-root {
+  /* padding: 8px !important; */
+}
+
+button:focus {
+  outline: none !important;
+}
+
+.alignPadding {
+  padding-top: 0 !important;
+}
+
+.header-data-key {
+  font-size: 0.75rem;
+  color: #000000;
+  margin-top: 0.4rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.header-data {
+  color: #005f71 !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+
+}
+
+.MuiDataGrid-virtualScroller {
+  min-height: 100px;
+}

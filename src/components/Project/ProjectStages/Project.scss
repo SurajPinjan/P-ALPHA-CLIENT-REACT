@@ -1,0 +1,14 @@
+.MuiDataGrid-columnHeaders {
+  background-color: #00B0AB;
+  color: #ffffff;
+  min-height: 35px !important;
+  max-height: 35px !important;
+}
+
+.MuiDataGrid-virtualScrollerRenderZone {
+  .Mui-selected {
+    font-weight: 600 !important;
+    background: #eeeeee !important;
+    color: #202020 !important;
+  }
+}
