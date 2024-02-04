@@ -81,7 +81,7 @@ function Validate() {
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
       body: {
-        pageSize: 1,
+        pageSize: 100,
         pageNumber: 0,
       },
     };

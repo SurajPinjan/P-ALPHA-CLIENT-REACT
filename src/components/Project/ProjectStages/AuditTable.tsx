@@ -28,7 +28,7 @@ import ImagePreview from '../../../commons/Dialogues/ImagePreview';
 import FileUpload from '../../../commons/Dialogues/FileUpload';
 import { GridValidRowModel } from '@mui/x-data-grid';
 
-export default function FullFeaturedCrudGrid(props: { updateHandler?: (editData: GridValidRowModel) => void, saveHandler?: (newData: GridValidRowModel) => void, isCompare?: boolean, hasAttachment: boolean, initialColumns: GridColDef[], initialRows: GridRowsProp, data: TableType, tab: TabType, tableTitle: string, buttonTitle?: string, isClicked?: String, onSelect?: (subData: GridRowsProp) => void }) {
+export default function FullFeaturedCrudGrid(props: { updateHandler?: (editData: GridValidRowModel) => void, saveHandler?: (newData: GridValidRowModel) => void, isCompare?: boolean, hasAttachment: boolean, initialColumns: GridColDef[], initialRows: GridRowsProp, data: TableType, tab: TabType, tableTitle: string, buttonTitle?: string, isClicked?: string, onSelect?: (subData: GridRowsProp) => void }) {
 
   const [hasAttachment] = React.useState(props.hasAttachment);
   const [isAudit] = React.useState(props.data === TableType.Audit);

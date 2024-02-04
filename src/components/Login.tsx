@@ -5,7 +5,6 @@ import '../App.css';
 import { makeHttpCall } from '../services/ApiService';
 import { API_RESPONSE_CODE, ENTITY_NAME, HTTP_METHOD, OPERATION } from '../types/enums';
 import { HttpLoginRequestBody, HttpRequestData, HttpResponseLogin } from '../types/httpTypes';
-import useApiQuery, { useCustomHook } from '../services/ApiHook';
 const ButtonStyle = styled(Button)`
     background-color: #115E6E !important;
     color: white;

@@ -8,8 +8,19 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { XView } from "../../models/X";
+import AliceCarousel from 'react-alice-carousel';
+import 'react-alice-carousel/lib/alice-carousel.css';
 
 function SwipeableTextMobileStepper(props: { baners: XView[] | undefined }) {
+
+  const handleDragStart = (e) => e.preventDefault();
+
+  const items: any[] = [
+    <img src="http://localhost:3000/uploads/istockphoto-5.jpg" onDragStart={handleDragStart} role="presentation" />,
+    <img src="http://localhost:3000/uploads/istockphoto-3.jpg" onDragStart={handleDragStart} role="presentation" />,
+    <img src="http://localhost:3000/uploads/istockphoto-4.jpg" onDragStart={handleDragStart} role="presentation" />,
+  ];
+
   // States
   const [activeStep, setActiveStep] = React.useState(0);
   const [banners] = React.useState<XView[] | undefined>(props.baners);
@@ -26,9 +37,45 @@ function SwipeableTextMobileStepper(props: { baners: XView[] | undefined }) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleStepChange = (step: React.SetStateAction<number>) => {
+    setActiveStep(step);
+  };
+
   return (
-    <Box sx={{ maxWidth: "100%", flexGrow: 1 }}>
-      <MobileStepper
+    <Box sx={{ maxWidth: "100%" }}>
+      {banners && (
+        <AliceCarousel 
+          items={items}
+          autoPlay
+          autoPlayInterval={2000}
+        ></AliceCarousel>
+      )}
+      {/* <AutoPlaySwipeableViews
+        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        index={activeStep}
+        onChangeIndex={handleStepChange}
+        enableMouseEvents
+      >
+        {banners && (banners.length > 0) && banners.map((step: XView, index) => (
+          <div key={step.uid}>
+            {Math.abs(activeStep - index) <= 2 ? (
+              <Box
+                component="img"
+                sx={{
+                  height: 455,
+                  display: 'block',
+                  overflow: 'hidden',
+                  width: '100%',
+                  objectFit: 'cover',
+                }}
+                src={step.url}
+                alt={step.url}
+              />
+            ) : null}
+          </div>
+        ))}
+      </AutoPlaySwipeableViews> */}
+      {/* <MobileStepper
         steps={maxSteps}
         position="static"
         activeStep={activeStep}
@@ -56,7 +103,7 @@ function SwipeableTextMobileStepper(props: { baners: XView[] | undefined }) {
             Back
           </Button>
         }
-      />
+      /> */}
     </Box>
   );
 }
