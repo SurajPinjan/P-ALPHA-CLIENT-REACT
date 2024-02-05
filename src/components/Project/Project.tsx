@@ -22,7 +22,12 @@ import {
   HttpResponseGetAll,
 } from "../../types/httpTypes";
 import { XModel, XView, getViewFromModelX } from "../../models/X";
-import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../types/enums";
+import {
+  ENTITY_NAME,
+  HTTP_METHOD,
+  OPERATION,
+  SELECT_VALUES,
+} from "../../types/enums";
 import { makeHttpCall } from "../../services/ApiService";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
 import { GridColDef } from "@mui/x-data-grid";
@@ -54,6 +59,14 @@ const columns = [
     width: 240,
     type: "date",
     editable: true,
+  },
+  {
+    field: "columnSelect",
+    headerName: "Select",
+    width: 240,
+    type: "singleSelect",
+    editable: true,
+    valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
   },
 ];
 
@@ -299,8 +312,6 @@ function Admin(props: {
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
 
-    alert(JSON.stringify(entityFound))
-
     if (entityFound && props.saveHandler && savedId != -1) {
       props.saveHandler(entityFound);
     }
@@ -308,7 +319,6 @@ function Admin(props: {
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(updateId);
-    alert(JSON.stringify(entityFound))
     if (entityFound && props.updateHandler && updateId !== -1 && toUpdated) {
       if (toDeleted) {
         setToDeleted(false);

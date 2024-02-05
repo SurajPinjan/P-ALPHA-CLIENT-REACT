@@ -34,7 +34,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [{ title: 'Dashboard', path: 'home' },
 { title: 'Problem Bank', path: 'problem_bank' },
 { title: 'Six Sigma', path: 'project' },
-{ title: 'Training', path: 'training' }];
+{ title: 'Training', path: 'project_details' }];
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,

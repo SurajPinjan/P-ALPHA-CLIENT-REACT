@@ -13,6 +13,7 @@ import {
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
+  SELECT_VALUES,
 } from "../../../types/enums";
 import {
   HttpCreateOneRequestBody,
@@ -42,6 +43,7 @@ function Validate() {
     //save now
     createData({
       columnDate: newData.columnDate,
+      columnSelect: newData.columnSelect,
       isDeleted: false,
       url: newData.url,
       isNew: newData.isNew,
@@ -53,6 +55,7 @@ function Validate() {
     updateData({
       uid: editData.uid,
       url: editData.url,
+      columnSelect: editData.columnSelect,
       columnDate: editData.columnDate,
       isDeleted: editData.isDeleted == 0 ? false : true,
       isNew: editData.isNew,
@@ -67,6 +70,14 @@ function Validate() {
         width: 240,
         type: "date",
         editable: true,
+      },
+      {
+        field: "columnSelect",
+        headerName: "Select",
+        width: 240,
+        type: "singleSelect",
+        editable: true,
+        valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
       },
     ]);
 
@@ -116,7 +127,8 @@ function Validate() {
       };
 
     const createdData: HttpResponseCreateOne<XModel> = await makeHttpCall<
-      HttpResponseCreateOne<XModel>,HttpCreateOneRequestBody<XModel>
+      HttpResponseCreateOne<XModel>,
+      HttpCreateOneRequestBody<XModel>
     >(requestDataCreate);
 
     if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
@@ -142,7 +154,8 @@ function Validate() {
       };
 
     const updatedData: HttpResponseUpdateOne<XModel> = await makeHttpCall<
-      HttpResponseUpdateOne<XModel>,HttpUpdateOneRequestBody<XModel>
+      HttpResponseUpdateOne<XModel>,
+      HttpUpdateOneRequestBody<XModel>
     >(requestDataCreate);
 
     if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
