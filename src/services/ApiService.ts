@@ -5,12 +5,12 @@ import {
   HttpResponseBody,
 } from "../types/httpTypes";
 
-export async function makeHttpCall<T extends HttpResponseBody,G>(
+export async function makeHttpCall<T extends HttpResponseBody, G>(
   params: HttpRequestData<G>
 ): Promise<T> {
   const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
     import.meta.env.VITE_BACKEND_PORT
-  }/${import.meta.env.VITE_API_VERSION}/${params.entityName}/${
+  }/app/${import.meta.env.VITE_API_VERSION}/${params.entityName}/${
     params.operation
   }`;
   const authToken: string | null = localStorage.getItem("token");
@@ -50,7 +50,7 @@ export function makeMultiPartHttpCall(
 ): Promise<HttpMultiPartResponseBody> {
   const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
     import.meta.env.VITE_BACKEND_PORT
-  }/${import.meta.env.VITE_API_VERSION}/file/${OPERATION.UPLOAD}`;
+  }/app/${import.meta.env.VITE_API_VERSION}/file/${OPERATION.UPLOAD}`;
   const authToken: string | null = localStorage.getItem("token");
   const headers: Headers = new Headers();
 

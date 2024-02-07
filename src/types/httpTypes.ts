@@ -15,12 +15,15 @@ export type HttpRequestData<G> = {
   operation: OPERATION;
 };
 
-export type HttpGetAllRequestBody<T> = {
+export type Filter<T> = {
   data?: T;
+};
+
+export type HttpGetAllRequestBody<T> = {
   isPagination?: boolean;
   pageNumber?: number;
   pageSize?: number;
-  filters?: unknown;
+  filters?: Filter<T>;
 };
 
 export type HttpGetOneRequestBody = {

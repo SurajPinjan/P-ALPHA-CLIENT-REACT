@@ -17,16 +17,27 @@ import {
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  HttpCreateOneRequestBody,
   HttpGetAllRequestBody,
   HttpRequestData,
+  HttpResponseCreateOne,
   HttpResponseGetAll,
+  HttpResponseUpdateOne,
+  HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
-import { XModel, XView, getViewFromModelX } from "../../models/X";
 import {
+  XModel,
+  XView,
+  getModelFromViewX,
+  getViewFromModelX,
+} from "../../models/X";
+import {
+  API_RESPONSE_CODE,
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
   SELECT_VALUES,
+  USER_ROLES,
 } from "../../types/enums";
 import { makeHttpCall } from "../../services/ApiService";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
@@ -35,6 +46,7 @@ import { GridRowModesModel } from "@mui/x-data-grid";
 import { GridRowModes } from "@mui/x-data-grid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import AddIcon from "@mui/icons-material/Add";
 import { GridRowsProp } from "@mui/x-data-grid";
 import ImageIcon from "@mui/icons-material/Image";
 import SaveIcon from "@mui/icons-material/Save";
@@ -43,6 +55,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import EditToolbar from "./ProjectStages/EditToolbar";
+import { MasterView } from "../../models/Master";
+import { useNavigate } from "react-router-dom";
+import { urlEncodeObject } from "../../services/encoderService";
 
 export interface Page {
   isLoading: boolean;
@@ -52,34 +67,39 @@ export interface Page {
   pageSize: number;
 }
 
-const columns = [
-  {
+interface AdminProps {
+  isCompare?: boolean;
+  saveHandler?: (newData: GridValidRowModel) => void;
+  updateHandler?: (editData: GridValidRowModel) => void;
+  filters: MasterView;
+}
+
+const Admin: React.FC<AdminProps> = (props) => {
+  // constants
+  const role: string | null = localStorage.getItem("userrole");
+
+  const columns = [];
+
+  columns.push({
     field: "columnDate",
     headerName: "Date",
     width: 240,
     type: "date",
     editable: true,
-  },
-  {
+  });
+
+  const isAdmin: boolean =
+    typeof role !== "undefined" && role !== null && role === USER_ROLES.ADMIN;
+
+  columns.push({
     field: "columnSelect",
     headerName: "Select",
     width: 240,
     type: "singleSelect",
-    editable: true,
+    editable: isAdmin ? true : false,
     valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
-  },
-];
+  });
 
-function Admin(props: {
-  isCompare?: boolean;
-  //   hasAttachment: boolean;
-  //   initialColumns: GridColDef[];
-  //   initialRows: GridRowsProp;
-  //   tableTitle: string,
-  //   buttonTitle?: string,
-  saveHandler?: (newData: GridValidRowModel) => void;
-  updateHandler?: (editData: GridValidRowModel) => void;
-}) {
   // states
   const [pageState, setPageState] = useState<Page>({
     isLoading: false,
@@ -88,7 +108,7 @@ function Admin(props: {
     page: 0,
     pageSize: 2,
   });
-
+  // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpenUpload, setIsOpenUpload] = React.useState(false);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
@@ -106,152 +126,141 @@ function Admin(props: {
   const [tableTitle] = React.useState("X");
 
   // constants
-  const columnsDetails: GridColDef[] = hasAttachment
-    ? [
-        ...columns,
-        {
-          field: "url",
-          headerName: "Url",
-          type: "actions",
-          width: 100,
-          cellClassName: "attachment",
-          getActions: ({ id }) => {
-            const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+  const columnsDetails: GridColDef[] = [...columns];
 
-            if (isInEditMode) {
-              return [
-                <GridActionsCellItem
-                  icon={<FileUploadIcon />}
-                  label="Upload"
-                  sx={{
-                    color: "primary.main",
-                  }}
-                  onClick={() => {
-                    setImgRw(undefined);
-                    setTimeout(() => {
-                      const dat = findById(id);
-                      setImgRw(dat);
-                      setIsOpenUpload(true);
-                    }, 200);
-                  }}
-                />,
-              ];
-            }
+  if (hasAttachment) {
+    columnsDetails.push({
+      field: "url",
+      headerName: "Url",
+      type: "actions",
+      width: 100,
+      cellClassName: "attachment",
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
-            return [
-              <GridActionsCellItem
-                icon={<ImageIcon />}
-                label="Edit"
-                className="textPrimary"
-                color="inherit"
-                onClick={() => {
-                  setImgRw(undefined);
-                  setTimeout(() => {
-                    const dat = findById(id);
-                    setImgRw(dat);
-                    setIsOpen(true);
-                  }, 200);
-                }}
-              />,
-            ];
-          },
-        },
-        {
-          field: "actions",
-          type: "actions",
-          headerName: "Actions",
-          width: 100,
-          cellClassName: "actions",
-          getActions: ({ id }) => {
-            const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<FileUploadIcon />}
+              label="Upload"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={() => {
+                setImgRw(undefined);
+                setTimeout(() => {
+                  const dat = findById(id);
+                  setImgRw(dat);
+                  setIsOpenUpload(true);
+                }, 200);
+              }}
+            />,
+          ];
+        }
 
-            if (isInEditMode) {
-              return [
-                <GridActionsCellItem
-                  icon={<SaveIcon />}
-                  label="Save"
-                  sx={{
-                    color: "primary.main",
-                  }}
-                  onClick={handleSaveClick(id)}
-                />,
-                <GridActionsCellItem
-                  icon={<CancelIcon />}
-                  label="Cancel"
-                  className="textPrimary"
-                  onClick={handleCancelClick(id)}
-                  color="inherit"
-                />,
-              ];
-            }
+        return [
+          <GridActionsCellItem
+            icon={<ImageIcon />}
+            label="Edit"
+            className="textPrimary"
+            color="inherit"
+            onClick={() => {
+              setImgRw(undefined);
+              setTimeout(() => {
+                const dat = findById(id);
+                setImgRw(dat);
+                setIsOpen(true);
+              }, 200);
+            }}
+          />,
+        ];
+      },
+    });
+  }
 
-            return [
-              <GridActionsCellItem
-                icon={<EditIcon />}
-                label="Edit"
-                className="textPrimary"
-                onClick={handleEditClick(id)}
-                color="inherit"
-              />,
-              <GridActionsCellItem
-                icon={<DeleteIcon />}
-                label="Delete"
-                onClick={handleDeleteClick(id)}
-                color="inherit"
-              />,
-            ];
-          },
-        },
-      ]
-    : [
-        ...columns,
-        {
-          field: "actions",
-          type: "actions",
-          headerName: "Actions",
-          width: 100,
-          cellClassName: "actions",
-          getActions: ({ id }) => {
-            const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+  if (isAdmin) {
+    columnsDetails.push({
+      field: "navigate",
+      type: "actions",
+      headerName: "Navigate",
+      width: 100,
+      cellClassName: "navigate",
+      getActions: ({ id }) => {
+        const x: GridValidRowModel | undefined = findById(id);
 
-            if (isInEditMode) {
-              return [
-                <GridActionsCellItem
-                  icon={<SaveIcon />}
-                  label="Save"
-                  sx={{
-                    color: "primary.main",
-                  }}
-                  onClick={handleSaveClick(id)}
-                />,
-                <GridActionsCellItem
-                  icon={<CancelIcon />}
-                  label="Cancel"
-                  className="textPrimary"
-                  onClick={handleCancelClick(id)}
-                  color="inherit"
-                />,
-              ];
-            }
+        const isValue1: boolean =
+          x && x.columnSelect && x.columnSelect === SELECT_VALUES.VALUE_1;
 
-            return [
-              <GridActionsCellItem
-                icon={<EditIcon />}
-                label="Edit"
-                className="textPrimary"
-                onClick={handleEditClick(id)}
-                color="inherit"
-              />,
-              <GridActionsCellItem
-                icon={<DeleteIcon />}
-                label="Delete"
-                onClick={handleDeleteClick(id)}
-                color="inherit"
-              />,
-            ];
-          },
-        },
+        return [
+          <GridActionsCellItem
+            disabled={isValue1}
+            icon={<AddIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={() => {
+              navigate(
+                `/dashboard/charter_update/${urlEncodeObject<
+                  GridValidRowModel | undefined
+                >(x)}`
+              );
+            }}
+            color="inherit"
+          />,
+        ];
+      },
+    });
+  }
+
+  columnsDetails.push({
+    field: "actions",
+    type: "actions",
+    headerName: "Actions",
+    width: 100,
+    cellClassName: "actions",
+    getActions: ({ id }) => {
+      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+      if (isInEditMode) {
+        return [
+          <GridActionsCellItem
+            icon={<SaveIcon />}
+            label="Save"
+            sx={{
+              color: "primary.main",
+            }}
+            onClick={handleSaveClick(id)}
+          />,
+          <GridActionsCellItem
+            icon={<CancelIcon />}
+            label="Cancel"
+            className="textPrimary"
+            onClick={handleCancelClick(id)}
+            color="inherit"
+          />,
+        ];
+      }
+
+      return [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          className="textPrimary"
+          onClick={handleEditClick(id)}
+          color="inherit"
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={handleDeleteClick(id)}
+          color="inherit"
+        />,
       ];
+    },
+  });
+
+  // 3rd party hooks
+
+  const navigate = useNavigate();
 
   //   data operations
   const getDataAll = useCallback(async () => {
@@ -284,6 +293,68 @@ function Admin(props: {
     }));
   }, [pageState.page, pageState.pageSize]);
 
+  const updateData = useCallback(
+    async (viewData: XView) => {
+      const requestDataCreate: HttpRequestData<
+        HttpUpdateOneRequestBody<XModel>
+      > = {
+        entityName: ENTITY_NAME.X,
+        method: HTTP_METHOD.POST,
+        operation: OPERATION.UPDATE_ONE,
+        body: {
+          data: getModelFromViewX(viewData),
+        },
+      };
+
+      const updatedData: HttpResponseUpdateOne<XModel> = await makeHttpCall<
+        HttpResponseUpdateOne<XModel>,
+        HttpUpdateOneRequestBody<XModel>
+      >(requestDataCreate);
+
+      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+        setPageState((old) => ({
+          ...old,
+          page: 0,
+          pageSize: 2,
+        }));
+        getDataAll();
+      }
+    },
+    [getDataAll]
+  );
+
+  const createData = useCallback(
+    async (viewData: XView) => {
+      const requestDataCreate: HttpRequestData<
+        HttpCreateOneRequestBody<XModel>
+      > = {
+        entityName: ENTITY_NAME.X,
+        method: HTTP_METHOD.POST,
+        operation: OPERATION.CREATE_ONE,
+        body: {
+          data: getModelFromViewX(viewData),
+        },
+      };
+
+      const createdData: HttpResponseCreateOne<XModel> = await makeHttpCall<
+        HttpResponseCreateOne<XModel>,
+        HttpCreateOneRequestBody<XModel>
+      >(requestDataCreate);
+
+      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+        setPageState((old) => ({
+          ...old,
+          page: 0,
+          pageSize: 2,
+        }));
+        getDataAll();
+      }
+    },
+    [getDataAll]
+  );
+
+  // anonymous functions
+
   const findById = useCallback(
     (id: GridRowId): GridValidRowModel | undefined => {
       for (let index = 0; index < pageState.data.length; index++) {
@@ -309,25 +380,51 @@ function Admin(props: {
     getDataAll();
   }, [getDataAll, pageState.page, pageState.pageSize]);
 
+  useEffect(() => {}, [props.filters, props.filters.master]);
+
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
 
-    if (entityFound && props.saveHandler && savedId != -1) {
-      props.saveHandler(entityFound);
+    if (
+      entityFound &&
+      // props.saveHandler &&
+      savedId != -1
+    ) {
+      createData({
+        columnDate: entityFound.columnDate,
+        columnSelect: entityFound.columnSelect,
+        isDeleted: false,
+        url: entityFound.url,
+        isNew: entityFound.isNew,
+      });
+      // props.saveHandler(entityFound);
     }
-  }, [findById, props, savedId]);
+  }, [createData, findById, props, savedId]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(updateId);
-    if (entityFound && props.updateHandler && updateId !== -1 && toUpdated) {
+    if (
+      entityFound &&
+      // props.updateHandler &&
+      updateId !== -1 &&
+      toUpdated
+    ) {
       if (toDeleted) {
         setToDeleted(false);
         entityFound.isDeleted = 1;
       }
       setToUpdated(false);
-      props.updateHandler(entityFound);
+      updateData({
+        uid: entityFound.uid,
+        url: entityFound.url,
+        columnSelect: entityFound.columnSelect,
+        columnDate: entityFound.columnDate,
+        isDeleted: entityFound.isDeleted == 0 ? false : true,
+        isNew: entityFound.isNew,
+      });
+      // props.updateHandler(entityFound);
     }
-  }, [findById, props, toDeleted, toUpdated, updateId]);
+  }, [findById, props, toDeleted, toUpdated, updateData, updateId]);
 
   const handleSaveClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
@@ -424,6 +521,7 @@ function Admin(props: {
         </AppBar>
         <Container style={{ marginTop: 100, marginBottom: 100 }}>
           <DataGrid
+            sx={{ border: "none", padding: "15px" }}
             autoHeight
             editMode="row"
             rowModesModel={rowModesModel}
@@ -482,6 +580,6 @@ function Admin(props: {
       </Box>
     </>
   );
-}
+};
 
 export default Admin;

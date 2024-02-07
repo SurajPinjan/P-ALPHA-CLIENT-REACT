@@ -181,6 +181,7 @@ function MachineAudit() {
               data={TableType.Audit}
               tab={TabType.Process}
               onSelect={onSelect}
+              isClicked={null}
             ></FullFeaturedCrudGrid>
             <FullFeaturedCrudGrid
               hasAttachment={false}

@@ -193,7 +193,7 @@ function ProjectReview() {
                                 </div>
                             </GridStyled>
                         </Box>
-                        <FullFeaturedCrudGrid hasAttachment={false} tableTitle='' buttonTitle='Add Review' initialColumns={columnsDetails} initialRows={tableRows} data={TableType.Audit} tab={TabType.Process}></FullFeaturedCrudGrid>
+                        <FullFeaturedCrudGrid isClicked={null} hasAttachment={false} tableTitle='' buttonTitle='Add Review' initialColumns={columnsDetails} initialRows={tableRows} data={TableType.Audit} tab={TabType.Process}></FullFeaturedCrudGrid>
                     </CardContent>
                 </Card>
             </Box>

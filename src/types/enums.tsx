@@ -19,6 +19,7 @@ export enum ENTITY_NAME {
   X = "x",
   FILE = "file",
   AUTH = "auth",
+  MASTER = "master",
 }
 
 export enum OPERATION {

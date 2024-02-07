@@ -63,23 +63,37 @@ function Validate() {
   };
 
   useEffect(() => {
-    setColumnsDetails([
-      {
-        field: "columnDate",
-        headerName: "Date",
-        width: 240,
-        type: "date",
-        editable: true,
-      },
-      {
-        field: "columnSelect",
-        headerName: "Select",
-        width: 240,
-        type: "singleSelect",
-        editable: true,
-        valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
-      },
-    ]);
+    const role: string | null = localStorage.getItem("userrole");
+
+    if (role && role === "admin") {
+      setColumnsDetails([
+        {
+          field: "columnDate",
+          headerName: "Date",
+          width: 240,
+          type: "date",
+          editable: true,
+        },
+        {
+          field: "columnSelect",
+          headerName: "Select",
+          width: 240,
+          type: "singleSelect",
+          editable: true,
+          valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
+        },
+      ]);
+    } else {
+      setColumnsDetails([
+        {
+          field: "columnDate",
+          headerName: "Date",
+          width: 240,
+          type: "date",
+          editable: true,
+        },
+      ]);
+    }
 
     getDataAll();
   }, []);
@@ -183,6 +197,7 @@ function Validate() {
                 initialRows={rows}
                 data={TableType.Audit}
                 tab={TabType.Process}
+                isClicked={null}
               ></FullFeaturedCrudGrid>
             </CardContent>
           </Card>

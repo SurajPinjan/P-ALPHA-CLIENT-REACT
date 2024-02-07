@@ -14,7 +14,7 @@ import { deepReducerFunction } from "../Reducers/deepReducer";
 function Home() {
   // states
   // view refresh states
-  const [banners, setBanners] = useReducer(deepReducerFunction, []);
+  const [banners, setBanners] = useReducer(deepReducerFunction<XView[]>, []);
   const [reset, setReset] = React.useState<boolean>(true);
 
   // data operators
@@ -31,7 +31,8 @@ function Home() {
     };
 
     const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
-      HttpResponseGetAll<XModel>
+      HttpResponseGetAll<XModel>,
+      HttpGetAllRequestBody<XModel>
     >(requestDataAll);
 
     setBanners(

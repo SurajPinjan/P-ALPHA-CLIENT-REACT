@@ -1,50 +1,61 @@
-import * as React from "react";
-import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import MobileStepper from "@mui/material/MobileStepper";
+import * as React from "react";
 // import Paper from '@mui/material/Paper';
 // import Typography from '@mui/material/Typography';
-import Button from "@mui/material/Button";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import AliceCarousel from "react-alice-carousel";
+import "react-alice-carousel/lib/alice-carousel.css";
 import { XView } from "../../models/X";
-import AliceCarousel from 'react-alice-carousel';
-import 'react-alice-carousel/lib/alice-carousel.css';
 
 function SwipeableTextMobileStepper(props: { baners: XView[] | undefined }) {
+  const handleDragStart = (e: unknown) => {
+    if (e instanceof Event) e.preventDefault();
+  };
 
-  const handleDragStart = (e) => e.preventDefault();
-
-  const items: any[] = [
-    <img src="http://localhost:3000/uploads/istockphoto-5.jpg" onDragStart={handleDragStart} role="presentation" />,
-    <img src="http://localhost:3000/uploads/istockphoto-3.jpg" onDragStart={handleDragStart} role="presentation" />,
-    <img src="http://localhost:3000/uploads/istockphoto-4.jpg" onDragStart={handleDragStart} role="presentation" />,
+  const items: React.DetailedHTMLProps<
+    React.ImgHTMLAttributes<HTMLImageElement>,
+    HTMLImageElement
+  >[] = [
+    <img
+      src="http://localhost:3000/uploads/istockphoto-5.jpg"
+      onDragStart={handleDragStart}
+      role="presentation"
+    />,
+    <img
+      src="http://localhost:3000/uploads/istockphoto-3.jpg"
+      onDragStart={handleDragStart}
+      role="presentation"
+    />,
+    <img
+      src="http://localhost:3000/uploads/istockphoto-4.jpg"
+      onDragStart={handleDragStart}
+      role="presentation"
+    />,
   ];
 
   // States
-  const [activeStep, setActiveStep] = React.useState(0);
+  // const [activeStep, setActiveStep] = React.useState(0);
   const [banners] = React.useState<XView[] | undefined>(props.baners);
 
   // constants
-  const theme = useTheme();
-  const maxSteps = banners ? banners.length : 0;
+  // const theme = useTheme();
+  // const maxSteps = banners ? banners.length : 0;
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+  // const handleNext = () => {
+  //   setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  // };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  // const handleBack = () => {
+  //   setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  // };
 
-  const handleStepChange = (step: React.SetStateAction<number>) => {
-    setActiveStep(step);
-  };
+  // const handleStepChange = (step: React.SetStateAction<number>) => {
+  //   setActiveStep(step);
+  // };
 
   return (
     <Box sx={{ maxWidth: "100%" }}>
       {banners && (
-        <AliceCarousel 
+        <AliceCarousel
           items={items}
           autoPlay
           autoPlayInterval={2000}

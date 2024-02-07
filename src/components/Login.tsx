@@ -56,7 +56,7 @@ const Login = () => {
             }
         }
 
-        const fetchData: HttpResponseLogin = await makeHttpCall<HttpResponseLogin>(requestDataAll);
+        const fetchData: HttpResponseLogin = await makeHttpCall<HttpResponseLogin,HttpLoginRequestBody>(requestDataAll);
 
 
         if (fetchData.responseCode == API_RESPONSE_CODE.SUCCESS) {
