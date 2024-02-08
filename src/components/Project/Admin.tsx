@@ -40,20 +40,19 @@ const AdminWrapper: React.FC<AdminWrapperProps> = () => {
   // data operations
 
   const getDataAll = useCallback(async () => {
-    const requestDataAll: HttpRequestData<HttpGetAllRequestBody<MasterModel>> =
-      {
-        entityName: ENTITY_NAME.MASTER,
-        method: HTTP_METHOD.POST,
-        operation: OPERATION.GET_ALL,
-        body: {
-          pageSize: 10,
-          pageNumber: 0,
-        },
-      };
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
+      entityName: ENTITY_NAME.MASTER,
+      method: HTTP_METHOD.POST,
+      operation: OPERATION.GET_ALL,
+      body: {
+        pageSize: 10,
+        pageNumber: 0,
+      },
+    };
 
     const fetchData: HttpResponseGetAll<MasterModel> = await makeHttpCall<
       HttpResponseGetAll<MasterModel>,
-      HttpGetAllRequestBody<MasterModel>
+      HttpGetAllRequestBody
     >(requestDataAll);
 
     const dat: MasterView[] = fetchData.data.map((row: MasterModel) => {
@@ -103,7 +102,13 @@ const AdminWrapper: React.FC<AdminWrapperProps> = () => {
                       {" "}
                       Master
                     </InputLabel>
-                    <Field as={Select} labelId="master" name="master">
+                    <Field
+                      as={Select}
+                      labelId="master"
+                      name="master"
+                      id="master"
+                      label="master"
+                    >
                       {masters.map((master) => (
                         <MenuItem key={master.uid} value={master.master}>
                           {master.master}

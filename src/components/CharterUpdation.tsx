@@ -3,10 +3,9 @@ import {
   Card,
   CardContent,
   FormControl,
-  InputLabel,
   TextField,
   Typography,
-  styled,
+  styled
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -72,7 +71,7 @@ export default function BasicGrid() {
           ></Typography>
           <Grid container spacing={2}>
             {
-              <Grid xs={3}>
+              <Grid >
                 {urlData && (
                   <Formik
                     initialValues={{
@@ -82,14 +81,14 @@ export default function BasicGrid() {
                   >
                     <Form>
                       <FormControl variant="standard" sx={{ minWidth: "100%" }}>
-                        <InputLabel id="demo-simple-select-standard-label">
-                          {" "}
-                          ColumnSelect
-                        </InputLabel>
                         <Field
                           as={TextField}
                           labelId="columnSelect"
                           name="columnSelect"
+                          type="text"
+                          style={{ width: "100%" }}
+                          label="Column Select"
+                          variant="standard"
                         />
                         <ErrorMessage
                           component="div"

@@ -58,6 +58,7 @@ import EditToolbar from "./ProjectStages/EditToolbar";
 import { MasterView } from "../../models/Master";
 import { useNavigate } from "react-router-dom";
 import { urlEncodeObject } from "../../services/encoderService";
+import { Filter } from "../../types/filterTypes";
 
 export interface Page {
   isLoading: boolean;
@@ -122,6 +123,12 @@ const Admin: React.FC<AdminProps> = (props) => {
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [savedId, setSavedId] = React.useState<GridRowId>(-1);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
+  const [filters, setFilters] = React.useState<MasterView>({
+    isDeleted: false,
+    isNew: false,
+    master: undefined,
+    uid: undefined,
+  });
   const [buttonTitle] = React.useState("Add X");
   const [tableTitle] = React.useState("X");
 
@@ -265,11 +272,22 @@ const Admin: React.FC<AdminProps> = (props) => {
   //   data operations
   const getDataAll = useCallback(async () => {
     setPageState((old) => ({ ...old, isLoading: true }));
-    const requestDataAll: HttpRequestData<HttpGetAllRequestBody<XModel>> = {
+    const filterArray: Filter[] = [];
+
+    if (filters && filters.master) {
+      filterArray.push({
+        column_name: "columnSelect",
+        operator: "=",
+        value: filters.master.toString(),
+      });
+    }
+
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
       entityName: ENTITY_NAME.X,
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
       body: {
+        filters: filterArray,
         pageSize: pageState.pageSize,
         pageNumber: pageState.page,
       },
@@ -277,7 +295,7 @@ const Admin: React.FC<AdminProps> = (props) => {
 
     const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
       HttpResponseGetAll<XModel>,
-      HttpGetAllRequestBody<XModel>
+      HttpGetAllRequestBody
     >(requestDataAll);
 
     const dat: XView[] = fetchData.data.map((row: XModel) => {
@@ -291,7 +309,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       data: dat,
       total: fetchData.totalCount,
     }));
-  }, [pageState.page, pageState.pageSize]);
+  }, [filters, pageState.page, pageState.pageSize]);
 
   const updateData = useCallback(
     async (viewData: XView) => {
@@ -376,9 +394,14 @@ const Admin: React.FC<AdminProps> = (props) => {
   };
 
   //   hooks
+
+  useEffect(() => {
+    setFilters((old) => ({ ...old, master: props.filters.master }));
+  }, [props.filters]);
+
   useEffect(() => {
     getDataAll();
-  }, [getDataAll, pageState.page, pageState.pageSize]);
+  }, [getDataAll, pageState.page, pageState.pageSize, filters]);
 
   useEffect(() => {}, [props.filters, props.filters.master]);
 

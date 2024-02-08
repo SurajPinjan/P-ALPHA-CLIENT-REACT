@@ -20,7 +20,7 @@ function Home() {
   // data operators
   const getDataAllBanner = async () => {
     setReset(false);
-    const requestDataAll: HttpRequestData<HttpGetAllRequestBody<XModel>> = {
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
       entityName: ENTITY_NAME.X,
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
@@ -32,7 +32,7 @@ function Home() {
 
     const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
       HttpResponseGetAll<XModel>,
-      HttpGetAllRequestBody<XModel>
+      HttpGetAllRequestBody
     >(requestDataAll);
 
     setBanners(

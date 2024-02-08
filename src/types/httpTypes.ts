@@ -6,6 +6,7 @@ import {
   HTTP_METHOD,
   OPERATION,
 } from "./enums";
+import { Filter } from "./filterTypes";
 
 // Request types
 export type HttpRequestData<G> = {
@@ -15,15 +16,11 @@ export type HttpRequestData<G> = {
   operation: OPERATION;
 };
 
-export type Filter<T> = {
-  data?: T;
-};
-
-export type HttpGetAllRequestBody<T> = {
+export type HttpGetAllRequestBody = {
   isPagination?: boolean;
   pageNumber?: number;
   pageSize?: number;
-  filters?: Filter<T>;
+  filters?: Filter[];
 };
 
 export type HttpGetOneRequestBody = {

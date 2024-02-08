@@ -4,12 +4,11 @@ import {
   Card,
   CardContent,
   Grid,
-  SelectChangeEvent,
   TextField,
   Typography,
   styled,
 } from "@mui/material";
-import { ChangeEvent, ChangeEventHandler, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import SelectVariants from "../../../commons/SelectInput";
 import { makeMultiPartHttpCall } from "../../../services/ApiService";
 import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../../types/enums";
@@ -38,7 +37,7 @@ function MeasureTest() {
     setInputValue(event.target.value);
   };
 
-  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const uploadFile = async () => {
     if (selectedFile != null) {
@@ -55,8 +54,12 @@ function MeasureTest() {
     }
   };
 
-  const handleFileInputChange = async (event: any) => {
-    setSelectedFile(event.target.files[0]);
+  const handleFileInputChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files?.length) {
+      setSelectedFile(event.target.files[0]);
+    }
   };
 
   return (
