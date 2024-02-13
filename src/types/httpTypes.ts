@@ -43,11 +43,15 @@ export type HttpLoginRequestBody = {
 // Response types
 export type HttpResponseBody = {
   responseCode: API_RESPONSE_CODE;
-  errorMessage?: string;
+  displayMsg: string;
 };
 
 export type HttpMultiPartResponseBody = HttpResponseBody & {
   url: string;
+};
+
+export type HttpErrorResponseBody = HttpResponseBody & {
+  errorMessage: string;
 };
 
 export type HttpResponseGetAll<T> = HttpResponseBody & {

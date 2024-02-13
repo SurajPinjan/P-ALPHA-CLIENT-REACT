@@ -30,16 +30,18 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
   })
     .then((res) => {
       if (!res.ok) {
-        alert(res.statusText);
+        return res.json();
       } else {
         return res.json();
       }
     })
     .then((res: T) => {
-      if (res.responseCode === API_RESPONSE_CODE.SUCCESS) {
+      if (res && res.responseCode === API_RESPONSE_CODE.SUCCESS) {
         return res;
       } else {
-        console.log(res.errorMessage);
+        if (res instanceof Object && "errorMessage" in res) {
+          console.log(res.errorMessage);
+        }
         return res;
       }
     });

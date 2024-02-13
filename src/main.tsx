@@ -9,6 +9,9 @@ import ProjectDetails from "./components/Project/ProjectDetails.tsx";
 import Training from "./components/Training/Training.tsx";
 import ProblemBank from "./components/problemBank/ProblemBank.tsx";
 import "./index.css";
+import { Provider } from "react-redux";
+import React from "react";
+import store from "./services/GlobalStateService.ts";
 
 const routes = [
   {
@@ -52,8 +55,9 @@ const router = createBrowserRouter(routes);
 const root = document.getElementById("root")!;
 
 ReactDOM.createRoot(root).render(
-  <RouterProvider router={router} />
-  // <React.StrictMode>
-  //   <RouterProvider router={router} />
-  // </React.StrictMode>
+  <Provider store={store}>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  </Provider>
 );

@@ -1,25 +1,33 @@
+
 export type FormProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
 };
 export type CardProps = {
-  url: string,
-  title: string,
-  description: string
+  url: string;
+  title: string;
+  description: string;
 };
 
 export type select = {
-  label?: string,
-  value: string[],
-  enabled?: boolean
+  label?: string;
+  value: string[];
+  enabled?: boolean;
 };
 
 export type textArea = {
-  label?: string,
-  row?: number,
+  label?: string;
+  row?: number;
   style?: React.CSSProperties[];
 };
 
 export type date = {
-  label?: string,
+  label?: string;
+};
+
+export type GlobalState = {
+  code: string;
+  displayMsg: string;
+  apiTime: string;
+  errMsg?: string;
 };

@@ -20,6 +20,7 @@ import {
   HttpCreateOneRequestBody,
   HttpGetAllRequestBody,
   HttpRequestData,
+  HttpResponseBody,
   HttpResponseCreateOne,
   HttpResponseGetAll,
   HttpResponseUpdateOne,
@@ -59,6 +60,8 @@ import { MasterView } from "../../models/Master";
 import { useNavigate } from "react-router-dom";
 import { urlEncodeObject } from "../../services/encoderService";
 import { Filter } from "../../types/filterTypes";
+import store from "../../services/GlobalStateService";
+import { DateTime } from "luxon";
 
 export interface Page {
   isLoading: boolean;
@@ -298,10 +301,14 @@ const Admin: React.FC<AdminProps> = (props) => {
       HttpGetAllRequestBody
     >(requestDataAll);
 
-    const dat: XView[] = fetchData.data.map((row: XModel) => {
-      const data: XView = getViewFromModelX(row);
-      return data;
-    });
+    toastDispatcher(fetchData);
+
+    const dat: XView[] = fetchData.data
+      ? fetchData.data.map((row: XModel) => {
+          const data: XView = getViewFromModelX(row);
+          return data;
+        })
+      : [];
 
     setPageState((old) => ({
       ...old,
@@ -328,6 +335,8 @@ const Admin: React.FC<AdminProps> = (props) => {
         HttpResponseUpdateOne<XModel>,
         HttpUpdateOneRequestBody<XModel>
       >(requestDataCreate);
+
+      toastDispatcher(updatedData);
 
       if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
         setPageState((old) => ({
@@ -359,6 +368,8 @@ const Admin: React.FC<AdminProps> = (props) => {
         HttpCreateOneRequestBody<XModel>
       >(requestDataCreate);
 
+      toastDispatcher(createdData);
+
       if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
         setPageState((old) => ({
           ...old,
@@ -385,6 +396,21 @@ const Admin: React.FC<AdminProps> = (props) => {
     },
     [pageState.data]
   );
+
+  function toastDispatcher(fetchData: HttpResponseBody) {
+    const toast = () => ({
+      type: "DUMMYTYPE",
+      newCode: fetchData.responseCode,
+      newDisplayMsg: fetchData.displayMsg,
+      apiTime: DateTime.now().toISO(),
+      newErrMsg:
+        fetchData instanceof Object && "errorMessage" in fetchData
+          ? fetchData.errorMessage
+          : undefined,
+    });
+
+    store.dispatch(toast());
+  }
 
   // event handlers
 
