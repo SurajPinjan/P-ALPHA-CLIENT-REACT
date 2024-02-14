@@ -13,6 +13,7 @@ import {
   GridRowEditStopReasons,
   GridRowId,
   GridRowModel,
+  GridRowParams,
   GridValidRowModel,
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
@@ -527,6 +528,17 @@ const Admin: React.FC<AdminProps> = (props) => {
     }
   };
 
+  const handleRowClick: GridEventListener<"rowClick"> = (
+    params: GridRowParams<XView>,
+    event
+  ) => {
+    console.log(event.isTrusted);
+    const selectedRowData = params.row;
+    if (params.row) {
+      console.log("Clicked row:", selectedRowData);
+    }
+  };
+
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
     setPageState((old) => ({
@@ -576,6 +588,7 @@ const Admin: React.FC<AdminProps> = (props) => {
             rowModesModel={rowModesModel}
             onRowModesModelChange={handleRowModesModelChange}
             onRowEditStop={handleRowEditStop}
+            onRowClick={handleRowClick}
             processRowUpdate={processRowUpdate}
             rows={pageState.data}
             rowCount={pageState.total}
