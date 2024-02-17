@@ -1,10 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Typography, styled } from "@mui/material";
-import {
-  GridRowModes,
-  GridRowModesModel,
-} from "@mui/x-data-grid";
+import { GridRowModes, GridRowModesModel } from "@mui/x-data-grid";
 import { randomId } from "@mui/x-data-grid-generator";
 import { Page } from "../Project";
 

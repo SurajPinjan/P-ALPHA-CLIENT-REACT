@@ -1,6 +1,18 @@
-import { Card, CardContent, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 
-import { GridColDef, GridRowsProp, GridValueFormatterParams, useGridApiContext } from "@mui/x-data-grid";
+import {
+  GridColDef,
+  GridRowsProp,
+  GridValueFormatterParams,
+  useGridApiContext,
+} from "@mui/x-data-grid";
 import FullFeaturedCrudGrid from "./AuditTable";
 import { TabType, TableType } from "./MeasureBak";
 
@@ -124,18 +136,24 @@ function Analyze() {
       width: 240,
       editable: true,
       valueOptions: discountOptions,
-      valueFormatter: ({ value }: GridValueFormatterParams) => (value ? value.join("/") : ""),
+      valueFormatter: ({ value }: GridValueFormatterParams) =>
+        value ? value.join("/") : "",
       renderEditCell: CustomDiscountEditCell,
       filterOperators: [
         {
           value: "contains",
           getApplyFilterFn: (filterItem: any) => {
-            if (filterItem.value == null || filterItem.value === "") {
+            if (
+              typeof filterItem === "object" &&
+              filterItem !== null &&
+              "value" in filterItem &&
+              (filterItem.value == null || filterItem.value === "")
+            ) {
               return null;
             }
             return ({ value }: any) => {
               return value.some(
-                (cellValue: any) => cellValue === filterItem.value
+                (cellValue: unknown) => cellValue === filterItem.value
               );
             };
           },

@@ -5,7 +5,7 @@ import {
   FormControl,
   TextField,
   Typography,
-  styled
+  styled,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -71,7 +71,7 @@ export default function BasicGrid() {
           ></Typography>
           <Grid container spacing={2}>
             {
-              <Grid >
+              <Grid>
                 {urlData && (
                   <Formik
                     initialValues={{

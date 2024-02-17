@@ -13,10 +13,15 @@ export enum API_RESPONSE_CODE {
   ERROR_CREATING = "ER004",
   ERROR_RETRIEVING_DATA = "ER005",
   ERROR_UPDATING_DATA = "ER006",
+  ERROR_UPLOADING_FILE = "ER007",
+  ERROR_INVALID_TOKEN = "ER008",
+  ERROR_INVALID_ROLE = "ER009",
 }
 
 export enum ENTITY_NAME {
   X = "x",
+  Y = "y",
+  YWITHX = "yWithX",
   FILE = "file",
   AUTH = "auth",
   MASTER = "master",

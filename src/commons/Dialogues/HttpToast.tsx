@@ -72,9 +72,9 @@ const HttpToast = ({ code, displayMsg, errMsg, apiTime }: GlobalState) => {
           onClose={handleClose}
           severity={errMsgP ? "error" : "success"}
         >
-          {codeP}
-          {displayMsgP}
-          {errMsgP}
+          <div>{codeP}</div>
+          <div>{displayMsgP}</div>
+          <div>{errMsgP}</div>
         </MuiAlert>
       </Snackbar>
     </div>

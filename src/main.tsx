@@ -1,4 +1,6 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import BasicGrid from "./components/CharterUpdation.tsx";
@@ -6,11 +8,9 @@ import Home from "./components/Home.tsx";
 import Login from "./components/Login.tsx";
 import AdminWrapper from "./components/Project/Admin.tsx";
 import ProjectDetails from "./components/Project/ProjectDetails.tsx";
+import YGridWrapper from "./components/Project/YPage.tsx";
 import Training from "./components/Training/Training.tsx";
-import ProblemBank from "./components/problemBank/ProblemBank.tsx";
 import "./index.css";
-import { Provider } from "react-redux";
-import React from "react";
 import store from "./services/GlobalStateService.ts";
 
 const routes = [
@@ -28,7 +28,7 @@ const routes = [
       },
       {
         path: "problem_bank",
-        element: <ProblemBank />,
+        element: <YGridWrapper />,
       },
       {
         path: "project",

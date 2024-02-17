@@ -1,4 +1,3 @@
-
 export type FormProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -31,3 +30,13 @@ export type GlobalState = {
   apiTime: string;
   errMsg?: string;
 };
+
+export const enum TableType {
+  Audit,
+  Detail,
+}
+
+export const enum TabType {
+  Machine,
+  Process,
+}

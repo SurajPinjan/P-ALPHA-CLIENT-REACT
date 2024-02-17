@@ -1,12 +1,17 @@
+import { DateTime } from "luxon";
+import { Store } from "redux";
 import { API_RESPONSE_CODE, OPERATION } from "../types/enums";
 import {
   HttpMultiPartResponseBody,
   HttpRequestData,
   HttpResponseBody,
 } from "../types/httpTypes";
+import { NavigateFunction } from "react-router-dom";
 
 export async function makeHttpCall<T extends HttpResponseBody, G>(
-  params: HttpRequestData<G>
+  params: HttpRequestData<G>,
+  store: Store,
+  navigate: NavigateFunction
 ): Promise<T> {
   const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
     import.meta.env.VITE_BACKEND_PORT
@@ -37,10 +42,14 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
     })
     .then((res: T) => {
       if (res && res.responseCode === API_RESPONSE_CODE.SUCCESS) {
+        // toastDispatcher(store, res);
         return res;
       } else {
         if (res instanceof Object && "errorMessage" in res) {
-          console.log(res.errorMessage);
+          toastDispatcher(store, res);
+          if (res.responseCode === API_RESPONSE_CODE.ERROR_INVALID_TOKEN) {
+            navigate("/");
+          }
         }
         return res;
       }
@@ -76,4 +85,19 @@ export function makeMultiPartHttpCall(
     .then((res: HttpMultiPartResponseBody) => {
       return res;
     });
+}
+
+function toastDispatcher(store: Store, fetchData: HttpResponseBody) {
+  const toast = () => ({
+    type: "DUMMYTYPE",
+    newCode: fetchData.responseCode,
+    newDisplayMsg: fetchData.displayMsg,
+    apiTime: DateTime.now().toISO(),
+    newErrMsg:
+      fetchData instanceof Object && "errorMessage" in fetchData
+        ? fetchData.errorMessage
+        : undefined,
+  });
+
+  store.dispatch(toast());
 }

@@ -60,6 +60,19 @@ export default function FullFeaturedCrudGrid(props: {
   const [toDeleted, setToDeleted] = React.useState<boolean>(false);
   const [imgRw, setImgRw] = React.useState<GridValidRowModel | undefined>();
 
+  const findById = React.useCallback(
+    (id: GridRowId): GridValidRowModel | undefined => {
+      for (let index = 0; index < rows.length; index++) {
+        const element: GridValidRowModel = rows[index];
+        if (element.id === id) {
+          return element;
+        }
+      }
+      return undefined;
+    },
+    [rows]
+  );
+
   React.useEffect(() => {
     if (
       props.isClicked &&
@@ -69,7 +82,7 @@ export default function FullFeaturedCrudGrid(props: {
     ) {
       setRows(props.initialRows);
     }
-  }, [props.isClicked]);
+  }, [isAudit, props.initialRows, props.isClicked]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
@@ -77,7 +90,7 @@ export default function FullFeaturedCrudGrid(props: {
     if (entityFound && props.saveHandler && savedId != -1) {
       props.saveHandler(entityFound);
     }
-  }, [savedId]);
+  }, [findById, props, savedId]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(updateId);
@@ -89,7 +102,7 @@ export default function FullFeaturedCrudGrid(props: {
       setToUpdated(false);
       props.updateHandler(entityFound);
     }
-  }, [updateId]);
+  }, [findById, props, toDeleted, toUpdated, updateId]);
 
   const onClose = () => {
     setIsOpen(false);
@@ -157,16 +170,6 @@ export default function FullFeaturedCrudGrid(props: {
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
-  };
-
-  const findById = (id: GridRowId): GridValidRowModel | undefined => {
-    for (let index = 0; index < rows.length; index++) {
-      const element: GridValidRowModel = rows[index];
-      if (element.id === id) {
-        return element;
-      }
-    }
-    return undefined;
   };
 
   const columnsDetails: GridColDef[] = hasAttachment

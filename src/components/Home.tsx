@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import "../App.css";
 import SwipeableTextMobileStepper from "../commons/Dashboard/Carousel";
 import { XModel, XView, getViewFromModelX } from "../models/X";
@@ -10,15 +10,20 @@ import {
   HttpResponseGetAll,
 } from "../types/httpTypes";
 import { deepReducerFunction } from "../Reducers/deepReducer";
+import store from "../services/GlobalStateService";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  // constants
+  const navigate = useNavigate();
   // states
   // view refresh states
   const [banners, setBanners] = useReducer(deepReducerFunction<XView[]>, []);
   const [reset, setReset] = React.useState<boolean>(true);
 
   // data operators
-  const getDataAllBanner = async () => {
+
+  const getDataAllBanner = useCallback(async () => {
     setReset(false);
     const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
       entityName: ENTITY_NAME.X,
@@ -27,13 +32,14 @@ function Home() {
       body: {
         pageSize: 100,
         pageNumber: 0,
+        filters: [],
       },
     };
 
     const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
       HttpResponseGetAll<XModel>,
       HttpGetAllRequestBody
-    >(requestDataAll);
+    >(requestDataAll, store, navigate);
 
     setBanners(
       fetchData.data.map((row: XModel) => {
@@ -45,12 +51,12 @@ function Home() {
     setTimeout(() => {
       setReset(true);
     }, 100);
-  };
+  }, [navigate]);
 
   // hooks
   useEffect(() => {
     getDataAllBanner();
-  }, []);
+  }, [getDataAllBanner]);
 
   // Template
   return <>{reset && <SwipeableTextMobileStepper baners={banners} />}</>;

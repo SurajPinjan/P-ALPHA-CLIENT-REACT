@@ -120,7 +120,7 @@ const initialRows: GridRowsProp = [
 ];
 
 function ProcessAudit() {
-  const [isClicked, setIsClicked] = React.useState<string| null>(null);
+  const [isClicked, setIsClicked] = React.useState<string | null>(null);
   const [isUpdate, setIsUpdate] = React.useState<boolean>(true);
   const [initialRowsProcessDetails, setInitialRowsProcessDetails] =
     React.useState<GridRowsProp>([]);

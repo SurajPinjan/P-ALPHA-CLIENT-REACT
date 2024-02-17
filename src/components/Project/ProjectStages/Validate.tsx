@@ -1,6 +1,6 @@
 import { Box, Card, CardContent } from "@mui/material";
 import { GridColDef, GridValidRowModel } from "@mui/x-data-grid";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   XModel,
   XView,
@@ -26,8 +26,12 @@ import {
 } from "../../../types/httpTypes";
 import FullFeaturedCrudGrid from "./AuditTable";
 import { TabType, TableType } from "./MeasureBak";
+import store from "../../../services/GlobalStateService";
+import { useNavigate } from "react-router-dom";
 
 function Validate() {
+  // constants
+  const navigate = useNavigate();
   // experiment
 
   // states
@@ -61,6 +65,91 @@ function Validate() {
       isNew: editData.isNew,
     });
   };
+
+  // data operators
+  const getDataAll = useCallback(async () => {
+    setReset(false);
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
+      entityName: ENTITY_NAME.X,
+      method: HTTP_METHOD.POST,
+      operation: OPERATION.GET_ALL,
+      body: {
+        pageSize: 100,
+        pageNumber: 0,
+      },
+    };
+
+    const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
+      HttpResponseGetAll<XModel>,
+      HttpGetAllRequestBody
+    >(requestDataAll, store, navigate);
+
+    setRows(
+      fetchData.data.map((row: XModel) => {
+        const data: XView = getViewFromModelX(row);
+        return data;
+      })
+    );
+
+    setTimeout(() => {
+      setReset(true);
+    }, 100);
+  }, [navigate]);
+
+  const createData = async (viewData: XView) => {
+    setReset(false);
+    const requestDataCreate: HttpRequestData<HttpCreateOneRequestBody<XModel>> =
+      {
+        entityName: ENTITY_NAME.X,
+        method: HTTP_METHOD.POST,
+        operation: OPERATION.CREATE_ONE,
+        body: {
+          data: getModelFromViewX(viewData),
+        },
+      };
+
+    const createdData: HttpResponseCreateOne<XModel> = await makeHttpCall<
+      HttpResponseCreateOne<XModel>,
+      HttpCreateOneRequestBody<XModel>
+    >(requestDataCreate, store, navigate);
+
+    if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      getDataAll().then(() => {
+        setReset(true);
+      });
+    } else {
+      setReset(true);
+    }
+  };
+
+  const updateData = async (viewData: XView) => {
+    setReset(false);
+
+    const requestDataCreate: HttpRequestData<HttpUpdateOneRequestBody<XModel>> =
+      {
+        entityName: ENTITY_NAME.X,
+        method: HTTP_METHOD.POST,
+        operation: OPERATION.UPDATE_ONE,
+        body: {
+          data: getModelFromViewX(viewData),
+        },
+      };
+
+    const updatedData: HttpResponseUpdateOne<XModel> = await makeHttpCall<
+      HttpResponseUpdateOne<XModel>,
+      HttpUpdateOneRequestBody<XModel>
+    >(requestDataCreate, store, navigate);
+
+    if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      getDataAll().then(() => {
+        setReset(true);
+      });
+    } else {
+      setReset(true);
+    }
+  };
+
+  // hooks
 
   useEffect(() => {
     const role: string | null = localStorage.getItem("userrole");
@@ -96,90 +185,7 @@ function Validate() {
     }
 
     getDataAll();
-  }, []);
-
-  // data operators
-  const getDataAll = async () => {
-    setReset(false);
-    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
-      entityName: ENTITY_NAME.X,
-      method: HTTP_METHOD.POST,
-      operation: OPERATION.GET_ALL,
-      body: {
-        pageSize: 100,
-        pageNumber: 0,
-      },
-    };
-
-    const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
-      HttpResponseGetAll<XModel>,
-      HttpGetAllRequestBody
-    >(requestDataAll);
-
-    setRows(
-      fetchData.data.map((row: XModel) => {
-        const data: XView = getViewFromModelX(row);
-        return data;
-      })
-    );
-
-    setTimeout(() => {
-      setReset(true);
-    }, 100);
-  };
-
-  const createData = async (viewData: XView) => {
-    setReset(false);
-    const requestDataCreate: HttpRequestData<HttpCreateOneRequestBody<XModel>> =
-      {
-        entityName: ENTITY_NAME.X,
-        method: HTTP_METHOD.POST,
-        operation: OPERATION.CREATE_ONE,
-        body: {
-          data: getModelFromViewX(viewData),
-        },
-      };
-
-    const createdData: HttpResponseCreateOne<XModel> = await makeHttpCall<
-      HttpResponseCreateOne<XModel>,
-      HttpCreateOneRequestBody<XModel>
-    >(requestDataCreate);
-
-    if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
-      getDataAll().then(() => {
-        setReset(true);
-      });
-    } else {
-      setReset(true);
-    }
-  };
-
-  const updateData = async (viewData: XView) => {
-    setReset(false);
-
-    const requestDataCreate: HttpRequestData<HttpUpdateOneRequestBody<XModel>> =
-      {
-        entityName: ENTITY_NAME.X,
-        method: HTTP_METHOD.POST,
-        operation: OPERATION.UPDATE_ONE,
-        body: {
-          data: getModelFromViewX(viewData),
-        },
-      };
-
-    const updatedData: HttpResponseUpdateOne<XModel> = await makeHttpCall<
-      HttpResponseUpdateOne<XModel>,
-      HttpUpdateOneRequestBody<XModel>
-    >(requestDataCreate);
-
-    if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
-      getDataAll().then(() => {
-        setReset(true);
-      });
-    } else {
-      setReset(true);
-    }
-  };
+  }, [getDataAll]);
 
   return (
     reset && (

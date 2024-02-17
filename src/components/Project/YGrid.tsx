@@ -1,8 +1,6 @@
-import AddIcon from "@mui/icons-material/Add";
 import CancelIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ImageIcon from "@mui/icons-material/Image";
 import SaveIcon from "@mui/icons-material/Save";
 import {
@@ -29,26 +27,22 @@ import {
   GridValidRowModel,
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
-import { MasterView } from "../../models/Master";
 import {
-  XModel,
-  XView,
-  getModelFromViewX,
-  getViewFromModelX,
-} from "../../models/X";
+  YWithXModel,
+  YWithXView,
+  getViewFromModelYWithX,
+} from "../../models/DataTransfer/YWithX";
+import { XView } from "../../models/X";
+import { YModel, YView, getModelFromViewY } from "../../models/Y";
 import { makeHttpCall } from "../../services/ApiService";
 import store from "../../services/GlobalStateService";
-import { urlEncodeObject } from "../../services/encoderService";
 import {
   API_RESPONSE_CODE,
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
-  SELECT_VALUES,
-  USER_ROLES,
 } from "../../types/enums";
 import { Filter } from "../../types/filterTypes";
 import {
@@ -61,6 +55,7 @@ import {
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
 import EditToolbar from "./ProjectStages/EditToolbar";
+import { useNavigate } from "react-router-dom";
 
 export interface Page {
   isLoading: boolean;
@@ -70,37 +65,32 @@ export interface Page {
   pageSize: number;
 }
 
-interface AdminProps {
+interface YProps {
   isCompare?: boolean;
   saveHandler?: (newData: GridValidRowModel) => void;
   updateHandler?: (editData: GridValidRowModel) => void;
-  filters: MasterView;
+  saveData: YView;
+  xOptions: XView[];
 }
 
-const Admin: React.FC<AdminProps> = (props) => {
+const YGrid: React.FC<YProps> = (props) => {
   // constants
-  const role: string | null = localStorage.getItem("userrole");
-
+  const navigate = useNavigate();
   const columns = [];
 
   columns.push({
-    field: "columnDate",
-    headerName: "Date",
+    field: "columnText",
+    headerName: "Text",
     width: 240,
-    type: "date",
     editable: true,
   });
 
-  const isAdmin: boolean =
-    typeof role !== "undefined" && role !== null && role === USER_ROLES.ADMIN;
-
   columns.push({
-    field: "columnSelect",
-    headerName: "Select",
+    field: "x_columnDate",
+    headerName: "Date",
     width: 240,
-    type: "singleSelect",
-    editable: isAdmin ? true : false,
-    valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
+    type: "date",
+    editable: false,
   });
 
   // states
@@ -125,48 +115,37 @@ const Admin: React.FC<AdminProps> = (props) => {
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [savedId, setSavedId] = React.useState<GridRowId>(-1);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
-  const [filters, setFilters] = React.useState<MasterView>({
+  const [saveData, setSaveData] = React.useState<YView>({
     isDeleted: false,
     isNew: false,
-    master: undefined,
+    columnText: "",
+    x_id: 0,
     uid: undefined,
   });
-  const [buttonTitle] = React.useState("Add X");
-  const [tableTitle] = React.useState("X");
+  const [tableTitle] = React.useState("Y");
+
+  const [xOptions, setXOptions] = React.useState<XView[]>([]);
 
   // constants
   const columnsDetails: GridColDef[] = [...columns];
 
+  columnsDetails.push({
+    field: "x_id",
+    headerName: "X Entity FK",
+    width: 240,
+    type: "singleSelect",
+    editable: true,
+    valueOptions: [...xOptions.map((x) => (x.uid ? x.uid : x.columnDate))],
+  });
+
   if (hasAttachment) {
     columnsDetails.push({
-      field: "url",
+      field: "x_url",
       headerName: "Url",
       type: "actions",
       width: 100,
       cellClassName: "attachment",
       getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<FileUploadIcon />}
-              label="Upload"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={() => {
-                setImgRw(undefined);
-                setTimeout(() => {
-                  const dat = findById(id);
-                  setImgRw(dat);
-                  setIsOpenUpload(true);
-                }, 200);
-              }}
-            />,
-          ];
-        }
-
         return [
           <GridActionsCellItem
             icon={<ImageIcon />}
@@ -181,39 +160,6 @@ const Admin: React.FC<AdminProps> = (props) => {
                 setIsOpen(true);
               }, 200);
             }}
-          />,
-        ];
-      },
-    });
-  }
-
-  if (isAdmin) {
-    columnsDetails.push({
-      field: "navigate",
-      type: "actions",
-      headerName: "Navigate",
-      width: 100,
-      cellClassName: "navigate",
-      getActions: ({ id }) => {
-        const x: GridValidRowModel | undefined = findById(id);
-
-        const isValue1: boolean =
-          x && x.columnSelect && x.columnSelect === SELECT_VALUES.VALUE_1;
-
-        return [
-          <GridActionsCellItem
-            disabled={isValue1}
-            icon={<AddIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={() => {
-              navigate(
-                `/dashboard/charter_update/${urlEncodeObject<
-                  GridValidRowModel | undefined
-                >(x)}`
-              );
-            }}
-            color="inherit"
           />,
         ];
       },
@@ -267,25 +213,13 @@ const Admin: React.FC<AdminProps> = (props) => {
     },
   });
 
-  // 3rd party hooks
-
-  const navigate = useNavigate();
-
   //   data operations
   const getDataAll = useCallback(async () => {
     setPageState((old) => ({ ...old, isLoading: true }));
     const filterArray: Filter[] = [];
 
-    if (filters && filters.master) {
-      filterArray.push({
-        column_name: "columnSelect",
-        operator: "=",
-        value: filters.master.toString(),
-      });
-    }
-
     const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
-      entityName: ENTITY_NAME.X,
+      entityName: ENTITY_NAME.YWITHX,
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
       body: {
@@ -295,14 +229,14 @@ const Admin: React.FC<AdminProps> = (props) => {
       },
     };
 
-    const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
-      HttpResponseGetAll<XModel>,
+    const fetchData: HttpResponseGetAll<YWithXModel> = await makeHttpCall<
+      HttpResponseGetAll<YWithXModel>,
       HttpGetAllRequestBody
     >(requestDataAll, store, navigate);
 
-    const dat: XView[] = fetchData.data
-      ? fetchData.data.map((row: XModel) => {
-          const data: XView = getViewFromModelX(row);
+    const dat: YWithXView[] = fetchData.data
+      ? fetchData.data.map((row: YWithXModel) => {
+          const data: YWithXView = getViewFromModelYWithX(row);
           return data;
         })
       : [];
@@ -313,24 +247,24 @@ const Admin: React.FC<AdminProps> = (props) => {
       data: dat,
       total: fetchData.totalCount,
     }));
-  }, [filters, navigate, pageState.page, pageState.pageSize]);
+  }, [navigate, pageState.page, pageState.pageSize]);
 
   const updateData = useCallback(
-    async (viewData: XView) => {
+    async (viewData: YView) => {
       const requestDataCreate: HttpRequestData<
-        HttpUpdateOneRequestBody<XModel>
+        HttpUpdateOneRequestBody<YModel>
       > = {
-        entityName: ENTITY_NAME.X,
+        entityName: ENTITY_NAME.Y,
         method: HTTP_METHOD.POST,
         operation: OPERATION.UPDATE_ONE,
         body: {
-          data: getModelFromViewX(viewData),
+          data: getModelFromViewY(viewData),
         },
       };
 
-      const updatedData: HttpResponseUpdateOne<XModel> = await makeHttpCall<
-        HttpResponseUpdateOne<XModel>,
-        HttpUpdateOneRequestBody<XModel>
+      const updatedData: HttpResponseUpdateOne<YModel> = await makeHttpCall<
+        HttpResponseUpdateOne<YModel>,
+        HttpUpdateOneRequestBody<YModel>
       >(requestDataCreate, store, navigate);
 
       if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
@@ -346,21 +280,21 @@ const Admin: React.FC<AdminProps> = (props) => {
   );
 
   const createData = useCallback(
-    async (viewData: XView) => {
+    async (viewData: YView) => {
       const requestDataCreate: HttpRequestData<
-        HttpCreateOneRequestBody<XModel>
+        HttpCreateOneRequestBody<YModel>
       > = {
-        entityName: ENTITY_NAME.X,
+        entityName: ENTITY_NAME.Y,
         method: HTTP_METHOD.POST,
         operation: OPERATION.CREATE_ONE,
         body: {
-          data: getModelFromViewX(viewData),
+          data: getModelFromViewY(viewData),
         },
       };
 
-      const createdData: HttpResponseCreateOne<XModel> = await makeHttpCall<
-        HttpResponseCreateOne<XModel>,
-        HttpCreateOneRequestBody<XModel>
+      const createdData: HttpResponseCreateOne<YModel> = await makeHttpCall<
+        HttpResponseCreateOne<YModel>,
+        HttpCreateOneRequestBody<YModel>
       >(requestDataCreate, store, navigate);
 
       if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
@@ -389,6 +323,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     },
     [pageState.data]
   );
+
   // event handlers
 
   const onClose = () => {
@@ -399,14 +334,21 @@ const Admin: React.FC<AdminProps> = (props) => {
   //   hooks
 
   useEffect(() => {
-    setFilters((old) => ({ ...old, master: props.filters.master }));
-  }, [props.filters]);
+    setSavedId(1);
+    setSaveData((old) => ({
+      ...old,
+      columnText: props.saveData.columnText,
+      x_id: props.saveData.x_id,
+    }));
+  }, [props.saveData, props.saveData.columnText]);
 
   useEffect(() => {
     getDataAll();
-  }, [getDataAll, pageState.page, pageState.pageSize, filters]);
+  }, [getDataAll, pageState.page, pageState.pageSize]);
 
-  useEffect(() => {}, [props.filters, props.filters.master]);
+  useEffect(() => {
+    setXOptions(props.xOptions);
+  }, [getDataAll, props.xOptions]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
@@ -417,15 +359,21 @@ const Admin: React.FC<AdminProps> = (props) => {
       savedId != -1
     ) {
       createData({
-        columnDate: entityFound.columnDate,
-        columnSelect: entityFound.columnSelect,
+        columnText: entityFound.columnText,
         isDeleted: false,
-        url: entityFound.url,
+        x_id: entityFound.x_id,
         isNew: entityFound.isNew,
       });
       // props.saveHandler(entityFound);
     }
   }, [createData, findById, props, savedId]);
+
+  React.useEffect(() => {
+    if (savedId != -1 && saveData.columnText !== "" && saveData.x_id !== 0) {
+      setSavedId(-1);
+      createData(saveData);
+    }
+  }, [createData, saveData, savedId]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(updateId);
@@ -442,9 +390,8 @@ const Admin: React.FC<AdminProps> = (props) => {
       setToUpdated(false);
       updateData({
         uid: entityFound.uid,
-        url: entityFound.url,
-        columnSelect: entityFound.columnSelect,
-        columnDate: entityFound.columnDate,
+        x_id: entityFound.x_id,
+        columnText: entityFound.columnText,
         isDeleted: entityFound.isDeleted == 0 ? false : true,
         isNew: entityFound.isNew,
       });
@@ -505,7 +452,7 @@ const Admin: React.FC<AdminProps> = (props) => {
   };
 
   const handleRowClick: GridEventListener<"rowClick"> = (
-    params: GridRowParams<XView>,
+    params: GridRowParams<YView>,
     event
   ) => {
     console.log(event.isTrusted);
@@ -552,7 +499,7 @@ const Admin: React.FC<AdminProps> = (props) => {
         <AppBar>
           <Toolbar>
             <Typography variant="h6" component="div">
-              X Grid
+              Y Grid
             </Typography>
           </Toolbar>
         </AppBar>
@@ -610,7 +557,6 @@ const Admin: React.FC<AdminProps> = (props) => {
                 setPageState,
                 setRowModesModel,
                 tableTitle,
-                buttonTitle,
               },
             }}
           />
@@ -620,4 +566,4 @@ const Admin: React.FC<AdminProps> = (props) => {
   );
 };
 
-export default Admin;
+export default YGrid;

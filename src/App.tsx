@@ -175,7 +175,7 @@ const App = () => {
 
   // design
 
-  function listItem(Menu: React.ComponentType<any>, index: number) {
+  function listItem(Menu: React.ComponentType<unknown>, index: number) {
     return (
       <ListItem
         key={menuItems[index].title}

@@ -22,12 +22,14 @@ import {
   HttpResponseGetAll,
 } from "../../types/httpTypes";
 import Admin from "./Project";
+import store from "../../services/GlobalStateService";
+import { useNavigate } from "react-router-dom";
 
 interface AdminWrapperProps {}
 
 const AdminWrapper: React.FC<AdminWrapperProps> = () => {
   // constants
-
+  const navigate = useNavigate();
   // states
   const [masters, setMasters] = React.useState<MasterView[]>([]);
   const [filters, setFilters] = React.useState<MasterView>({
@@ -53,7 +55,7 @@ const AdminWrapper: React.FC<AdminWrapperProps> = () => {
     const fetchData: HttpResponseGetAll<MasterModel> = await makeHttpCall<
       HttpResponseGetAll<MasterModel>,
       HttpGetAllRequestBody
-    >(requestDataAll);
+    >(requestDataAll, store, navigate);
 
     const dat: MasterView[] = fetchData.data.map((row: MasterModel) => {
       const data: MasterView = getViewFromModelMaster(row);
@@ -61,7 +63,7 @@ const AdminWrapper: React.FC<AdminWrapperProps> = () => {
     });
 
     setMasters(() => dat);
-  }, []);
+  }, [navigate]);
 
   // anonymous functions
 
