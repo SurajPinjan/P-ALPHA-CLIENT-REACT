@@ -26,6 +26,7 @@ import {
   GridRowModesModel,
   GridRowParams,
   GridRowsProp,
+  GridSortModel,
   GridValidRowModel,
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
@@ -61,6 +62,7 @@ import {
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
 import EditToolbar from "./ProjectStages/EditToolbar";
+import _ from "lodash";
 
 export interface Page {
   isLoading: boolean;
@@ -88,6 +90,13 @@ const Admin: React.FC<AdminProps> = (props) => {
     headerName: "Date",
     width: 240,
     type: "date",
+    editable: true,
+  });
+
+  columns.push({
+    field: "columnUText",
+    headerName: "Unique Text",
+    width: 240,
     editable: true,
   });
 
@@ -131,6 +140,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     master: undefined,
     uid: undefined,
   });
+  const [sorts, setSorts] = React.useState<GridSortModel>([]);
   const [buttonTitle] = React.useState("Add X");
   const [tableTitle] = React.useState("X");
 
@@ -290,6 +300,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       operation: OPERATION.GET_ALL,
       body: {
         filters: filterArray,
+        sorts: sorts,
         pageSize: pageState.pageSize,
         pageNumber: pageState.page,
       },
@@ -313,7 +324,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       data: dat,
       total: fetchData.totalCount,
     }));
-  }, [filters, navigate, pageState.page, pageState.pageSize]);
+  }, [filters, navigate, pageState.page, pageState.pageSize, sorts]);
 
   const updateData = useCallback(
     async (viewData: XView) => {
@@ -419,6 +430,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       createData({
         columnDate: entityFound.columnDate,
         columnSelect: entityFound.columnSelect,
+        columnUText: entityFound.columnUText,
         isDeleted: false,
         url: entityFound.url,
         isNew: entityFound.isNew,
@@ -443,6 +455,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       updateData({
         uid: entityFound.uid,
         url: entityFound.url,
+        columnUText: entityFound.columnUText,
         columnSelect: entityFound.columnSelect,
         columnDate: entityFound.columnDate,
         isDeleted: entityFound.isDeleted == 0 ? false : true,
@@ -493,6 +506,10 @@ const Admin: React.FC<AdminProps> = (props) => {
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
+  };
+
+  const handleSortModelChange = (newSortModel: GridSortModel) => {
+    setSorts(_.cloneDeep(newSortModel));
   };
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
@@ -613,6 +630,8 @@ const Admin: React.FC<AdminProps> = (props) => {
                 buttonTitle,
               },
             }}
+            sortingMode="server"
+            onSortModelChange={handleSortModelChange}
           />
         </Container>
       </Box>

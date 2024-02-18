@@ -14,7 +14,7 @@ import {
   useGridApiContext,
 } from "@mui/x-data-grid";
 import FullFeaturedCrudGrid from "./AuditTable";
-import { TabType, TableType } from "./MeasureBak";
+import { TabType, TableType } from "../../../types/types";
 
 const discountOptions = [
   "Pareto",

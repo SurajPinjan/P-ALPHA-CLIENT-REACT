@@ -1,3 +1,4 @@
+import { GridSortModel } from "@mui/x-data-grid";
 import { Model } from "../models/Model";
 import { UModel } from "../models/U";
 import {
@@ -20,6 +21,7 @@ export type HttpGetAllRequestBody = {
   isPagination?: boolean;
   pageNumber?: number;
   pageSize?: number;
+  sorts?: GridSortModel;
   filters?: Filter[];
 };
 

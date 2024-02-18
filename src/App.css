@@ -204,3 +204,11 @@ button:focus {
 .MuiDataGrid-virtualScroller {
   min-height: 100px;
 }
+
+.jv-chevron {
+  max-width: 10px !important;
+}
+
+.jv-button {
+
+}

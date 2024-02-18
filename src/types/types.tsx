@@ -29,6 +29,8 @@ export type GlobalState = {
   displayMsg: string;
   apiTime: string;
   errMsg?: string;
+  APIUrl: string;
+  APIBody: string;
 };
 
 export const enum TableType {

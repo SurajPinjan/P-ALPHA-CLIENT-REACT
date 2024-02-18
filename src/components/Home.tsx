@@ -33,6 +33,7 @@ function Home() {
         pageSize: 100,
         pageNumber: 0,
         filters: [],
+        sorts: [{ field: "uid", sort: "desc" }],
       },
     };
 

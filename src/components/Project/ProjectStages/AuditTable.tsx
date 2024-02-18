@@ -23,10 +23,10 @@ import {
   GridRowsProp,
 } from "@mui/x-data-grid";
 import EditToolbar from "./EditToolbar";
-import { TabType, TableType } from "./MeasureBak";
 import ImagePreview from "../../../commons/Dialogues/ImagePreview";
 import FileUpload from "../../../commons/Dialogues/FileUpload";
 import { GridValidRowModel } from "@mui/x-data-grid";
+import { TabType, TableType } from "../../../types/types";
 
 export default function FullFeaturedCrudGrid(props: {
   updateHandler?: (editData: GridValidRowModel) => void;

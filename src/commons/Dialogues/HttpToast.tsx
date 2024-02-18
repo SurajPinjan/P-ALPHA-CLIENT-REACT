@@ -5,12 +5,20 @@ import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
 import * as React from "react";
 import { GlobalState } from "../../types/types";
 import { DateTime } from "luxon";
+import JsonView from "react18-json-view";
 
 interface ToastState {
   isOpen: boolean;
 }
 
-const HttpToast = ({ code, displayMsg, errMsg, apiTime }: GlobalState) => {
+const HttpToast = ({
+  code,
+  displayMsg,
+  errMsg,
+  apiTime,
+  APIBody,
+  APIUrl,
+}: GlobalState) => {
   // constants
   const initialState: ToastState = {
     isOpen: false,
@@ -21,6 +29,8 @@ const HttpToast = ({ code, displayMsg, errMsg, apiTime }: GlobalState) => {
   const [codeP, setCodeP] = React.useState<string>("");
   const [displayMsgP, setDisplayMsgP] = React.useState<string>("");
   const [errMsgP, setErrMsgP] = React.useState<string | undefined>();
+  const [APIUrlP, setAPIUrlP] = React.useState<string | undefined>();
+  const [APIBodyP, setAPIBodyP] = React.useState<string | undefined>(`{}`);
   const [apiTimeP, setApiTimeP] = React.useState<string>(
     DateTime.now().toISO()
   );
@@ -31,11 +41,13 @@ const HttpToast = ({ code, displayMsg, errMsg, apiTime }: GlobalState) => {
     setDisplayMsgP(displayMsg);
     setErrMsgP(errMsg);
     setApiTimeP(apiTime);
-  }, [code, displayMsg, errMsg, apiTime]);
+    setAPIUrlP(APIUrl);
+    setAPIBodyP(APIBody);
+  }, [code, displayMsg, errMsg, apiTime, APIUrl, APIBody]);
 
   React.useEffect(() => {
     setOpen(true);
-  }, [codeP, displayMsgP, errMsgP, apiTimeP]);
+  }, [codeP, displayMsgP, errMsgP, apiTimeP, APIUrlP, APIBodyP]);
 
   // event handlers
 
@@ -53,6 +65,10 @@ const HttpToast = ({ code, displayMsg, errMsg, apiTime }: GlobalState) => {
   return (
     <div>
       <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         open={open}
         // autoHideDuration={6000}
         autoHideDuration={null}
@@ -75,6 +91,19 @@ const HttpToast = ({ code, displayMsg, errMsg, apiTime }: GlobalState) => {
           <div>{codeP}</div>
           <div>{displayMsgP}</div>
           <div>{errMsgP}</div>
+          <div>{APIUrlP}</div>
+          {APIBodyP && (
+            <JsonView
+              style={{ width: "20%", height: "5%" }}
+              displaySize={"collapsed"}
+              theme="github"
+              enableClipboard={false}
+              collapsed={true}
+              collapseStringMode={"word"}
+              editable={false}
+              src={JSON.parse(APIBodyP)}
+            />
+          )}
         </MuiAlert>
       </Snackbar>
     </div>

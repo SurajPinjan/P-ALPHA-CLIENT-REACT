@@ -7,6 +7,8 @@ const mapStateToProps = (state: GlobalState) => ({
   displayMsg: state.displayMsg,
   errMsg: state.errMsg,
   apiTime: state.apiTime,
+  APIBody: state.APIBody,
+  APIUrl: state.APIUrl,
 });
 
 const HttpToastWithState = connect(mapStateToProps)(HttpToast);

@@ -6,6 +6,8 @@ const initialState: GlobalState = {
   displayMsg: "",
   apiTime: DateTime.now().toISO(),
   errMsg: undefined,
+  APIBody: "",
+  APIUrl: "",
 };
 
 const globalReducer = (state = initialState, action: any) => {
@@ -14,6 +16,8 @@ const globalReducer = (state = initialState, action: any) => {
     "newCode" in action &&
     "newDisplayMsg" in action &&
     "newErrMsg" in action &&
+    "newAPIBody" in action &&
+    "newAPIUrl" in action &&
     "apiTime" in action
   ) {
     const return_state = {
@@ -22,6 +26,8 @@ const globalReducer = (state = initialState, action: any) => {
       displayMsg: action.newDisplayMsg,
       errMsg: action.newErrMsg,
       apiTime: action.apiTime,
+      APIBody: action.newAPIBody,
+      APIUrl: action.newAPIUrl,
     };
 
     return return_state;

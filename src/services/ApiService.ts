@@ -42,11 +42,11 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
     })
     .then((res: T) => {
       if (res && res.responseCode === API_RESPONSE_CODE.SUCCESS) {
-        // toastDispatcher(store, res);
+        // toastDispatcher(store, JSON.stringify(params.body), url, res);
         return res;
       } else {
         if (res instanceof Object && "errorMessage" in res) {
-          toastDispatcher(store, res);
+          toastDispatcher(store, JSON.stringify(params.body), url, res);
           if (res.responseCode === API_RESPONSE_CODE.ERROR_INVALID_TOKEN) {
             navigate("/");
           }
@@ -87,7 +87,12 @@ export function makeMultiPartHttpCall(
     });
 }
 
-function toastDispatcher(store: Store, fetchData: HttpResponseBody) {
+function toastDispatcher(
+  store: Store,
+  APIBody: string,
+  APIUrl: string,
+  fetchData: HttpResponseBody
+) {
   const toast = () => ({
     type: "DUMMYTYPE",
     newCode: fetchData.responseCode,
@@ -97,6 +102,8 @@ function toastDispatcher(store: Store, fetchData: HttpResponseBody) {
       fetchData instanceof Object && "errorMessage" in fetchData
         ? fetchData.errorMessage
         : undefined,
+    newAPIBody: APIBody,
+    newAPIUrl: APIUrl,
   });
 
   store.dispatch(toast());

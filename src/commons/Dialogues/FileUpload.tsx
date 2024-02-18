@@ -51,7 +51,8 @@ export default function FileUpload(params: {
       const image: string = URL.createObjectURL(selectedFile);
       const img = new Image();
       img.onload = async () => {
-        if (img.width === 2 * img.height) {
+        // if (img.width === 2 * img.height) {
+        if (true) {
           const requestDataUpdateOne: HttpRequestData<FormData> = {
             entityName: ENTITY_NAME.FILE,
             method: HTTP_METHOD.POST,

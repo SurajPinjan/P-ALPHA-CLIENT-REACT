@@ -49,6 +49,8 @@ const AdminWrapper: React.FC<AdminWrapperProps> = () => {
       body: {
         pageSize: 10,
         pageNumber: 0,
+        filters: [],
+        sorts: [{ field: "uid", sort: "desc" }],
       },
     };
 

@@ -25,9 +25,10 @@ import {
   HttpUpdateOneRequestBody,
 } from "../../../types/httpTypes";
 import FullFeaturedCrudGrid from "./AuditTable";
-import { TabType, TableType } from "./MeasureBak";
+
 import store from "../../../services/GlobalStateService";
 import { useNavigate } from "react-router-dom";
+import { TabType, TableType } from "../../../types/types";
 
 function Validate() {
   // constants
@@ -76,6 +77,8 @@ function Validate() {
       body: {
         pageSize: 100,
         pageNumber: 0,
+        filters: [],
+        sorts: [{ field: "uid", sort: "desc" }],
       },
     };
 

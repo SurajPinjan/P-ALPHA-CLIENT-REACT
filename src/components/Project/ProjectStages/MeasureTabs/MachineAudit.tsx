@@ -5,11 +5,11 @@ import { GridRowsProp } from "@mui/x-data-grid";
 import { randomCreatedDate, randomId } from "@mui/x-data-grid-generator";
 import React from "react";
 import FullFeaturedCrudGrid from "../AuditTable";
-import { TabType, TableType } from "../MeasureBak";
 import { columns, randomMachine, randomRole } from "./CommonFunctions";
 
 // import AddIcon from '@mui/icons-material/Add';
 import { GridColDef } from "@mui/x-data-grid";
+import { TabType, TableType } from "../../../../types/types";
 
 const initialRows: GridRowsProp = [
   {

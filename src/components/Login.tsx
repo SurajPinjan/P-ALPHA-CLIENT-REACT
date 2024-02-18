@@ -6,7 +6,7 @@ import {
   TextField,
   styled,
 } from "@mui/material";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { makeHttpCall } from "../services/ApiService";
@@ -37,16 +37,13 @@ const ButtonStyle = styled(Button)`
 const Login = () => {
   // states
   const [disabled, setDisabled] = React.useState(false);
-  const [username, setUsername] = React.useState("name");
+  const [username, setUsername] = React.useState("admin");
   const [password, setPassword] = React.useState("Password@123");
 
   // constants
   const navigate = useNavigate();
 
   // event handlers
-  const navigateDashboard = () => {
-    navigate("/dashboard/problem_bank");
-  };
 
   const validateInput = () => {
     // check if input is valid
@@ -60,7 +57,7 @@ const Login = () => {
   // hooks
 
   // data operations
-  const login = async () => {
+  const login = useCallback(async () => {
     const requestDataAll: HttpRequestData<HttpLoginRequestBody> = {
       entityName: ENTITY_NAME.AUTH,
       method: HTTP_METHOD.POST,
@@ -85,10 +82,15 @@ const Login = () => {
       localStorage.setItem("userrole", fetchData.userInfo.urole);
 
       setTimeout(() => {
-        navigateDashboard();
+        navigate("/dashboard/problem_bank");
       }, 100);
     }
-  };
+  }, [navigate, password, username]);
+
+  //   hook
+  useEffect(() => {
+    login();
+  }, [login]);
 
   // template
   return (

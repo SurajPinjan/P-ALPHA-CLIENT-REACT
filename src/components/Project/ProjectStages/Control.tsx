@@ -3,7 +3,7 @@ import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { randomId } from "@mui/x-data-grid-generator";
 import filepdf from "../../../assets/images/filepdf.pdf";
 import FullFeaturedCrudGrid from "./AuditTable";
-import { TabType, TableType } from "./MeasureBak";
+import { TabType, TableType } from "../../../types/types";
 
 // textarea
 

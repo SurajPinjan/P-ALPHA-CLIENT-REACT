@@ -25,6 +25,7 @@ import {
   GridRowParams,
   GridRowsProp,
   GridValidRowModel,
+  GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import FileUpload from "../../commons/Dialogues/FileUpload";
@@ -135,7 +136,21 @@ const YGrid: React.FC<YProps> = (props) => {
     width: 240,
     type: "singleSelect",
     editable: true,
-    valueOptions: [...xOptions.map((x) => (x.uid ? x.uid : x.columnDate))],
+    valueOptions: [
+      ...xOptions.map((x: XView) => {
+        return { value: x.uid, label: x.columnUText };
+      }),
+    ],
+    valueFormatter: ({ value }: GridValueFormatterParams<number>) => {
+      for (let index = 0; index < xOptions.length; index++) {
+        const option: XView = xOptions[index];
+        if (option.uid && option.uid === value) {
+          return option.columnUText;
+        }
+      }
+
+      return value;
+    },
   });
 
   if (hasAttachment) {
@@ -224,6 +239,7 @@ const YGrid: React.FC<YProps> = (props) => {
       operation: OPERATION.GET_ALL,
       body: {
         filters: filterArray,
+        sorts: [{ field: "uid", sort: "desc" }],
         pageSize: pageState.pageSize,
         pageNumber: pageState.page,
       },

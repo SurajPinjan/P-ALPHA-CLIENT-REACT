@@ -5,7 +5,8 @@ import { useState } from "react";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { randomCreatedDate, randomId } from "@mui/x-data-grid-generator";
 import FullFeaturedCrudGrid from "./AuditTable";
-import { TabType, TableType } from "./MeasureBak";
+import { TabType, TableType } from "../../../types/types";
+
 const ButtonStyle = styled(Button)`
   background-color: #005f71;
   color: #fff;

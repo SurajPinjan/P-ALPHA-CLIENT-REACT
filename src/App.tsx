@@ -115,7 +115,7 @@ const Drawer = styled(MuiDrawer, {
 const App = () => {
   // states
   const [open, setOpen] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn] = React.useState(true);
   const [problem, setProblem] = React.useState<null | HTMLElement>(null);
 
   const theme = useTheme();
@@ -159,12 +159,12 @@ const App = () => {
 
   const handleMenuClick = () => {
     if (isLoggedIn) {
-      setIsLoggedIn(false);
+      // setIsLoggedIn(false);
       navigate("/dashboard/home");
       setOpen(false);
       setProblem(null);
     } else {
-      setIsLoggedIn(true);
+      // setIsLoggedIn(true);
       setProblem(null);
     }
   };

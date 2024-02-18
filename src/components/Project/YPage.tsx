@@ -51,6 +51,7 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
         pageSize: 10,
         pageNumber: 0,
         filters: [],
+        sorts: [{ field: "uid", sort: "desc" }],
       },
     };
 
@@ -75,7 +76,6 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
     values: YView,
     { setSubmitting }: FormikHelpers<YView>
   ) => {
-    console.log("Submitted values:", values);
     setY((old) => ({
       ...old,
       columnText: values.columnText,
@@ -120,7 +120,6 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
                         id="x_id"
                         label="x_id"
                         onChange={(e: SelectChangeEvent<number>) => {
-                          console.log(values);
                           const foundX = xs.find(
                             (x) => x.uid === e.target.value
                           );
@@ -130,7 +129,7 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
                       >
                         {xs.map((x) => (
                           <MenuItem key={x.uid} value={x.uid}>
-                            {x.uid}
+                            {x.columnUText}
                           </MenuItem>
                         ))}
                       </Field>
