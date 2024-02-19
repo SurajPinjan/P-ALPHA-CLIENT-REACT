@@ -42,8 +42,9 @@ export default function FileUpload(params: {
     params.onClose();
   };
 
-  const handleFileInputChange = async (event: any) => {
-    setSelectedFile(event.target.files[0]);
+  // React.InputHTMLAttributes<HTMLInputElement>.onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined
+  const handleFileInputChange = async (fileList: FileList | null) => {
+    if (fileList) setSelectedFile(fileList[0]);
   };
 
   const uploadFile = async () => {
@@ -51,8 +52,7 @@ export default function FileUpload(params: {
       const image: string = URL.createObjectURL(selectedFile);
       const img = new Image();
       img.onload = async () => {
-        // if (img.width === 2 * img.height) {
-        if (true) {
+        if (img.width === 2 * img.height) {
           const requestDataUpdateOne: HttpRequestData<FormData> = {
             entityName: ENTITY_NAME.FILE,
             method: HTTP_METHOD.POST,
@@ -111,7 +111,7 @@ export default function FileUpload(params: {
                 id="file-input-1"
                 type="file"
                 accept=".png, .jpg, .jpeg"
-                onChange={handleFileInputChange}
+                onChange={(e) => handleFileInputChange(e.target.files)}
               />
               <button
                 style={{

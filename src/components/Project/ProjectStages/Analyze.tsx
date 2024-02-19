@@ -102,9 +102,13 @@ function Analyze() {
     initialRowsString !== null ? initialRowsString : JSON.stringify([])
   );
 
-  for (let index = 0; index < initialRows.length; index++) {
-    initialRows[index].toolsused = [];
+  for (const row of initialRows) {
+    row.toolused = [];
   }
+
+  // for (let index = 0; index < initialRows.length; index++) {
+  //   initialRows[index].toolsused = [];
+  // }
 
   const columnsDetails: GridColDef[] = [
     {
@@ -142,7 +146,7 @@ function Analyze() {
       filterOperators: [
         {
           value: "contains",
-          getApplyFilterFn: (filterItem: any) => {
+          getApplyFilterFn: (filterItem: unknown) => {
             if (
               typeof filterItem === "object" &&
               filterItem !== null &&
@@ -151,7 +155,7 @@ function Analyze() {
             ) {
               return null;
             }
-            return ({ value }: any) => {
+            return ({ value }: unknown) => {
               return value.some(
                 (cellValue: unknown) => cellValue === filterItem.value
               );

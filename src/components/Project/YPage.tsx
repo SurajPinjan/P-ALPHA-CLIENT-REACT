@@ -11,9 +11,11 @@ import {
 } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import React, { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { XModel, XView, getViewFromModelX } from "../../models/X";
 import { YView } from "../../models/Y";
 import { makeHttpCall } from "../../services/ApiService";
+import store from "../../services/GlobalStateService";
 import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../types/enums";
 import {
   HttpGetAllRequestBody,
@@ -21,8 +23,6 @@ import {
   HttpResponseGetAll,
 } from "../../types/httpTypes";
 import YGrid from "./YGrid";
-import store from "../../services/GlobalStateService";
-import { useNavigate } from "react-router-dom";
 
 interface YGridWrapperProps {}
 
@@ -120,6 +120,7 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
                         id="x_id"
                         label="x_id"
                         onChange={(e: SelectChangeEvent<number>) => {
+                          console.log(values.isNew);
                           const foundX = xs.find(
                             (x) => x.uid === e.target.value
                           );

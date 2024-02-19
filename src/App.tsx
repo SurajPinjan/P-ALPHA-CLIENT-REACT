@@ -124,7 +124,7 @@ const App = () => {
 
   // non state variables
   const openMenuProblem = Boolean(problem);
-  const menus: React.ComponentType<any>[] = [
+  const menus: React.ComponentType<Element>[] = [
     DashboardOutlined,
     () => <img src={Problem} alt="bar chart" width={20} height={20} />,
     () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
