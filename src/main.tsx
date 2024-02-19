@@ -43,7 +43,7 @@ const routes = [
         element: <BasicGrid />,
       },
       {
-        path: "training",
+        path: "trainings",
         element: <Training />,
       },
     ],
