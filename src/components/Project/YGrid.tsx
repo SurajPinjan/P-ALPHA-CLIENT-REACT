@@ -57,6 +57,8 @@ import {
 } from "../../types/httpTypes";
 import EditToolbar from "./ProjectStages/EditToolbar";
 import { useNavigate } from "react-router-dom";
+import { GridSortModel } from "@mui/x-data-grid";
+import _ from "lodash";
 
 export interface Page {
   isLoading: boolean;
@@ -95,6 +97,7 @@ const YGrid: React.FC<YProps> = (props) => {
   });
 
   // states
+  const [sorts, setSorts] = React.useState<GridSortModel>([]);
   const [pageState, setPageState] = useState<Page>({
     isLoading: false,
     data: [],
@@ -239,7 +242,7 @@ const YGrid: React.FC<YProps> = (props) => {
       operation: OPERATION.GET_ALL,
       body: {
         filters: filterArray,
-        sorts: [{ field: "uid", sort: "desc" }],
+        sorts: sorts,
         pageSize: pageState.pageSize,
         pageNumber: pageState.page,
       },
@@ -263,7 +266,7 @@ const YGrid: React.FC<YProps> = (props) => {
       data: dat,
       total: fetchData.totalCount,
     }));
-  }, [navigate, pageState.page, pageState.pageSize]);
+  }, [navigate, pageState.page, pageState.pageSize, sorts]);
 
   const updateData = useCallback(
     async (viewData: YView) => {
@@ -345,6 +348,10 @@ const YGrid: React.FC<YProps> = (props) => {
   const onClose = () => {
     setIsOpen(false);
     setIsOpenUpload(false);
+  };
+
+  const handleSortModelChange = (newSortModel: GridSortModel) => {
+    setSorts(_.cloneDeep(newSortModel));
   };
 
   //   hooks
@@ -575,6 +582,8 @@ const YGrid: React.FC<YProps> = (props) => {
                 tableTitle,
               },
             }}
+            sortingMode="server"
+            onSortModelChange={handleSortModelChange}
           />
         </Container>
       </Box>

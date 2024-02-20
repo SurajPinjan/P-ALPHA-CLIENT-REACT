@@ -38,8 +38,8 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { title: "Dashboard", path: "home" },
-  { title: "Problem Bank", path: "problem_bank" },
-  { title: "Six Sigma", path: "project" },
+  { title: "X Grid", path: "problem_bank" },
+  { title: "Y With X", path: "project" },
   { title: "Training", path: "project_details" },
 ];
 
