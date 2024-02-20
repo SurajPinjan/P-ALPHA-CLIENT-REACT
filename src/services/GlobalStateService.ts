@@ -1,5 +1,5 @@
 import { GlobalState } from "../types/types";
-import { legacy_createStore as createStore } from "redux";
+import { Action, legacy_createStore as createStore } from "redux";
 import { DateTime } from "luxon";
 const initialState: GlobalState = {
   code: "",
@@ -10,7 +10,16 @@ const initialState: GlobalState = {
   APIUrl: "",
 };
 
-const globalReducer = (state = initialState, action: any) => {
+export interface ActionInterface extends Action {
+  newCode: string;
+  newDisplayMsg: string;
+  newErrMsg?: string;
+  newAPIBody: string;
+  newAPIUrl: string;
+  apiTime: string;
+}
+
+const globalReducer = (state = initialState, action: ActionInterface) => {
   if (
     action instanceof Object &&
     "newCode" in action &&

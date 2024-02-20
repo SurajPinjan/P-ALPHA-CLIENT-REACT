@@ -7,10 +7,12 @@ import {
   HttpResponseBody,
 } from "../types/httpTypes";
 import { NavigateFunction } from "react-router-dom";
+import { ActionInterface } from "./GlobalStateService";
+import { GlobalState } from "../types/types";
 
 export async function makeHttpCall<T extends HttpResponseBody, G>(
   params: HttpRequestData<G>,
-  store: Store,
+  store: Store<GlobalState, ActionInterface, unknown>,
   navigate: NavigateFunction
 ): Promise<T> {
   const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
@@ -88,7 +90,7 @@ export function makeMultiPartHttpCall(
 }
 
 function toastDispatcher(
-  store: Store,
+  store: Store<GlobalState, ActionInterface, unknown>,
   APIBody: string,
   APIUrl: string,
   fetchData: HttpResponseBody
@@ -99,7 +101,9 @@ function toastDispatcher(
     newDisplayMsg: fetchData.displayMsg,
     apiTime: DateTime.now().toISO(),
     newErrMsg:
-      fetchData instanceof Object && "errorMessage" in fetchData
+      fetchData instanceof Object &&
+      "errorMessage" in fetchData &&
+      typeof fetchData.errorMessage === "string"
         ? fetchData.errorMessage
         : undefined,
     newAPIBody: APIBody,
