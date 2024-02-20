@@ -89,7 +89,7 @@ export function makeMultiPartHttpCall(
     });
 }
 
-function toastDispatcher(
+export function toastDispatcher(
   store: Store<GlobalState, ActionInterface, unknown>,
   APIBody: string,
   APIUrl: string,

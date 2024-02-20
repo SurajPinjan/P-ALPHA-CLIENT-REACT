@@ -1,4 +1,4 @@
-import { DashboardOutlined } from "@mui/icons-material";
+// import { DashboardOutlined } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -124,8 +124,7 @@ const App = () => {
 
   // non state variables
   const openMenuProblem = Boolean(problem);
-  const menus: React.ComponentType<Element>[] = [
-    DashboardOutlined,
+  const menus: React.ComponentType<HTMLImageElement>[] = [
     () => <img src={Problem} alt="bar chart" width={20} height={20} />,
     () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
@@ -175,7 +174,11 @@ const App = () => {
 
   // design
 
-  function listItem(Menu: React.ComponentType<unknown>, index: number) {
+  function listItem(
+    Menu: React.ComponentType<HTMLImageElement>,
+    index: number
+  ) {
+    console.log(Menu);
     return (
       <ListItem
         key={menuItems[index].title}
@@ -209,7 +212,7 @@ const App = () => {
                 location.pathname === "/" + menuItems[1].path ? "#115E6E" : "",
             }}
           >
-            {<Menu></Menu>}
+            {/* {<Menu></Menu>} */}
           </ListItemIcon>
           <ListItemText
             primary={menuItems[index].title}

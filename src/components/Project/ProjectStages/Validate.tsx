@@ -49,6 +49,7 @@ function Validate() {
     createData({
       columnDate: newData.columnDate,
       columnSelect: newData.columnSelect,
+      columnUText: newData.columnUText,
       isDeleted: false,
       url: newData.url,
       isNew: newData.isNew,
@@ -60,6 +61,7 @@ function Validate() {
     updateData({
       uid: editData.uid,
       url: editData.url,
+      columnUText: editData.columnUText,
       columnSelect: editData.columnSelect,
       columnDate: editData.columnDate,
       isDeleted: editData.isDeleted == 0 ? false : true,

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { HttpRequestData, HttpResponseBody } from "../types/httpTypes";
+import { useEffect, useState } from "react";
 import { API_RESPONSE_CODE } from "../types/enums";
-import { DateTime } from "luxon";
+import { HttpRequestData, HttpResponseBody } from "../types/httpTypes";
+import { toastDispatcher } from "./ApiService";
 import store from "./GlobalStateService";
 
 export const useHttpCall = <T extends HttpResponseBody, G>(
@@ -41,7 +41,7 @@ export const useHttpCall = <T extends HttpResponseBody, G>(
         }
 
         const responseData: T = await response.json();
-        toastDispatcher(responseData);
+        toastDispatcher(store, JSON.stringify(params.body), url, responseData);
 
         if (responseData.responseCode === API_RESPONSE_CODE.SUCCESS) {
           setData(responseData);
@@ -63,21 +63,6 @@ export const useHttpCall = <T extends HttpResponseBody, G>(
 
     makeRequest();
   }, [params]);
-
-  function toastDispatcher(fetchData: HttpResponseBody) {
-    const toast = () => ({
-      type: "DUMMYTYPE",
-      newCode: fetchData.responseCode,
-      newDisplayMsg: fetchData.displayMsg,
-      apiTime: DateTime.now().toISO(),
-      newErrMsg:
-        fetchData instanceof Object && "errorMessage" in fetchData
-          ? fetchData.errorMessage
-          : undefined,
-    });
-
-    store.dispatch(toast());
-  }
 
   return [data, loading, error];
 };
