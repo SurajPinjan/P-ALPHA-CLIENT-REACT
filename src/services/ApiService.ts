@@ -97,17 +97,18 @@ export function toastDispatcher(
 ) {
   const toast = () => ({
     type: "DUMMYTYPE",
-    newCode: fetchData.responseCode,
-    newDisplayMsg: fetchData.displayMsg,
+    _Code: fetchData.responseCode,
+    _DisplayMsg: fetchData.displayMsg,
     apiTime: DateTime.now().toISO(),
-    newErrMsg:
+    _ErrMsg:
       fetchData instanceof Object &&
       "errorMessage" in fetchData &&
       typeof fetchData.errorMessage === "string"
         ? fetchData.errorMessage
         : undefined,
-    newAPIBody: APIBody,
-    newAPIUrl: APIUrl,
+    _APIBody: APIBody,
+    _APIUrl: APIUrl,
+    _SelectUId: -1,
   });
 
   store.dispatch(toast());

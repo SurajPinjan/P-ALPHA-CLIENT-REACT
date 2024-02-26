@@ -1,91 +1,35 @@
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   AppBar,
   Button,
+  Card,
+  CardContent,
   FormControlLabel,
   FormGroup,
   Grid,
+  Paper,
   Switch,
   Tab,
   Table,
+  TableBody,
+  TableCell,
   TableContainer,
   TableRow,
   Tabs,
+  TextField,
+  Tooltip,
   Typography,
   styled,
 } from "@mui/material";
-import { SetStateAction, useState } from "react";
-import { Panel } from "../ProjectDetails";
-import {
-  Paper,
-  TableBody,
-  TableCell,
-  Tooltip,
-  TextField,
-  CardContent,
-  Card,
-} from "@mui/material";
-import React from "react";
 import Box from "@mui/material/Box";
 import TablePagination from "@mui/material/TablePagination";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { SetStateAction, useState } from "react";
 import SelectVariants from "../../../commons/SelectInput";
 import Textarea from "../../../commons/Textarea";
-import BasicDatePicker from "../../../commons/DatePicker";
-interface Column {
-  id: "stage" | "plan" | "actual" | "start1" | "end1" | "start2" | "end2";
-  label: string;
-  minWidth?: number;
-  align?: "center";
-  format?: (value: number) => string;
-}
-
-const columns: Column[] = [
-  { id: "stage", label: "", minWidth: 150 },
-
-  { id: "plan", label: "Plan", minWidth: 100, align: "center" },
-  { id: "actual", label: "Actual", minWidth: 100, align: "center" },
-  {
-    id: "start1",
-    label: "Start",
-    minWidth: 80,
-    align: "center",
-  },
-  {
-    id: "end1",
-    label: "End",
-    minWidth: 80,
-    align: "center",
-  },
-  {
-    id: "start2",
-    label: "Start",
-    minWidth: 80,
-    align: "center",
-  },
-  { id: "end2", label: "End", minWidth: 80, align: "center" },
-];
-
-function createData(
-  stage: string,
-  plan: number,
-  actual: string,
-  start1: string,
-  end1: string,
-  end2: string,
-  start2: string
-) {
-  return { stage, plan, actual, start1, end1, start2, end2 };
-}
-
-const rows = [
-  createData("Define", 5, "-", "-", "-", "-", "-"),
-  createData("Measure", 15, "-", "-", "-", "-", "-"),
-  createData("Analyse", 25, "-", "-", "-", "-", "-"),
-  createData("Validate / Improve", 45, "-", "-", "-", "-", ""),
-  createData("Control", 10, "-", "-", "-", "-", "-"),
-  createData("Total", 100, "-", "-", "-", "-", "-"),
-];
+import { BLANK } from "../../../types/enums";
+import { Panel } from "../ProjectDetails";
+import ProjectSchedule from "./SimpleTableGrid";
 
 // end project schedule
 
@@ -121,10 +65,18 @@ const tableRows = [
     "Movement_Plan",
     "-",
     "Project-Lead",
-    ""
+    BLANK
   ),
-  resourceData(2, "K. Nanthakumar", 34234, "Movement_Plan", "-", "Member", ""),
-  resourceData(3, "A.S. Sambasivan", 42353, "Quality", "BB", "Member", ""),
+  resourceData(
+    2,
+    "K. Nanthakumar",
+    34234,
+    "Movement_Plan",
+    "-",
+    "Member",
+    BLANK
+  ),
+  resourceData(3, "A.S. Sambasivan", 42353, "Quality", "BB", "Member", BLANK),
 ];
 
 // manage resource
@@ -150,23 +102,10 @@ const TableHeadStyled = styled("thead")({
   color: "#ffffff",
 });
 
-const TableCellStyled = styled(TableCell)({
-  padding: "5px",
-  borderRight: "1px solid #ddd",
-});
 const SubTableCellStyled = styled(TableCell)({
   padding: "5px",
   borderRight: "1px solid #ddd",
   lineHeight: "0.5",
-});
-
-const TableRowStyled = styled(TableRow)({});
-
-const TableCellAlign = styled(TableCell)({
-  padding: "5px",
-  border: "none",
-  borderRight: "1px solid #ddd",
-  position: "sticky",
 });
 
 const SubTableCell = styled(TableCell)({
@@ -218,7 +157,7 @@ function Define() {
   return (
     // <>
     // <Box style={{ width: '100%' }} >
-    <BoxStyled style={{ padding: "" }}>
+    <BoxStyled style={{ padding: BLANK }}>
       <AppBar
         position="static"
         style={{
@@ -288,163 +227,7 @@ function Define() {
       </Panel>
 
       <Panel value={index} index={1}>
-        <Paper sx={{ width: "100%" }}>
-          <TableContainer style={{ overflow: "hidden" }}>
-            <Table aria-label="sticky table">
-              <TableHeadStyled>
-                <TableRowStyled>
-                  <TableCellAlign align="center" style={{ fontWeight: "bold" }}>
-                    Stage
-                  </TableCellAlign>
-                  <TableCellStyled
-                    align="center"
-                    colSpan={2}
-                    style={{ fontWeight: "bold" }}
-                  >
-                    Score
-                  </TableCellStyled>
-                  <TableCellStyled
-                    align="center"
-                    colSpan={2}
-                    style={{ fontWeight: "bold" }}
-                  >
-                    Plan
-                  </TableCellStyled>
-                  <TableCellStyled
-                    align="center"
-                    colSpan={2}
-                    style={{ fontWeight: "bold" }}
-                  >
-                    Actual
-                  </TableCellStyled>
-                </TableRowStyled>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCellStyled
-                      key={column.id}
-                      align={column.align}
-                      style={{
-                        top: 57,
-                        minWidth: column.minWidth,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {column.label}
-                    </TableCellStyled>
-                  ))}
-                </TableRow>
-              </TableHeadStyled>
-              <TableBody>
-                <TableRow>
-                  <SubTableCellStyled> Define</SubTableCellStyled>
-                  <SubTableCellStyled>5</SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <TextField variant="standard" />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>18-Jan-23</SubTableCellStyled>
-                  <SubTableCellStyled>18-Jul-23</SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                </TableRow>
-                <TableRow>
-                  <SubTableCellStyled> Measure</SubTableCellStyled>
-                  <SubTableCellStyled>5</SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <TextField variant="standard" />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <BasicDatePicker />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    <BasicDatePicker />
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                </TableRow>
-                <TableRow>
-                  <SubTableCellStyled> Analyze </SubTableCellStyled>
-                  <SubTableCellStyled>5</SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <TextField variant="standard" />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <BasicDatePicker />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    <BasicDatePicker />
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                </TableRow>
-                <TableRow>
-                  <SubTableCellStyled> Validate / Improve </SubTableCellStyled>
-                  <SubTableCellStyled>5</SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <TextField variant="standard" />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <BasicDatePicker />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    <BasicDatePicker />
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                </TableRow>
-                <TableRow>
-                  <SubTableCellStyled> Control </SubTableCellStyled>
-                  <SubTableCellStyled>5</SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <TextField variant="standard" />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <BasicDatePicker />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    <BasicDatePicker />
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                  <SubTableCellStyled>-</SubTableCellStyled>
-                </TableRow>
-                <TableRow>
-                  <SubTableCellStyled> Total </SubTableCellStyled>
-                  <SubTableCellStyled>25</SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <TextField variant="standard" />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    {" "}
-                    <BasicDatePicker />{" "}
-                  </SubTableCellStyled>
-                  <SubTableCellStyled>
-                    <BasicDatePicker />
-                  </SubTableCellStyled>
-                  <SubTableCellStyled></SubTableCellStyled>
-                  <SubTableCellStyled></SubTableCellStyled>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 100]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
+        <Paper sx={{ width: "100%" }}></Paper>
         <Grid
           item
           xs={12}
@@ -454,6 +237,7 @@ function Define() {
           <ButtonStyle variant="contained">Save & Next</ButtonStyle>
         </Grid>
         {/* project schedule */}
+        <ProjectSchedule></ProjectSchedule>
       </Panel>
       <Panel value={index} index={2}>
         {/* manage resource */}
@@ -474,19 +258,19 @@ function Define() {
                       label="Employee Name"
                       variant="standard"
                     />
-                    {/* <SelectVariants value={['']} label='Employee Name' /> */}
+                    {/* <SelectVariants value={[BLANK]} label='Employee Name' /> */}
                   </Grid>
                   <Grid item xs={2}>
-                    <SelectVariants value={[""]} label="Division" />
+                    <SelectVariants value={[BLANK]} label="Division" />
                   </Grid>
                   <Grid item xs={2}>
-                    <SelectVariants value={[""]} label="Department" />
+                    <SelectVariants value={[BLANK]} label="Department" />
                   </Grid>
                   <Grid item xs={2}>
-                    <SelectVariants value={[""]} label="Sub Department" />
+                    <SelectVariants value={[BLANK]} label="Sub Department" />
                   </Grid>
                   <Grid item xs={2}>
-                    <SelectVariants value={[""]} label="Role" />
+                    <SelectVariants value={[BLANK]} label="Role" />
                   </Grid>
                   <Grid item xs={2}>
                     <TextField

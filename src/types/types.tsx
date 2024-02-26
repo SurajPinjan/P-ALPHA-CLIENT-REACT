@@ -20,17 +20,20 @@ export type textArea = {
   style?: React.CSSProperties[];
 };
 
-export type date = {
+export type DateProps = {
   label?: string;
+  value: Date;
+  onChange: (date: Date | null) => void;
 };
 
 export type GlobalState = {
   code: string;
   displayMsg: string;
   apiTime: string;
-  errMsg?: string;
   APIUrl: string;
   APIBody: string;
+  errMsg?: string;
+  selectUId?: number;
 };
 
 export const enum TableType {
@@ -41,4 +44,9 @@ export const enum TableType {
 export const enum TabType {
   Machine,
   Process,
+}
+
+export interface DataList<T> {
+  isLoading: boolean;
+  data: T[];
 }

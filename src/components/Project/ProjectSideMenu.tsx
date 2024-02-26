@@ -27,6 +27,7 @@ import Define from "./ProjectStages/Define";
 import Measure from "./ProjectStages/MeasureBak";
 import ProjectReview from "./ProjectStages/ProjectReview";
 import Validate from "./ProjectStages/Validate";
+import { BLANK } from "../../types/enums";
 
 const AccordionDetailsStyle = styled(AccordionDetails)({
   padding: "0px 3px 5px !important",
@@ -34,7 +35,7 @@ const AccordionDetailsStyle = styled(AccordionDetails)({
 
 const BoxHeader = styled(Box)({
   display: "flex",
-  justifyContent: "",
+  justifyContent: BLANK,
   borderBottom: "1px solid",
   borderColor: "#f5f5f5",
 });

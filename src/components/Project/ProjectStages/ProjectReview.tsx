@@ -6,6 +6,7 @@ import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { randomCreatedDate, randomId } from "@mui/x-data-grid-generator";
 import FullFeaturedCrudGrid from "./AuditTable";
 import { TabType, TableType } from "../../../types/types";
+import { BLANK } from "../../../types/enums";
 
 const ButtonStyle = styled(Button)`
   background-color: #005f71;
@@ -26,7 +27,7 @@ const GridStyled = styled(Grid)({
 });
 
 // const tableRows = [
-//     resourceData(1, '19/07/23', 'Notch Width Allocation', 'In-Progress', 'R.Jeeva', 'To valildate the notch.. ', '-', '28/07/23', '-', ''),
+//     resourceData(1, '19/07/23', 'Notch Width Allocation', 'In-Progress', 'R.Jeeva', 'To valildate the notch.. ', '-', '28/07/23', '-', BLANK),
 
 // ];
 
@@ -205,7 +206,7 @@ function ProjectReview() {
             <FullFeaturedCrudGrid
               isClicked={null}
               hasAttachment={false}
-              tableTitle=""
+              tableTitle={BLANK}
               buttonTitle="Add Review"
               initialColumns={columnsDetails}
               initialRows={tableRows}

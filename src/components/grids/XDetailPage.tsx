@@ -13,7 +13,7 @@ import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { XModel, XView, getViewFromModelX } from "../../models/X";
-import { YView } from "../../models/Y";
+import { XDetailView } from "../../models/XDetail";
 import { makeHttpCall } from "../../services/ApiService";
 import store from "../../services/GlobalStateService";
 import { BLANK, ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../types/enums";
@@ -22,17 +22,17 @@ import {
   HttpRequestData,
   HttpResponseGetAll,
 } from "../../types/httpTypes";
-import YGrid from "./YGrid";
+import XDetailGridWithState from "./XDetailGrid";
 
-interface YGridWrapperProps {}
+interface XDetailGridWrapperProps {}
 
-const YGridWrapper: React.FC<YGridWrapperProps> = () => {
+const XDetailGridWrapper: React.FC<XDetailGridWrapperProps> = () => {
   // constants
   const navigate = useNavigate();
   // states
   const [xs, setXs] = React.useState<XView[]>([]);
-  const [y, setY] = React.useState<YView>({
-    columnText: BLANK,
+  const [y, setY] = React.useState<XDetailView>({
+    columnDetail: BLANK,
     x_id: 0,
     isDeleted: false,
     isNew: false,
@@ -73,12 +73,12 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
   // event handlers
 
   const formikSubmitHandler = (
-    values: YView,
-    { setSubmitting }: FormikHelpers<YView>
+    values: XDetailView,
+    { setSubmitting }: FormikHelpers<XDetailView>
   ) => {
     setY((old) => ({
       ...old,
-      columnText: values.columnText,
+      columnDetail: values.columnDetail,
       x_id: values.x_id,
     }));
     setSubmitting(false);
@@ -97,7 +97,7 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
         <CardContent>
           <Formik
             initialValues={{
-              columnText: BLANK,
+              columnDetail: BLANK,
               x_id: 0,
               isDeleted: false,
               isNew: false,
@@ -124,7 +124,7 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
                           const foundX = xs.find(
                             (x) => x.uid === e.target.value
                           );
-                          setFieldValue("columnText", foundX?.columnSelect);
+                          setFieldValue("columnDetail", foundX?.columnSelect);
                           setFieldValue("x_id", e.target.value);
                         }}
                       >
@@ -145,8 +145,8 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
                     <FormControl variant="standard" sx={{ minWidth: "100%" }}>
                       <Field
                         as={TextField}
-                        labelId="columnText"
-                        name="columnText"
+                        labelId="columnDetail"
+                        name="columnDetail"
                         type="text"
                         style={{ width: "100%" }}
                         label="Column Text"
@@ -162,9 +162,9 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
         </CardContent>
       </Card>
 
-      <YGrid saveData={y} xOptions={xs}></YGrid>
+      <XDetailGridWithState saveData={y} xOptions={xs} />
     </>
   );
 };
 
-export default YGridWrapper;
+export default XDetailGridWrapper;

@@ -6,6 +6,7 @@ import * as React from "react";
 import { GlobalState } from "../../types/types";
 import { DateTime } from "luxon";
 import JsonView from "react18-json-view";
+import { BLANK } from "../../types/enums";
 
 interface ToastState {
   isOpen: boolean;
@@ -26,8 +27,8 @@ const HttpToast = ({
 
   //   states
   const [open, setOpen] = React.useState<boolean>(initialState.isOpen);
-  const [codeP, setCodeP] = React.useState<string>("");
-  const [displayMsgP, setDisplayMsgP] = React.useState<string>("");
+  const [codeP, setCodeP] = React.useState<string>(BLANK);
+  const [displayMsgP, setDisplayMsgP] = React.useState<string>(BLANK);
   const [errMsgP, setErrMsgP] = React.useState<string | undefined>();
   const [APIUrlP, setAPIUrlP] = React.useState<string | undefined>();
   const [APIBodyP, setAPIBodyP] = React.useState<string | undefined>(`{}`);
@@ -46,7 +47,7 @@ const HttpToast = ({
   }, [code, displayMsg, errMsg, apiTime, APIUrl, APIBody]);
 
   React.useEffect(() => {
-    setOpen(true);
+    if (codeP !== BLANK) setOpen(true);
   }, [codeP, displayMsgP, errMsgP, apiTimeP, APIUrlP, APIBodyP]);
 
   // event handlers

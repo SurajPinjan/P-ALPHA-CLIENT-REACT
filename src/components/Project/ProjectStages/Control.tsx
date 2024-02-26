@@ -23,13 +23,13 @@ const initialRows: GridRowsProp = [
   // {
   //     id: randomId(),
   //     acts: 'Glass Thickness reduced',
-  //     controlmeasure: '',
+  //     controlmeasure: BLANK,
   //     ssv: 'Assembly Process'
   // },
   // {
   //     id: randomId(),
   //     acts: 'Glass Thickness reduced',
-  //     controlmeasure: '',
+  //     controlmeasure: BLANK,
   //     ssv: 'Assembly Process'
   // }
 ];

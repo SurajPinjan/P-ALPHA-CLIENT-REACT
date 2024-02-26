@@ -18,6 +18,7 @@ import {
 import { randomArrayItem, randomId } from "@mui/x-data-grid-generator";
 import * as React from "react";
 import styled from "styled-components";
+import { BLANK } from "../../../../types/enums";
 
 const roles = ["Variable", "Attribute"];
 
@@ -81,7 +82,10 @@ function EditToolbar(props: EditToolbarProps) {
   `;
   const handleClick = () => {
     const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
+    setRows((oldRows) => [
+      ...oldRows,
+      { id, name: BLANK, age: BLANK, isNew: true },
+    ]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
       [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },

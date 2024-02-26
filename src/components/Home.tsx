@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { deepReducerFunction } from "../Reducers/deepReducer";
 import SwipeableTextMobileStepper from "../commons/Dashboard/Carousel";
 import { XModel, XView, getViewFromModelX } from "../models/X";
 import { makeHttpCall } from "../services/ApiService";
+import store from "../services/GlobalStateService";
 import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../types/enums";
 import {
   HttpGetAllRequestBody,
   HttpRequestData,
   HttpResponseGetAll,
 } from "../types/httpTypes";
-import { deepReducerFunction } from "../Reducers/deepReducer";
-import store from "../services/GlobalStateService";
-import { useNavigate } from "react-router-dom";
 
 function Home() {
   // constants

@@ -11,7 +11,12 @@ import {
 import { ChangeEvent, useState } from "react";
 import SelectVariants from "../../../commons/SelectInput";
 import { makeMultiPartHttpCall } from "../../../services/ApiService";
-import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../../types/enums";
+import {
+  BLANK,
+  ENTITY_NAME,
+  HTTP_METHOD,
+  OPERATION,
+} from "../../../types/enums";
 import { HttpRequestData } from "../../../types/httpTypes";
 
 const ButtonStyle = styled(Button)`
@@ -31,7 +36,7 @@ const ButtonStyle = styled(Button)`
 //     width: '100%',
 // });
 function MeasureTest() {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(BLANK);
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);

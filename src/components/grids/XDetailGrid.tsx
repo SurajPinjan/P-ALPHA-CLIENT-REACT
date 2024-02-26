@@ -1,8 +1,6 @@
-import AddIcon from "@mui/icons-material/Add";
 import CancelIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ImageIcon from "@mui/icons-material/Image";
 import SaveIcon from "@mui/icons-material/Save";
 import {
@@ -28,29 +26,32 @@ import {
   GridRowsProp,
   GridSortModel,
   GridValidRowModel,
+  GridValueFormatterParams,
 } from "@mui/x-data-grid";
+import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
-import { MasterView } from "../../models/Master";
 import {
-  XModel,
-  XView,
-  getModelFromViewX,
-  getViewFromModelX,
-} from "../../models/X";
+  XDetailWithXModel,
+  XDetailWithXView,
+  getViewFromModelXDetailWithX,
+} from "../../models/DataTransfer/XDetailWithX";
+import { XView } from "../../models/X";
+import {
+  XDetailModel,
+  XDetailView,
+  getModelFromViewXDetail,
+} from "../../models/XDetail";
 import { makeHttpCall } from "../../services/ApiService";
 import store from "../../services/GlobalStateService";
-import { urlEncodeObject } from "../../services/encoderService";
 import {
   API_RESPONSE_CODE,
   BLANK,
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
-  SELECT_VALUES,
-  USER_ROLES,
 } from "../../types/enums";
 import { Filter } from "../../types/filterTypes";
 import {
@@ -62,9 +63,9 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
-import EditToolbar from "./ProjectStages/EditToolbar";
-import _ from "lodash";
-import { DateTime } from "luxon";
+import EditToolbar from "../Project/ProjectStages/EditToolbar";
+import { GlobalState } from "../../types/types";
+import { connect } from "react-redux";
 
 export interface Page {
   isLoading: boolean;
@@ -74,46 +75,37 @@ export interface Page {
   pageSize: number;
 }
 
-interface AdminProps {
+interface XDetailProps {
   isCompare?: boolean;
   saveHandler?: (newData: GridValidRowModel) => void;
   updateHandler?: (editData: GridValidRowModel) => void;
-  filters: MasterView;
+  saveData: XDetailView;
+  xOptions: XView[];
 }
 
-const Admin: React.FC<AdminProps> = (props) => {
-  const role: string | null = localStorage.getItem("userrole");
-
+const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
+  // constants
+  const navigate = useNavigate();
   const columns = [];
 
   columns.push({
-    field: "columnDate",
+    field: "columnDetail",
+    headerName: "Column Detail",
+    width: 240,
+    editable: true,
+  });
+
+  columns.push({
+    field: "x_columnDate",
     headerName: "Date",
     width: 240,
     type: "date",
-    editable: true,
-  });
-
-  columns.push({
-    field: "columnUText",
-    headerName: "Unique Text",
-    width: 240,
-    editable: true,
-  });
-
-  const isAdmin: boolean =
-    typeof role !== "undefined" && role !== null && role === USER_ROLES.ADMIN;
-
-  columns.push({
-    field: "columnSelect",
-    headerName: "Select",
-    width: 240,
-    type: "singleSelect",
-    editable: isAdmin ? true : false,
-    valueOptions: [SELECT_VALUES.VALUE_1, SELECT_VALUES.VALUE_2],
+    editable: false,
   });
 
   // states
+  const [xId, setXId] = React.useState<number>(-1);
+  const [sorts, setSorts] = React.useState<GridSortModel>([]);
   const [pageState, setPageState] = useState<Page>({
     isLoading: false,
     data: [],
@@ -121,7 +113,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     page: 0,
     pageSize: 2,
   });
-
+  // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpenUpload, setIsOpenUpload] = React.useState(false);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
@@ -135,48 +127,51 @@ const Admin: React.FC<AdminProps> = (props) => {
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [savedId, setSavedId] = React.useState<GridRowId>(-1);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
-  const [filters, setFilters] = React.useState<MasterView>({
+  const [saveData, setSaveData] = React.useState<XDetailView>({
     isDeleted: false,
     isNew: false,
-    master: undefined,
+    columnDetail: BLANK,
+    x_id: 0,
     uid: undefined,
   });
-  const [sorts, setSorts] = React.useState<GridSortModel>([]);
-  const [buttonTitle] = React.useState("Add X");
-  const [tableTitle] = React.useState("X");
+  const [tableTitle] = React.useState("Y");
 
+  const [xOptions, setXOptions] = React.useState<XView[]>([]);
+
+  // constants
   const columnsDetails: GridColDef[] = [...columns];
+
+  columnsDetails.push({
+    field: "x_id",
+    headerName: "X Entity FK",
+    width: 240,
+    type: "singleSelect",
+    editable: true,
+    valueOptions: [
+      ...xOptions.map((x: XView) => {
+        return { value: x.uid, label: x.columnUText };
+      }),
+    ],
+    valueFormatter: ({ value }: GridValueFormatterParams<number>) => {
+      for (let index = 0; index < xOptions.length; index++) {
+        const option: XView = xOptions[index];
+        if (option.uid && option.uid === value) {
+          return option.columnUText;
+        }
+      }
+
+      return value;
+    },
+  });
 
   if (hasAttachment) {
     columnsDetails.push({
-      field: "url",
+      field: "x_url",
       headerName: "Url",
       type: "actions",
       width: 100,
       cellClassName: "attachment",
       getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<FileUploadIcon />}
-              label="Upload"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={() => {
-                setImgRw(undefined);
-                setTimeout(() => {
-                  const dat = findById(id);
-                  setImgRw(dat);
-                  setIsOpenUpload(true);
-                }, 200);
-              }}
-            />,
-          ];
-        }
-
         return [
           <GridActionsCellItem
             icon={<ImageIcon />}
@@ -191,39 +186,6 @@ const Admin: React.FC<AdminProps> = (props) => {
                 setIsOpen(true);
               }, 200);
             }}
-          />,
-        ];
-      },
-    });
-  }
-
-  if (isAdmin) {
-    columnsDetails.push({
-      field: "navigate",
-      type: "actions",
-      headerName: "Navigate",
-      width: 100,
-      cellClassName: "navigate",
-      getActions: ({ id }) => {
-        const x: GridValidRowModel | undefined = findById(id);
-
-        const isValue1: boolean =
-          x && x.columnSelect && x.columnSelect === SELECT_VALUES.VALUE_1;
-
-        return [
-          <GridActionsCellItem
-            disabled={isValue1}
-            icon={<AddIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={() => {
-              navigate(
-                `/dashboard/charter_update/${urlEncodeObject<
-                  GridValidRowModel | undefined
-                >(x)}`
-              );
-            }}
-            color="inherit"
           />,
         ];
       },
@@ -277,23 +239,14 @@ const Admin: React.FC<AdminProps> = (props) => {
     },
   });
 
-  const navigate = useNavigate();
-
-  // Data operations
+  //   data operations
   const getDataAll = useCallback(async () => {
     setPageState((old) => ({ ...old, isLoading: true }));
     const filterArray: Filter[] = [];
-
-    if (filters && filters.master) {
-      filterArray.push({
-        column_name: "columnSelect",
-        operator: "=",
-        value: filters.master.toString(),
-      });
-    }
+    filterArray.push({ column_name: "x_id", operator: "=", value: xId });
 
     const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
-      entityName: ENTITY_NAME.X,
+      entityName: ENTITY_NAME.XDETAILWITHX,
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
       body: {
@@ -304,14 +257,14 @@ const Admin: React.FC<AdminProps> = (props) => {
       },
     };
 
-    const fetchData: HttpResponseGetAll<XModel> = await makeHttpCall<
-      HttpResponseGetAll<XModel>,
+    const fetchData: HttpResponseGetAll<XDetailWithXModel> = await makeHttpCall<
+      HttpResponseGetAll<XDetailWithXModel>,
       HttpGetAllRequestBody
     >(requestDataAll, store, navigate);
 
-    const dat: XView[] = fetchData.data
-      ? fetchData.data.map((row: XModel) => {
-          const data: XView = getViewFromModelX(row);
+    const dat: XDetailWithXView[] = fetchData.data
+      ? fetchData.data.map((row: XDetailWithXModel) => {
+          const data: XDetailWithXView = getViewFromModelXDetailWithX(row);
           return data;
         })
       : [];
@@ -322,25 +275,26 @@ const Admin: React.FC<AdminProps> = (props) => {
       data: dat,
       total: fetchData.totalCount,
     }));
-  }, [filters, navigate, pageState.page, pageState.pageSize, sorts]);
+  }, [navigate, pageState.page, pageState.pageSize, sorts, xId]);
 
   const updateData = useCallback(
-    async (viewData: XView) => {
+    async (viewData: XDetailView) => {
       const requestDataCreate: HttpRequestData<
-        HttpUpdateOneRequestBody<XModel>
+        HttpUpdateOneRequestBody<XDetailModel>
       > = {
-        entityName: ENTITY_NAME.X,
+        entityName: ENTITY_NAME.XDETAIL,
         method: HTTP_METHOD.POST,
         operation: OPERATION.UPDATE_ONE,
         body: {
-          data: getModelFromViewX(viewData),
+          data: getModelFromViewXDetail(viewData),
         },
       };
 
-      const updatedData: HttpResponseUpdateOne<XModel> = await makeHttpCall<
-        HttpResponseUpdateOne<XModel>,
-        HttpUpdateOneRequestBody<XModel>
-      >(requestDataCreate, store, navigate);
+      const updatedData: HttpResponseUpdateOne<XDetailModel> =
+        await makeHttpCall<
+          HttpResponseUpdateOne<XDetailModel>,
+          HttpUpdateOneRequestBody<XDetailModel>
+        >(requestDataCreate, store, navigate);
 
       if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
         setPageState((old) => ({
@@ -355,22 +309,23 @@ const Admin: React.FC<AdminProps> = (props) => {
   );
 
   const createData = useCallback(
-    async (viewData: XView) => {
+    async (viewData: XDetailView) => {
       const requestDataCreate: HttpRequestData<
-        HttpCreateOneRequestBody<XModel>
+        HttpCreateOneRequestBody<XDetailModel>
       > = {
-        entityName: ENTITY_NAME.X,
+        entityName: ENTITY_NAME.XDETAIL,
         method: HTTP_METHOD.POST,
         operation: OPERATION.CREATE_ONE,
         body: {
-          data: getModelFromViewX(viewData),
+          data: getModelFromViewXDetail(viewData),
         },
       };
 
-      const createdData: HttpResponseCreateOne<XModel> = await makeHttpCall<
-        HttpResponseCreateOne<XModel>,
-        HttpCreateOneRequestBody<XModel>
-      >(requestDataCreate, store, navigate);
+      const createdData: HttpResponseCreateOne<XDetailModel> =
+        await makeHttpCall<
+          HttpResponseCreateOne<XDetailModel>,
+          HttpCreateOneRequestBody<XDetailModel>
+        >(requestDataCreate, store, navigate);
 
       if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
         setPageState((old) => ({
@@ -383,6 +338,8 @@ const Admin: React.FC<AdminProps> = (props) => {
     },
     [getDataAll, navigate]
   );
+
+  // anonymous functions
 
   const findById = useCallback(
     (id: GridRowId): GridValidRowModel | undefined => {
@@ -397,40 +354,76 @@ const Admin: React.FC<AdminProps> = (props) => {
     [pageState.data]
   );
 
+  // event handlers
+
   const onClose = () => {
     setIsOpen(false);
     setIsOpenUpload(false);
   };
 
-  // hooks
+  const handleSortModelChange = (newSortModel: GridSortModel) => {
+    setSorts(_.cloneDeep(newSortModel));
+  };
+
+  //   hooks
   useEffect(() => {
-    setFilters((old) => ({ ...old, master: props.filters.master }));
-  }, [props.filters]);
+    setXId(props.selectUId ? props.selectUId : -1);
+  }, [props.selectUId]);
+
+  useEffect(() => {
+    setSavedId(1);
+    setSaveData((old) => ({
+      ...old,
+      columnDetail: props.saveData.columnDetail,
+      x_id: props.saveData.x_id,
+    }));
+  }, [props.saveData, props.saveData.columnDetail]);
 
   useEffect(() => {
     getDataAll();
-  }, [getDataAll, pageState.page, pageState.pageSize, filters]);
+  }, [getDataAll, pageState.page, pageState.pageSize]);
 
-  useEffect(() => {}, [props.filters, props.filters.master]);
+  useEffect(() => {
+    setXOptions(props.xOptions);
+  }, [getDataAll, props.xOptions]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
 
-    if (entityFound && savedId != -1) {
+    if (
+      entityFound &&
+      // props.saveHandler &&
+      savedId != -1
+    ) {
       createData({
-        columnDate: entityFound.columnDate,
-        columnSelect: entityFound.columnSelect,
-        columnUText: entityFound.columnUText,
+        columnDetail: entityFound.columnDetail,
         isDeleted: false,
-        url: entityFound.url,
+        x_id: entityFound.x_id,
         isNew: entityFound.isNew,
       });
+      // props.saveHandler(entityFound);
     }
   }, [createData, findById, props, savedId]);
 
   React.useEffect(() => {
+    if (
+      savedId != -1 &&
+      saveData.columnDetail !== BLANK &&
+      saveData.x_id !== 0
+    ) {
+      setSavedId(-1);
+      createData(saveData);
+    }
+  }, [createData, saveData, savedId]);
+
+  React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(updateId);
-    if (entityFound && updateId !== -1 && toUpdated) {
+    if (
+      entityFound &&
+      // props.updateHandler &&
+      updateId !== -1 &&
+      toUpdated
+    ) {
       if (toDeleted) {
         setToDeleted(false);
         entityFound.isDeleted = 1;
@@ -438,17 +431,15 @@ const Admin: React.FC<AdminProps> = (props) => {
       setToUpdated(false);
       updateData({
         uid: entityFound.uid,
-        url: entityFound.url,
-        columnUText: entityFound.columnUText,
-        columnSelect: entityFound.columnSelect,
-        columnDate: entityFound.columnDate,
+        x_id: entityFound.x_id,
+        columnDetail: entityFound.columnDetail,
         isDeleted: entityFound.isDeleted == 0 ? false : true,
         isNew: entityFound.isNew,
       });
+      // props.updateHandler(entityFound);
     }
   }, [findById, props, toDeleted, toUpdated, updateData, updateId]);
 
-  // event handlers
   const handleSaveClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
 
@@ -492,10 +483,6 @@ const Admin: React.FC<AdminProps> = (props) => {
     setRowModesModel(newRowModesModel);
   };
 
-  const handleSortModelChange = (newSortModel: GridSortModel) => {
-    setSorts(_.cloneDeep(newSortModel));
-  };
-
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
     event
@@ -506,25 +493,13 @@ const Admin: React.FC<AdminProps> = (props) => {
   };
 
   const handleRowClick: GridEventListener<"rowClick"> = (
-    params: GridRowParams<XView>,
+    params: GridRowParams<XDetailWithXView>,
     event
   ) => {
     console.log(event.isTrusted);
-
+    const selectedRowData = params.row;
     if (params.row) {
-      const selectedRowData = params.row;
-      const toast = () => ({
-        type: "DUMMYTYPE",
-        _Code: BLANK,
-        _DisplayMsg: BLANK,
-        apiTime: DateTime.now().toISO(),
-        _ErrMsg: undefined,
-        _APIBody: BLANK,
-        _APIUrl: BLANK,
-        _SelectUId: selectedRowData.uid,
-      });
-
-      store.dispatch(toast());
+      console.log("Clicked row:", selectedRowData);
     }
   };
 
@@ -537,7 +512,8 @@ const Admin: React.FC<AdminProps> = (props) => {
     return updatedRow;
   };
 
-  // DOM
+  //   dom
+
   return (
     <>
       {imgRw && (
@@ -564,7 +540,7 @@ const Admin: React.FC<AdminProps> = (props) => {
         <AppBar>
           <Toolbar>
             <Typography variant="h6" component="div">
-              X Grid
+              X Detail Grid
             </Typography>
           </Toolbar>
         </AppBar>
@@ -622,7 +598,6 @@ const Admin: React.FC<AdminProps> = (props) => {
                 setPageState,
                 setRowModesModel,
                 tableTitle,
-                buttonTitle,
               },
             }}
             sortingMode="server"
@@ -634,4 +609,9 @@ const Admin: React.FC<AdminProps> = (props) => {
   );
 };
 
-export default Admin;
+const mapStateToProps = (state: GlobalState) => ({
+  selectUId: state.selectUId,
+});
+
+const XDetailGridWithState = connect(mapStateToProps)(XDetailGrid);
+export default XDetailGridWithState;

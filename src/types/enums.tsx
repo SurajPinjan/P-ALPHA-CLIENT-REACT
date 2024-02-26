@@ -22,6 +22,8 @@ export enum ENTITY_NAME {
   X = "x",
   Y = "y",
   YWITHX = "yWithX",
+  XDETAILWITHX = "xDetailWithX",
+  XDETAIL = "xDetail",
   FILE = "file",
   AUTH = "auth",
   MASTER = "master",
@@ -41,6 +43,8 @@ export enum OPERATION {
   // FILE
   UPLOAD = "upload",
 }
+
+export const BLANK = "";
 
 // Roles enum
 

@@ -1,3 +1,4 @@
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
   Card,
@@ -21,11 +22,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import "../../App.css";
 import SelectVariants from "../../commons/SelectInput";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useNavigate } from "react-router-dom";
 
 const ButtonStyle = styled(Button)`
   background-color: #115e6e !important;
@@ -163,6 +163,7 @@ function ProblemBank() {
           )}
         </Box>
       </Box>
+
       {open && (
         <Card sx={{ width: "100%" }} className="outerContainer">
           <CardContent style={{ paddingBottom: 1 }}>

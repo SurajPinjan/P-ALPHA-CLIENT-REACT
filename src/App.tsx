@@ -29,6 +29,7 @@ import SixSigma from "../src/assets/images/sixSigma.png";
 import Problem from "../src/assets/images/solve-the-problem.svg";
 import Training from "../src/assets/images/training.svg";
 import HttpToastWithState from "./commons/Dialogues/HttpToastWithState";
+import { BLANK } from "./types/enums";
 const drawerWidth = 200;
 
 interface MenuItem {
@@ -196,11 +197,11 @@ const App = () => {
             color:
               location.pathname === `/dashboard/${menuItems[index].path}`
                 ? "#115E6E"
-                : "",
+                : BLANK,
             borderLeft:
               location.pathname === `/dashboard/${menuItems[index].path}`
                 ? "5px solid #115E6E"
-                : "",
+                : BLANK,
           }}
         >
           <ListItemIcon
@@ -209,7 +210,9 @@ const App = () => {
               mr: open ? 3 : "auto",
               justifyContent: "center",
               color:
-                location.pathname === "/" + menuItems[1].path ? "#115E6E" : "",
+                location.pathname === "/" + menuItems[1].path
+                  ? "#115E6E"
+                  : BLANK,
             }}
           >
             {/* {<Menu></Menu>} */}

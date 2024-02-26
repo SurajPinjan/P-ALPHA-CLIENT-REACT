@@ -41,6 +41,7 @@ import { makeHttpCall } from "../../services/ApiService";
 import store from "../../services/GlobalStateService";
 import {
   API_RESPONSE_CODE,
+  BLANK,
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
@@ -122,7 +123,7 @@ const YGrid: React.FC<YProps> = (props) => {
   const [saveData, setSaveData] = React.useState<YView>({
     isDeleted: false,
     isNew: false,
-    columnText: "",
+    columnText: BLANK,
     x_id: 0,
     uid: undefined,
   });
@@ -392,7 +393,7 @@ const YGrid: React.FC<YProps> = (props) => {
   }, [createData, findById, props, savedId]);
 
   React.useEffect(() => {
-    if (savedId != -1 && saveData.columnText !== "" && saveData.x_id !== 0) {
+    if (savedId != -1 && saveData.columnText !== BLANK && saveData.x_id !== 0) {
       setSavedId(-1);
       createData(saveData);
     }
