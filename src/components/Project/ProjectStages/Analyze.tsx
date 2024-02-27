@@ -7,7 +7,6 @@ import {
 } from "@mui/x-data-grid";
 import { TabType, TableType } from "../../../types/types";
 import FullFeaturedCrudGrid from "./AuditTable";
-import { BLANK } from "../../../types/enums";
 
 const discountOptions = [
   "Pareto",
@@ -32,7 +31,7 @@ const discountOptions = [
 //     apiRef.current.setEditCellValue({
 //       id,
 //       field,
-//       value: newValue.filter((x: string) => x !== BLANK),
+//       value: newValue.filter((x: string) => x !== ""),
 //     });
 //   };
 
@@ -77,7 +76,7 @@ const discountOptions = [
 //         native: true,
 //       }}
 //     >
-//       {[BLANK, ...discountOptions].map((option) => (
+//       {["", ...discountOptions].map((option) => (
 //         <option key={option} value={option}>
 //           {option}
 //         </option>
@@ -131,7 +130,7 @@ function Analyze() {
       editable: true,
       valueOptions: discountOptions,
       valueFormatter: ({ value }: GridValueFormatterParams) =>
-        value ? value.join("/") : BLANK,
+        value ? value.join("/") : "",
       // renderEditCell: CustomDiscountEditCell,
       filterOperators: [
         {
@@ -141,7 +140,7 @@ function Analyze() {
               typeof filterItem === "object" &&
               filterItem !== null &&
               "value" in filterItem &&
-              (filterItem.value == null || filterItem.value === BLANK)
+              (filterItem.value == null || filterItem.value === "")
             ) {
               return null;
             } else {

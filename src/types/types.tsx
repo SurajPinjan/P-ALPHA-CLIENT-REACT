@@ -50,3 +50,10 @@ export interface DataList<T> {
   isLoading: boolean;
   data: T[];
 }
+
+export interface FileInfo {
+  url: string;
+  filesize: number;
+  filetype: string;
+  filename: string;
+}

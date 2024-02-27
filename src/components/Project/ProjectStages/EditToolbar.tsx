@@ -8,7 +8,7 @@ import { Page } from "../Project";
 interface EditToolbarProps {
   buttonTitle?: string;
   tableTitle: string;
-
+  columnMultiField: string;
   setPageState: (newPageState: (oldPageState: Page) => Page) => void;
   setRowModesModel: (
     newModel: (oldModel: GridRowModesModel) => GridRowModesModel
@@ -28,7 +28,13 @@ export default function EditToolbar(props: EditToolbarProps) {
       background-color: #115e6e;
     }
   `;
-  const { setPageState, setRowModesModel, buttonTitle, tableTitle } = props;
+  const {
+    setPageState,
+    setRowModesModel,
+    columnMultiField,
+    buttonTitle,
+    tableTitle,
+  } = props;
 
   const handleClick = () => {
     const id = randomId();
@@ -36,7 +42,7 @@ export default function EditToolbar(props: EditToolbarProps) {
 
     setPageState((old) => ({
       ...old,
-      data: [...old.data, { id, isNew: true }],
+      data: [...old.data, { id, [columnMultiField]: [], isNew: true }],
     }));
     setRowModesModel((oldModel) => ({
       ...oldModel,

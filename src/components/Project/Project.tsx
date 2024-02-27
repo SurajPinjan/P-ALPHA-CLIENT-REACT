@@ -9,7 +9,11 @@ import {
   AppBar,
   Box,
   Container,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Stack,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -28,8 +32,12 @@ import {
   GridRowsProp,
   GridSortModel,
   GridValidRowModel,
+  GridValueFormatterParams,
+  useGridApiContext,
 } from "@mui/x-data-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import _ from "lodash";
+import { DateTime } from "luxon";
+import React, { Ref, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
@@ -63,8 +71,6 @@ import {
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
 import EditToolbar from "./ProjectStages/EditToolbar";
-import _ from "lodash";
-import { DateTime } from "luxon";
 
 export interface Page {
   isLoading: boolean;
@@ -79,6 +85,88 @@ interface AdminProps {
   saveHandler?: (newData: GridValidRowModel) => void;
   updateHandler?: (editData: GridValidRowModel) => void;
   filters: MasterView;
+}
+
+const optionsList: string[] = ["A", "B", "C", "AD"];
+
+function CustomEditComponent(props: {
+  id: string;
+  value: string;
+  field: string;
+}) {
+  const { id, value, field } = props;
+  const apiRef = useGridApiContext();
+
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    const eventValue = event.target.value;
+    const newValue =
+      typeof eventValue === "string" ? value.split(",") : eventValue;
+    apiRef.current.setEditCellValue({
+      id,
+      field,
+      value: newValue.filter((x: string) => x !== ""),
+    });
+  };
+
+  return (
+    <Select
+      labelId="demo-multiple-name-label"
+      id="demo-multiple-name"
+      multiple
+      value={value}
+      onChange={handleChange}
+      sx={{ width: "100%" }}
+    >
+      {optionsList.map((option) => (
+        <MenuItem key={option} value={option}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+}
+
+const CustomDiscountEditCell = (params: {
+  id: string;
+  value: string;
+  field: string;
+}) => <CustomEditComponent {...params} />;
+
+function CustomFilterInputSingleSelect(props: {
+  item: object;
+  applyValue: (a: unknown) => void;
+  type: string;
+  focusElementRef: Ref<unknown> | undefined;
+}) {
+  const { item, applyValue, type, focusElementRef } = props;
+
+  if ("value" in item && "id" in item) {
+    return (
+      <TextField
+        id={`contains-input-${item.id}`}
+        value={item.value}
+        onChange={(event) => applyValue({ ...item, value: event.target.value })}
+        type={type || "text"}
+        variant="standard"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        inputRef={focusElementRef}
+        select
+        SelectProps={{
+          native: true,
+        }}
+      >
+        {["", ...optionsList].map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </TextField>
+    );
+  } else {
+    return <></>;
+  }
 }
 
 const Admin: React.FC<AdminProps> = (props) => {
@@ -99,6 +187,42 @@ const Admin: React.FC<AdminProps> = (props) => {
     headerName: "Unique Text",
     width: 240,
     editable: true,
+  });
+
+  columns.push({
+    field: "columnMultiValue",
+    headerName: "Tools Used",
+    type: "singleSelect",
+    width: 240,
+    editable: true,
+    valueOptions: optionsList,
+    valueFormatter: ({ value }: GridValueFormatterParams) => {
+      return value ? value.join("/") : "";
+    },
+    renderEditCell: CustomDiscountEditCell,
+    filterOperators: [
+      {
+        value: "contains",
+        getApplyFilterFn: (filterItem: { value: unknown } | null) => {
+          if (
+            filterItem instanceof Object &&
+            filterItem !== null &&
+            "value" in filterItem &&
+            (filterItem.value == null || filterItem.value === "")
+          ) {
+            return null;
+          } else {
+            return null;
+          }
+          // return ({ value }: unknown) => {
+          //   return value.some(
+          //     (cellValue: unknown) => cellValue === filterItem.value
+          //   );
+          // };
+        },
+        InputComponent: CustomFilterInputSingleSelect,
+      },
+    ],
   });
 
   const isAdmin: boolean =
@@ -145,7 +269,7 @@ const Admin: React.FC<AdminProps> = (props) => {
   const [buttonTitle] = React.useState("Add X");
   const [tableTitle] = React.useState("X");
 
-  const columnsDetails: GridColDef[] = [...columns];
+  const columnsDetails: unknown[] = [...columns];
 
   if (hasAttachment) {
     columnsDetails.push({
@@ -154,7 +278,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       type: "actions",
       width: 100,
       cellClassName: "attachment",
-      getActions: ({ id }) => {
+      getActions: ({ id }: { id: number }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
@@ -204,7 +328,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       headerName: "Navigate",
       width: 100,
       cellClassName: "navigate",
-      getActions: ({ id }) => {
+      getActions: ({ id }: { id: number }) => {
         const x: GridValidRowModel | undefined = findById(id);
 
         const isValue1: boolean =
@@ -236,7 +360,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     headerName: "Actions",
     width: 100,
     cellClassName: "actions",
-    getActions: ({ id }) => {
+    getActions: ({ id }: { id: number }) => {
       const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
       if (isInEditMode) {
@@ -421,6 +545,7 @@ const Admin: React.FC<AdminProps> = (props) => {
         columnDate: entityFound.columnDate,
         columnSelect: entityFound.columnSelect,
         columnUText: entityFound.columnUText,
+        columnMultiValue: entityFound.columnMultiValue,
         isDeleted: false,
         url: entityFound.url,
         isNew: entityFound.isNew,
@@ -440,6 +565,7 @@ const Admin: React.FC<AdminProps> = (props) => {
         uid: entityFound.uid,
         url: entityFound.url,
         columnUText: entityFound.columnUText,
+        columnMultiValue: entityFound.columnMultiValue,
         columnSelect: entityFound.columnSelect,
         columnDate: entityFound.columnDate,
         isDeleted: entityFound.isDeleted == 0 ? false : true,
@@ -605,7 +731,7 @@ const Admin: React.FC<AdminProps> = (props) => {
               page: pageState.page,
             }}
             paginationMode="server"
-            columns={columnsDetails}
+            columns={columnsDetails as GridColDef[]}
             slots={{
               toolbar: EditToolbar,
               noRowsOverlay: () => (
@@ -631,6 +757,7 @@ const Admin: React.FC<AdminProps> = (props) => {
               toolbar: {
                 setPageState,
                 setRowModesModel,
+                columnMultiField: "columnMultiValue",
                 tableTitle,
                 buttonTitle,
               },
