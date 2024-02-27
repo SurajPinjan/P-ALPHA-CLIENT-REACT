@@ -334,11 +334,21 @@ export default function FullFeaturedCrudGrid(props: {
           urlExisting={imgRw.url}
           isOpen={isOpenUpload}
           onClose={onClose}
-          onUpload={(urlSaved: string | undefined) => {
-            if (imgRw) {
-              imgRw.url = urlSaved;
+          onUpload={(
+            data:
+              | {
+                  url: string;
+                  filesize: number;
+                  filetype: string;
+                  filename: string;
+                }
+              | undefined
+          ) => {
+            if (imgRw && data) {
+              imgRw.url = data.url;
             }
           }}
+          onSave={() => {}}
         ></FileUpload>
       )}
       <Box
