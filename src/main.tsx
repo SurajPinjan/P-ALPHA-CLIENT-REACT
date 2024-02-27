@@ -12,6 +12,7 @@ import YGridWrapper from "./components/Project/YPage.tsx";
 import Training from "./components/Training/Training.tsx";
 import "./index.css";
 import store from "./services/GlobalStateService.ts";
+import MediaGridWrapper from "./commons/Grids/MediaPage.tsx";
 
 const routes = [
   {
@@ -25,6 +26,10 @@ const routes = [
       {
         path: "home",
         element: <Home />,
+      },
+      {
+        path: "media",
+        element: <MediaGridWrapper />,
       },
       {
         path: "problem_bank",

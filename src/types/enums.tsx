@@ -27,6 +27,7 @@ export enum ENTITY_NAME {
   FILE = "file",
   AUTH = "auth",
   MASTER = "master",
+  MEDIA = "media",
 }
 
 export enum OPERATION {

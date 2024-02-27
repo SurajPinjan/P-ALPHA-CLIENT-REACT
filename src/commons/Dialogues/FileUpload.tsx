@@ -26,7 +26,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function FileUpload(params: {
   urlExisting: string | undefined;
-  onUpload: (url: string) => void;
+  onUpload: (data: {
+    url: string;
+    filesize: number;
+    filetype: string;
+    filename: string;
+  }) => void;
+  onSave: () => void;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -42,7 +48,10 @@ export default function FileUpload(params: {
     params.onClose();
   };
 
-  // React.InputHTMLAttributes<HTMLInputElement>.onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined
+  const onSave = () => {
+    params.onSave();
+  };
+
   const handleFileInputChange = async (fileList: FileList | null) => {
     if (fileList) setSelectedFile(fileList[0]);
   };
@@ -66,7 +75,12 @@ export default function FileUpload(params: {
             requestDataUpdateOne
           );
           setUrl(data.url);
-          params.onUpload(data.url);
+          params.onUpload({
+            filename: selectedFile.name,
+            filesize: selectedFile.size,
+            filetype: selectedFile.type,
+            url: data.url,
+          });
         } else {
           alert("image width must be exactly twice image height");
         }
@@ -124,7 +138,18 @@ export default function FileUpload(params: {
               >
                 Upload
               </button>
-              {/* <button style={{ marginRight: '10px', textAlign: 'right', background: '#b2002d', color: 'white' }}>Delete</button> */}
+              <button
+                type="button"
+                onClick={onSave}
+                style={{
+                  marginLeft: "10px",
+                  textAlign: "right",
+                  background: "#b2002d",
+                  color: "white",
+                }}
+              >
+                Save
+              </button>
             </Typography>
           </CardContent>
         </DialogContent>
