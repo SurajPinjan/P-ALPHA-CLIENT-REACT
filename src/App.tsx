@@ -40,6 +40,8 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { title: "Dashboard", path: "home" },
   { title: "X Grid", path: "problem_bank" },
+  { title: "Media Grid Fix", path: "media_fix" },
+  { title: "Z Grid", path: "z_grid" },
   { title: "Y With X", path: "project" },
   { title: "Media Grid", path: "media" },
   { title: "Training", path: "project_details" },
@@ -129,6 +131,7 @@ const App = () => {
   const menus: React.ComponentType<HTMLImageElement>[] = [
     () => <img src={Problem} alt="bar chart" width={20} height={20} />,
     () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
+    () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,

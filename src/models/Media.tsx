@@ -4,19 +4,21 @@ import { View } from "./View";
 import { ENTITY_NAME } from "../types/enums";
 
 export type MediaModel = Model & {
-  fileurl: string;
-  filetype: string;
-  filesize: number;
-  filename: string;
+  tag?: string;
+  fileurl?: string;
+  filetype?: string;
+  filesize?: number;
+  filename?: string;
   entityType: ENTITY_NAME;
   entityId: number;
 };
 
 export type MediaView = View & {
-  fileurl: string;
-  filetype: string;
-  filesize: number;
-  filename: string;
+  tag?: string;
+  fileurl?: string;
+  filetype?: string;
+  filesize?: number;
+  filename?: string;
   entityType: ENTITY_NAME;
   entityId: number;
 };
@@ -31,6 +33,7 @@ export function getViewFromModelMedia(a: MediaModel): MediaView {
     filename: a.filename,
     entityType: a.entityType,
     entityId: a.entityId,
+    tag: a.tag,
     isNew: false,
     isDeleted: a.isDeleted,
   };
@@ -43,6 +46,7 @@ export function getModelFromViewMedia(a: MediaView): MediaModel {
     filetype: a.filetype,
     filesize: a.filesize,
     filename: a.filename,
+    tag: a.tag,
     entityType: a.entityType,
     entityId: a.entityId,
     createDate: randomCreatedDate(),

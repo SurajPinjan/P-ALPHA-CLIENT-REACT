@@ -1,35 +1,31 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import {
-  DataGrid,
   GridActionsCellItem,
   GridColDef,
-  GridPaginationModel,
   GridRowId,
   GridSortModel,
   GridValidRowModel,
 } from "@mui/x-data-grid";
-import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FileUpload from "../../commons/Dialogues/FileUpload";
-import ImagePreview from "../../commons/Dialogues/ImagePreview";
+import FixMediaGrid from "../../../components/Project/ProjectStages/FixMediaGrid";
 import {
   MediaModel,
   MediaView,
   getModelFromViewMedia,
   getViewFromModelMedia,
-} from "../../models/Media";
-import { makeHttpCall } from "../../services/ApiService";
-import store from "../../services/GlobalStateService";
+} from "../../../models/Media";
+import { makeHttpCall } from "../../../services/ApiService";
+import store from "../../../services/GlobalStateService";
 import {
   API_RESPONSE_CODE,
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
-} from "../../types/enums";
-import { Filter } from "../../types/filterTypes";
+} from "../../../types/enums";
+import { Filter } from "../../../types/filterTypes";
 import {
   HttpCreateOneRequestBody,
   HttpGetAllRequestBody,
@@ -38,9 +34,10 @@ import {
   HttpResponseGetAll,
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
-} from "../../types/httpTypes";
-import MediaToolbar from "./MediaToolbar";
-import { Page } from "../../types/types";
+} from "../../../types/httpTypes";
+import { Page } from "../../../types/types";
+import FileUpload from "../../Dialogues/FileUpload";
+import ImagePreview from "../../Dialogues/ImagePreview";
 
 interface MediaProps {
   isCompare?: boolean;
@@ -48,7 +45,7 @@ interface MediaProps {
   updateHandler?: (editData: GridValidRowModel) => void;
 }
 
-const MediaGrid: React.FC<MediaProps> = (props) => {
+const MediaGridFix: React.FC<MediaProps> = (props) => {
   // constants
   const navigate = useNavigate();
   const columns = [];
@@ -76,7 +73,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   });
 
   // states
-  const [sorts, setSorts] = React.useState<GridSortModel>([]);
+  const [sorts] = React.useState<GridSortModel>([]);
   const [pageState, setPageState] = useState<Page>({
     isLoading: false,
     data: [],
@@ -93,8 +90,6 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   const [imgRw, setImgRw] = React.useState<GridValidRowModel | undefined>();
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
-  const [tableTitle] = React.useState("Media Gallary");
-  const [buttonTitle] = React.useState("Add File");
   // constants
   const columnsDetails: GridColDef[] = [...columns];
 
@@ -260,10 +255,6 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
     setIsOpenUpload(false);
   };
 
-  const handleSortModelChange = (newSortModel: GridSortModel) => {
-    setSorts(_.cloneDeep(newSortModel));
-  };
-
   //   hooks
 
   useEffect(() => {
@@ -370,64 +361,11 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
       )}
       <Box>
         <Container>
-          <DataGrid
-            sx={{ border: "none", padding: "15px" }}
-            autoHeight
-            editMode="row"
-            rows={pageState.data}
-            rowCount={pageState.total}
-            loading={pageState.isLoading}
-            pageSizeOptions={[1, 2, 3]}
-            pagination
-            onPaginationModelChange={(paginationModel: GridPaginationModel) => {
-              setPageState((old) => ({
-                ...old,
-                page: paginationModel.page,
-                pageSize: paginationModel.pageSize,
-              }));
-            }}
-            paginationModel={{
-              pageSize: pageState.pageSize,
-              page: pageState.page,
-            }}
-            paginationMode="server"
-            columns={columnsDetails}
-            slots={{
-              toolbar: MediaToolbar,
-              noRowsOverlay: () => (
-                <Stack
-                  height="100%"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  No Details
-                </Stack>
-              ),
-              noResultsOverlay: () => (
-                <Stack
-                  height="100%"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  No Result
-                </Stack>
-              ),
-            }}
-            slotProps={{
-              toolbar: {
-                setIsOpenUpload,
-                tableTitle,
-                buttonTitle,
-                handleCreate,
-              },
-            }}
-            sortingMode="server"
-            onSortModelChange={handleSortModelChange}
-          />
+          <FixMediaGrid></FixMediaGrid>
         </Container>
       </Box>
     </>
   );
 };
 
-export default MediaGrid;
+export default MediaGridFix;

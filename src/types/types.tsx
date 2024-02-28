@@ -1,3 +1,5 @@
+import { GridRowsProp } from "@mui/x-data-grid";
+
 export type FormProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -56,4 +58,12 @@ export interface FileInfo {
   filesize: number;
   filetype: string;
   filename: string;
+}
+
+export interface Page {
+  isLoading: boolean;
+  data: GridRowsProp;
+  total: number;
+  page: number;
+  pageSize: number;
 }

@@ -21,6 +21,7 @@ export enum API_RESPONSE_CODE {
 export enum ENTITY_NAME {
   X = "x",
   Y = "y",
+  Z = "z",
   YWITHX = "yWithX",
   XDETAILWITHX = "xDetailWithX",
   XDETAIL = "xDetail",
