@@ -14,7 +14,6 @@ import {
 import {
   DataGrid,
   GridActionsCellItem,
-  GridColDef,
   GridEventListener,
   GridPaginationModel,
   GridRowEditStopReasons,
@@ -24,10 +23,13 @@ import {
   GridRowModesModel,
   GridRowParams,
   GridRowsProp,
+  GridSortModel,
   GridValidRowModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
+import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
 import {
@@ -56,10 +58,8 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
+import { SortableGridColDef, sortGridColDef } from "../../types/types";
 import EditToolbar from "./ProjectStages/EditToolbar";
-import { useNavigate } from "react-router-dom";
-import { GridSortModel } from "@mui/x-data-grid";
-import _ from "lodash";
 
 export interface Page {
   isLoading: boolean;
@@ -80,13 +80,14 @@ interface YProps {
 const YGrid: React.FC<YProps> = (props) => {
   // constants
   const navigate = useNavigate();
-  const columns = [];
+  const columns: SortableGridColDef[] = [];
 
   columns.push({
     field: "columnText",
     headerName: "Text",
     width: 240,
     editable: true,
+    order: 0,
   });
 
   columns.push({
@@ -95,6 +96,7 @@ const YGrid: React.FC<YProps> = (props) => {
     width: 240,
     type: "date",
     editable: false,
+    order: 1,
   });
 
   // states
@@ -132,9 +134,10 @@ const YGrid: React.FC<YProps> = (props) => {
   const [xOptions, setXOptions] = React.useState<XView[]>([]);
 
   // constants
-  const columnsDetails: GridColDef[] = [...columns];
+  const columnsDetails: SortableGridColDef[] = [...columns];
 
   columnsDetails.push({
+    order: -1,
     field: "x_id",
     headerName: "X Entity FK",
     width: 240,
@@ -159,6 +162,7 @@ const YGrid: React.FC<YProps> = (props) => {
 
   if (hasAttachment) {
     columnsDetails.push({
+      order: 3,
       field: "x_url",
       headerName: "Url",
       type: "actions",
@@ -186,6 +190,7 @@ const YGrid: React.FC<YProps> = (props) => {
   }
 
   columnsDetails.push({
+    order: 4,
     field: "actions",
     type: "actions",
     headerName: "Actions",
@@ -564,7 +569,7 @@ const YGrid: React.FC<YProps> = (props) => {
               page: pageState.page,
             }}
             paginationMode="server"
-            columns={columnsDetails}
+            columns={columnsDetails.sort(sortGridColDef)}
             slots={{
               toolbar: EditToolbar,
               noRowsOverlay: () => (

@@ -14,7 +14,6 @@ import {
 import {
   DataGrid,
   GridActionsCellItem,
-  GridColDef,
   GridEventListener,
   GridPaginationModel,
   GridRowEditStopReasons,
@@ -30,6 +29,7 @@ import {
 } from "@mui/x-data-grid";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
@@ -63,9 +63,12 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
+import {
+  GlobalState,
+  SortableGridColDef,
+  sortGridColDef,
+} from "../../types/types";
 import EditToolbar from "../Project/ProjectStages/EditToolbar";
-import { GlobalState } from "../../types/types";
-import { connect } from "react-redux";
 
 export interface Page {
   isLoading: boolean;
@@ -86,13 +89,14 @@ interface XDetailProps {
 const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
   // constants
   const navigate = useNavigate();
-  const columns = [];
+  const columns: SortableGridColDef[] = [];
 
   columns.push({
     field: "columnDetail",
     headerName: "Column Detail",
     width: 240,
     editable: true,
+    order: 0,
   });
 
   columns.push({
@@ -101,6 +105,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
     width: 240,
     type: "date",
     editable: false,
+    order: 1,
   });
 
   // states
@@ -139,9 +144,10 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
   const [xOptions, setXOptions] = React.useState<XView[]>([]);
 
   // constants
-  const columnsDetails: GridColDef[] = [...columns];
+  const columnsDetails: SortableGridColDef[] = [...columns];
 
   columnsDetails.push({
+    order: 2,
     field: "x_id",
     headerName: "X Entity FK",
     width: 240,
@@ -166,6 +172,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
 
   if (hasAttachment) {
     columnsDetails.push({
+      order: 3,
       field: "x_url",
       headerName: "Url",
       type: "actions",
@@ -193,6 +200,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
   }
 
   columnsDetails.push({
+    order: 4,
     field: "actions",
     type: "actions",
     headerName: "Actions",
@@ -581,7 +589,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
               page: pageState.page,
             }}
             paginationMode="server"
-            columns={columnsDetails}
+            columns={columnsDetails.sort(sortGridColDef)}
             slots={{
               toolbar: EditToolbar,
               noRowsOverlay: () => (

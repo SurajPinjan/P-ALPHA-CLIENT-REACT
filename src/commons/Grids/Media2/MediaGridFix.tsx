@@ -3,7 +3,6 @@ import ImageIcon from "@mui/icons-material/Image";
 import { Box, Container } from "@mui/material";
 import {
   GridActionsCellItem,
-  GridColDef,
   GridRowId,
   GridSortModel,
   GridValidRowModel,
@@ -35,7 +34,7 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../../types/httpTypes";
-import { Page } from "../../../types/types";
+import { Page, SortableGridColDef } from "../../../types/types";
 import FileUpload from "../../Dialogues/FileUpload";
 import ImagePreview from "../../Dialogues/ImagePreview";
 
@@ -48,13 +47,14 @@ interface MediaProps {
 const MediaGridFix: React.FC<MediaProps> = (props) => {
   // constants
   const navigate = useNavigate();
-  const columns = [];
+  const columns: SortableGridColDef[] = [];
 
   columns.push({
     field: "filename",
     headerName: "File Name",
     width: 240,
     editable: false,
+    order: 0,
   });
 
   columns.push({
@@ -63,6 +63,7 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
     type: "number",
     width: 140,
     editable: false,
+    order: 1,
   });
 
   columns.push({
@@ -70,6 +71,7 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
     headerName: "File Type",
     width: 140,
     editable: false,
+    order: 2,
   });
 
   // states
@@ -79,7 +81,7 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
     data: [],
     total: 0,
     page: 0,
-    pageSize: 2,
+    pageSize: 3,
   });
   // states
   const [isOpen, setIsOpen] = React.useState(false);
@@ -91,7 +93,7 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
   // constants
-  const columnsDetails: GridColDef[] = [...columns];
+  const columnsDetails: SortableGridColDef[] = [...columns];
 
   columnsDetails.push({
     field: "fileurl",
@@ -118,6 +120,7 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
         />,
       ];
     },
+    order: 4,
   });
 
   columnsDetails.push({
@@ -137,6 +140,7 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
         />,
       ];
     },
+    order: 5,
   });
 
   //   data operations

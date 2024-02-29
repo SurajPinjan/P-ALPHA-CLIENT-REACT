@@ -1,4 +1,4 @@
-import { GridRowsProp } from "@mui/x-data-grid";
+import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 
 export type FormProps = {
   open: boolean;
@@ -67,3 +67,14 @@ export interface Page {
   page: number;
   pageSize: number;
 }
+
+export type SortableGridColDef = GridColDef & {
+  order: number;
+};
+
+export const sortGridColDef = (
+  a: SortableGridColDef,
+  b: SortableGridColDef
+): number => {
+  return a.order > b.order ? 1 : a.order < b.order ? -1 : 0;
+};

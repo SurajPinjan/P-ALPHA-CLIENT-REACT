@@ -4,7 +4,6 @@ import { Box, Container, Stack } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
-  GridColDef,
   GridPaginationModel,
   GridRowId,
   GridSortModel,
@@ -39,8 +38,8 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
+import { Page, SortableGridColDef, sortGridColDef } from "../../types/types";
 import MediaToolbar from "./MediaToolbar";
-import { Page } from "../../types/types";
 
 interface MediaProps {
   isCompare?: boolean;
@@ -51,9 +50,10 @@ interface MediaProps {
 const MediaGrid: React.FC<MediaProps> = (props) => {
   // constants
   const navigate = useNavigate();
-  const columns = [];
+  const columns: SortableGridColDef[] = [];
 
   columns.push({
+    order: 0,
     field: "filename",
     headerName: "File Name",
     width: 240,
@@ -61,6 +61,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   });
 
   columns.push({
+    order: 1,
     field: "filesize",
     headerName: "File Size",
     type: "number",
@@ -69,6 +70,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   });
 
   columns.push({
+    order: 2,
     field: "filetype",
     headerName: "File Type",
     width: 140,
@@ -96,9 +98,10 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   const [tableTitle] = React.useState("Media Gallary");
   const [buttonTitle] = React.useState("Add File");
   // constants
-  const columnsDetails: GridColDef[] = [...columns];
+  const columnsDetails: SortableGridColDef[] = [...columns];
 
   columnsDetails.push({
+    order: 3,
     field: "fileurl",
     headerName: "File URL",
     type: "actions",
@@ -126,6 +129,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   });
 
   columnsDetails.push({
+    order: 4,
     field: "actions",
     type: "actions",
     headerName: "Actions",
@@ -391,7 +395,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
               page: pageState.page,
             }}
             paginationMode="server"
-            columns={columnsDetails}
+            columns={columnsDetails.sort(sortGridColDef)}
             slots={{
               toolbar: MediaToolbar,
               noRowsOverlay: () => (
