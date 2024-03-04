@@ -15,6 +15,7 @@ import Training from "./components/Training/Training.tsx";
 import "./index.css";
 import store from "./services/GlobalStateService.ts";
 import MediaGridFixWrapper from "./commons/Grids/Media2/MediaPageFix.tsx";
+import PDFGenrator from "./components/Project/PDFGen.tsx";
 
 const routes = [
   {
@@ -32,6 +33,10 @@ const routes = [
       {
         path: "z_grid",
         element: <ZGridWrapper />,
+      },
+      {
+        path: "pdf_gen",
+        element: <PDFGenrator />,
       },
       {
         path: "media_fix",

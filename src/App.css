@@ -17,7 +17,7 @@
   color: #000;
   height: 35px;
   margin: 1px !important;
-  /* word-break: break-word; */
+ 
   display: flex;
 }
 
@@ -62,7 +62,7 @@
 
 .boldTextStyle {
   font-weight: 600;
-  /* background-color: #00B0AB; */
+ 
   color: #115e6e;
   padding: 3px 15px !important;
   align-items: center;
@@ -80,8 +80,8 @@
 .MuiTableCell-head {
   background-color: #00b0ab !important;
   color: #fff !important;
-  /* border: 1px solid #ddd; */
-  /* padding:10px !important; */
+ 
+ 
 }
 
 .tableHeaderStyle {
@@ -119,8 +119,8 @@
   color: #fff !important;
   right: 8rem;
   top: 16rem;
-  /* float: right; */
-  /* left: 0; */
+ 
+ 
   position: fixed;
 }
 
@@ -147,12 +147,12 @@
 }
 
 .tabsBg {
-  /* background:#03a4c3ad!important; */
-  /* border-Right: 1; */
+ 
+ 
   border-color: divider;
   width: 135px;
   color: #000000 !important;
-  /* opacity: 0.7; */
+ 
 }
 
 .tabsBg:hover {
@@ -161,21 +161,15 @@
 }
 
 .Mui-selected {
-  /* background: #00B0AB !important; */
+ 
   font-weight: 600 !important;
   background: #005f71 !important;
   color: #fff !important;
-  /* border-bottom: 1px solid #fff !important; */
-  /* color: ; */
+ 
+ 
 }
 
-/* .MuiButtonBase-root:hover{
-    border-color: #fff !important;
-      background:#e0e0e069!important;
-  } */
-.MuiBox-root {
-  /* padding: 8px !important; */
-}
+
 
 button:focus {
   outline: none !important;

@@ -42,6 +42,7 @@ const menuItems: MenuItem[] = [
   { title: "X Grid", path: "problem_bank" },
   { title: "Media Grid Fix", path: "media_fix" },
   { title: "Z Grid", path: "z_grid" },
+  { title: "PDF Generator", path: "pdf_gen" },
   { title: "Y With X", path: "project" },
   { title: "Media Grid", path: "media" },
   { title: "Training", path: "project_details" },

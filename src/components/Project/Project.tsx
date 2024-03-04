@@ -757,6 +757,7 @@ const Admin: React.FC<AdminProps> = (props) => {
               toolbar: {
                 setPageState,
                 setRowModesModel,
+                columnList: [],
                 columnMultiField: "columnMultiValue",
                 tableTitle,
                 buttonTitle,

@@ -596,6 +596,7 @@ const YGrid: React.FC<YProps> = (props) => {
                 setPageState,
                 setRowModesModel,
                 tableTitle,
+                columnList: [],
               },
             }}
             sortingMode="server"

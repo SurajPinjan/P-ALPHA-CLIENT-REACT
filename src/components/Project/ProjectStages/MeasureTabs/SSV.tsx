@@ -269,7 +269,7 @@ export default function SSV() {
           toolbar: EditToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { setRows, setRowModesModel, columnList: [] },
         }}
       />
     </Box>

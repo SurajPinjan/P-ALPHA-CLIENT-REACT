@@ -1,12 +1,26 @@
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Typography,
+  styled,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { Typography, styled } from "@mui/material";
-import { GridRowModes, GridRowModesModel } from "@mui/x-data-grid";
+import { GridColDef, GridRowModes, GridRowModesModel } from "@mui/x-data-grid";
 import { randomId } from "@mui/x-data-grid-generator";
+import { useState } from "react";
 import { Page } from "../Project";
+import React from "react";
 
 interface EditToolbarProps {
   buttonTitle?: string;
+  columnList: GridColDef[];
+  setClmnVisibility?: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: boolean;
+    }>
+  >;
   tableTitle: string;
   columnMultiField: string;
   setPageState: (newPageState: (oldPageState: Page) => Page) => void;
@@ -28,6 +42,24 @@ export default function EditToolbar(props: EditToolbarProps) {
       background-color: #115e6e;
     }
   `;
+
+  const [columnVisibility, setColumnVisibility] = useState<{
+    [key: string]: boolean;
+  }>(() => {
+    const initialVisibility: { [key: string]: boolean } = {};
+    props.columnList.forEach((column) => {
+      initialVisibility[column.field] = true;
+    });
+    return initialVisibility;
+  });
+
+  const handleCheckboxChange = (column: string) => {
+    setColumnVisibility((prevState) => ({
+      ...prevState,
+      [column]: !prevState[column],
+    }));
+  };
+
   const {
     setPageState,
     setRowModesModel,
@@ -50,6 +82,10 @@ export default function EditToolbar(props: EditToolbarProps) {
     }));
   };
 
+  React.useEffect(() => {
+    if (props.setClmnVisibility) props.setClmnVisibility(columnVisibility);
+  }, [columnVisibility, props]);
+
   return (
     <>
       <Box sx={{ justifyContent: "space-between", display: "flex" }}>
@@ -66,7 +102,21 @@ export default function EditToolbar(props: EditToolbarProps) {
         >
           {tableTitle}
         </Typography>
-
+        <FormGroup row>
+          {props.columnList.map((item) => (
+            <Box key={item.field} sx={{ m: 1 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={columnVisibility[item.field]}
+                    onChange={() => handleCheckboxChange(item.field)}
+                  />
+                }
+                label={item.headerName}
+              />
+            </Box>
+          ))}
+        </FormGroup>
         {buttonTitle && (
           <ButtonStyle
             variant="contained"

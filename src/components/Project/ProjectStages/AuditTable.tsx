@@ -389,7 +389,13 @@ export default function FullFeaturedCrudGrid(props: {
             handleDetailsClick(params.row.subData);
           }}
           slotProps={{
-            toolbar: { setRows, setRowModesModel, tableTitle, buttonTitle },
+            toolbar: {
+              setRows,
+              setRowModesModel,
+              columnList: [],
+              tableTitle,
+              buttonTitle,
+            },
           }}
         />
       </Box>

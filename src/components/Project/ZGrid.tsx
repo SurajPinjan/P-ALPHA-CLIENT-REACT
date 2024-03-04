@@ -205,6 +205,16 @@ const ZGrid: React.FC<ZProps> = (props) => {
     },
   });
 
+  const [clmnVisibility, setClmnVisibility] = useState<{
+    [key: string]: boolean;
+  }>(() => {
+    const initialVisibility: { [key: string]: boolean } = {};
+    columnsDetails.forEach((column) => {
+      initialVisibility[column.field] = true;
+    });
+    return initialVisibility;
+  });
+
   // 3rd party hooks
 
   const navigate = useNavigate();
@@ -512,7 +522,9 @@ const ZGrid: React.FC<ZProps> = (props) => {
             page: pageState.page,
           }}
           paginationMode="server"
-          columns={columnsDetails}
+          columns={columnsDetails.filter(
+            (column) => clmnVisibility[column.field]
+          )}
           slots={{
             toolbar: EditToolbar,
             noRowsOverlay: () => (
@@ -530,6 +542,8 @@ const ZGrid: React.FC<ZProps> = (props) => {
             toolbar: {
               setPageState,
               setRowModesModel,
+              setClmnVisibility,
+              columnList: columnsDetails,
               columnMultiField: "none",
               tableTitle,
               buttonTitle,

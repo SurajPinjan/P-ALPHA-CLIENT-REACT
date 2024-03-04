@@ -615,6 +615,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
               toolbar: {
                 setPageState,
                 setRowModesModel,
+                columnList: [],
                 tableTitle,
               },
             }}
