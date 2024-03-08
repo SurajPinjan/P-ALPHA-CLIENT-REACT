@@ -1,106 +1,249 @@
 import { Button } from "@mui/material";
 import React from "react";
 import pdfMake from "pdfmake/build/pdfmake";
-// import pdfFonts from "pdfmake/build/vfs_fonts";
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import {
+  _JSONToPDFtransformer,
+  jsonToMap,
+} from "../../services/JSONToPDFTransformer";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { urlToBase64 } from "../../services/ApiService";
+import { MakePDFCellData } from "../../types/types";
 
-const pdfContent = () => {
+const pdfContent = async () => {
   const _content: TDocumentDefinitions = {
     content: [
       {
-        text: "SIX SIGMA ANECDOTE",
-        style: {
-          // font: "Helvetica",
-          fontSize: 12,
-          bold: true,
-          alignment: "center",
-          background: "#00000",
-          color: "#FFFFFF",
-          // margin: [40, 20, 0, 20],
+        table: {
+          widths: ["*"],
+          body: [
+            [
+              {
+                text: "SIX SIGMA ANECDOTE",
+                style: "title",
+              },
+            ],
+          ],
         },
       },
-
-      // {
-      //   text: "Demonstrating various styling options",
-      //   style: {
-      //     // font: "Arial",
-      //     fontSize: 18,
-      //     italics: true,
-      //     lineHeight: 1.2,
-      //   },
-      // },
-
-      // {
-      //   text: "This paragraph displays text indentation and a colored background. It utilizes basic text formatting options.",
-      //   style: {
-      //     leadingIndent: 20,
-      //     background: "#f5f5f5",
-      //     color: "#333333",
-      //   },
-      // },
-
-      // {
-      //   ul: [
-      //     "List item 1",
-      //     {
-      //       text: "List item 2 with a different font size",
-      //       style: {
-      //         fontSize: 12,
-      //       },
-      //     },
-      //     "List item 3 (circle marker)",
-      //     {
-      //       text: "List item 4 (square marker)",
-      //       markerColor: "■",
-      //     },
-      //   ],
-      // },
-
-      // {
-      //   table: {
-      //     headerRows: 1,
-      //     body: [
-      //       ["Column 1", "Column 2", "Column 3"],
-      //       [
-      //         "Data 1 with border",
-      //         {
-      //           text: "Data 2 with centered alignment",
-      //           alignment: "center",
-      //         },
-      //         "Data 3 with blue color",
-      //         {
-      //           text: "Data 4 (italicized)",
-      //           style: {
-      //             italics: true,
-      //           },
-      //         },
-      //       ],
-      //     ],
-      //     // layout: {
-      //     //   hLineWidth: function (i, node) {
-      //     //     return i === 0 || i === node.table.body.length ? 1 : 0.5;
-      //     //   },
-      //     //   vLineWidth: function (i, node) {
-      //     //     return i === 0 || i === node.table.widths.length ? 1 : 0.5;
-      //     //   },
-      //     // },
-      //   },
-      // },
-
-      // {
-      //   text: "This text is placed within a custom object for further styling possibilities.",
-      //   margin: [10, 5, 10, 5],
-      //   fillColor: "#eeeeee",
-      // },
+      {
+        alignment: "justify",
+        columns: [
+          {
+            style: "tableExample",
+            table: {
+              widths: [30, "*", 30, "*", 30, "*"],
+              body: _JSONToPDFtransformer(
+                jsonToMap({
+                  fontSize: {
+                    text: "200",
+                  } as MakePDFCellData,
+                  bold: {
+                    text: "200",
+                  } as MakePDFCellData,
+                  alignment: {
+                    text: "center",
+                  } as MakePDFCellData,
+                  background: {
+                    text: "FFFFF",
+                  } as MakePDFCellData,
+                  color: {
+                    text: "DDD",
+                  } as MakePDFCellData,
+                  sbold: {
+                    text: "EEE",
+                  } as MakePDFCellData,
+                  salignment: {
+                    text: "center",
+                  } as MakePDFCellData,
+                  sbackground: {
+                    text: "#FFFFFF",
+                  } as MakePDFCellData,
+                  scolor: {
+                    text: "center",
+                  } as MakePDFCellData,
+                }),
+                3
+              ),
+            },
+          },
+          {
+            style: "tableExample",
+            table: {
+              widths: [30, "*", 30, "*", 30, "*"],
+              body: _JSONToPDFtransformer(
+                jsonToMap({
+                  fontSize: {
+                    text: "200",
+                  } as MakePDFCellData,
+                  bold: {
+                    text: "200",
+                  } as MakePDFCellData,
+                  alignment: {
+                    text: "center",
+                  } as MakePDFCellData,
+                  background: {
+                    text: "FFFFF",
+                  } as MakePDFCellData,
+                  color: {
+                    text: "DDD",
+                  } as MakePDFCellData,
+                  sbold: {
+                    text: "EEE",
+                  } as MakePDFCellData,
+                  salignment: {
+                    text: "center",
+                  } as MakePDFCellData,
+                  sbackground: {
+                    text: "#FFFFFF",
+                  } as MakePDFCellData,
+                  scolor: {
+                    text: "center",
+                  } as MakePDFCellData,
+                }),
+                3
+              ),
+            },
+          },
+        ],
+      },
+      {
+        alignment: "justify",
+        columns: [
+          {
+            image: await urlToBase64(
+              "http://localhost:3000/uploads/istockphoto-2.jpg"
+            ),
+            width: 130,
+            margin: [
+              // Left, Top, Right, Bottom
+              0, 2, 0, 2,
+            ],
+          },
+          {
+            table: {
+              widths: [30, "*", 30, "*", 30, "*"],
+              body: _JSONToPDFtransformer(
+                jsonToMap({
+                  fontSize: {
+                    text: "200",
+                  } as MakePDFCellData,
+                  bold: {
+                    text: "200",
+                  } as MakePDFCellData,
+                  alignment: {
+                    text: "center",
+                  } as MakePDFCellData,
+                  background: {
+                    text: "FFFFF",
+                  } as MakePDFCellData,
+                  color: {
+                    text: "DDD",
+                  } as MakePDFCellData,
+                  sbold: {
+                    text: "EEE",
+                  } as MakePDFCellData,
+                  salignment: {
+                    text: "center",
+                  } as MakePDFCellData,
+                  sbackground: {
+                    text: "#FFFFFF",
+                  } as MakePDFCellData,
+                  scolor: {
+                    text: "center",
+                  } as MakePDFCellData,
+                }),
+                3
+              ),
+            },
+          },
+        ],
+      },
+      {
+        table: {
+          headerRows: 2,
+          body: [
+            [
+              {
+                bold: true,
+                fontSize: 8,
+                color: "black",
+                fillColor: "gray",
+                alignment: "center",
+                text: "Header with Colspan = 2",
+                colSpan: 2,
+              },
+              {},
+              {
+                text: "Header 3",
+                bold: true,
+                fontSize: 8,
+                color: "black",
+                fillColor: "gray",
+                alignment: "center",
+              },
+            ],
+            [
+              {
+                text: "Header 1",
+                bold: true,
+                fontSize: 8,
+                color: "black",
+                fillColor: "gray",
+                alignment: "center",
+              },
+              {
+                text: "Header 2",
+                bold: true,
+                fontSize: 8,
+                color: "black",
+                fillColor: "gray",
+                alignment: "center",
+              },
+              {
+                text: "Header 3",
+                bold: true,
+                fontSize: 8,
+                color: "black",
+                fillColor: "gray",
+                alignment: "center",
+              },
+            ],
+            ["Sample value 1", "Sample value 2", "Sample value 3"],
+            [
+              {
+                rowSpan: 3,
+                text: "rowSpan set to 3\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor",
+              },
+              "Sample value 2",
+              "Sample value 3",
+            ],
+            ["", "Sample value 2", "Sample value 3"],
+            ["Sample value 1", "Sample value 2", "Sample value 3"],
+            [
+              "Sample value 1",
+              {
+                colSpan: 2,
+                rowSpan: 2,
+                text: "Both:\nrowSpan and colSpan\ncan be defined at the same time",
+              },
+              "",
+            ],
+            ["Sample value 1", "", ""],
+          ],
+        },
+      },
     ],
 
     styles: {
-      header: {
-        // font: "Times New Roman",
-        fontSize: 16,
+      title: {
+        fontSize: 8,
         bold: true,
+        alignment: "center",
+        fillColor: "#00000",
+        color: "#FFFFFF",
       },
     },
   };
@@ -113,7 +256,9 @@ interface PDFGenProps {}
 const PDFGenrator: React.FC<PDFGenProps> = () => {
   const generatePdf = async () => {
     try {
-      const pdfBlob: pdfMake.TCreatedPdf = pdfMake.createPdf(pdfContent());
+      const pdfBlob: pdfMake.TCreatedPdf = pdfMake.createPdf(
+        await pdfContent()
+      );
       pdfBlob.open();
     } catch (error) {
       console.error("Error generating PDF:", error);

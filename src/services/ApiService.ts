@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { NavigateFunction } from "react-router-dom";
 import { Store } from "redux";
 import { API_RESPONSE_CODE, OPERATION } from "../types/enums";
 import {
@@ -6,16 +7,15 @@ import {
   HttpRequestData,
   HttpResponseBody,
 } from "../types/httpTypes";
-import { NavigateFunction } from "react-router-dom";
-import { ActionInterface } from "./GlobalStateService";
 import { GlobalState } from "../types/types";
+import { ActionInterface } from "./GlobalStateService";
 
 export async function makeHttpCall<T extends HttpResponseBody, G>(
   params: HttpRequestData<G>,
   store: Store<GlobalState, ActionInterface, unknown>,
   navigate: NavigateFunction
 ): Promise<T> {
-  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
+  const url: string = `http:
     import.meta.env.VITE_BACKEND_PORT
   }/app/${import.meta.env.VITE_API_VERSION}/${params.entityName}/${
     params.operation
@@ -44,7 +44,6 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
     })
     .then((res: T) => {
       if (res && res.responseCode === API_RESPONSE_CODE.SUCCESS) {
-        // toastDispatcher(store, JSON.stringify(params.body), url, res);
         return res;
       } else {
         if (res instanceof Object && "errorMessage" in res) {
@@ -58,10 +57,10 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
     });
 }
 
-export function makeMultiPartHttpCall(
+export async function makeMultiPartHttpCall(
   params: HttpRequestData<FormData>
 ): Promise<HttpMultiPartResponseBody> {
-  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
+  const url: string = `http:
     import.meta.env.VITE_BACKEND_PORT
   }/app/${import.meta.env.VITE_API_VERSION}/file/${OPERATION.UPLOAD}`;
   const authToken: string | null = localStorage.getItem("token");
@@ -86,6 +85,41 @@ export function makeMultiPartHttpCall(
     })
     .then((res: HttpMultiPartResponseBody) => {
       return res;
+    });
+}
+
+export async function urlToBase64(url: string): Promise<string> {
+  return fetch(url, {
+    credentials: "include",
+    method: "GET",
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        return res.json();
+      } else {
+        const blob: Blob = await res.blob();
+        return {
+          blob: blob,
+          content_type: res.headers.get("content-type") || "image/jpeg",
+        };
+      }
+    })
+    .then(async (_result: { blob: Blob; content_type: string }) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(_result.blob);
+
+      return new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          if (typeof reader.result === "string") {
+            const base64WithMetadata = `data:${_result.content_type};base64,${
+              reader.result.split(",")[1]
+            }`;
+            resolve(base64WithMetadata);
+          } else {
+            reject("Failed to read image data.");
+          }
+        };
+      });
     });
 }
 

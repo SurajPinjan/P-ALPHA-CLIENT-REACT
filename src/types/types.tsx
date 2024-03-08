@@ -72,6 +72,12 @@ export type SortableGridColDef = GridColDef & {
   order: number;
 };
 
+export type MakePDFCellData = {
+  text: string;
+  colSpan?: number;
+  rowSpan?: number;
+};
+
 export const sortGridColDef = (
   a: SortableGridColDef,
   b: SortableGridColDef
