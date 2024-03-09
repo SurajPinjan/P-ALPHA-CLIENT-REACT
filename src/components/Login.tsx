@@ -73,7 +73,7 @@ const Login = () => {
       HttpLoginRequestBody
     >(requestDataAll, store, navigate);
 
-    if (fetchData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+    if (fetchData.responseCode == API_RESPONSE_CODE.SUCCESS_GEN) {
       // save to localstore
       localStorage.setItem("token", fetchData.token);
       if (fetchData.userInfo.uid) {
@@ -127,7 +127,9 @@ const Login = () => {
                   id="username"
                   label="User Name"
                   variant="standard"
-                  onChange={(event) => {
+                  onChange={(event: {
+                    target: { value: React.SetStateAction<string> };
+                  }) => {
                     setUsername(event.target.value);
                   }}
                 />
@@ -141,7 +143,9 @@ const Login = () => {
                   id="password"
                   label="Password"
                   variant="standard"
-                  onChange={(event) => {
+                  onChange={(event: {
+                    target: { value: React.SetStateAction<string> };
+                  }) => {
                     setPassword(event.target.value);
                   }}
                 />

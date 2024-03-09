@@ -6,7 +6,7 @@ import * as React from "react";
 import { GlobalState } from "../../types/types";
 import { DateTime } from "luxon";
 import JsonView from "react18-json-view";
-import { BLANK } from "../../types/enums";
+import { API_RESPONSE_CODE, BLANK } from "../../types/enums";
 
 interface ToastState {
   isOpen: boolean;
@@ -26,6 +26,7 @@ const HttpToast = ({
   };
 
   //   states
+  const [isError, setIsError] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(initialState.isOpen);
   const [codeP, setCodeP] = React.useState<string>(BLANK);
   const [displayMsgP, setDisplayMsgP] = React.useState<string>(BLANK);
@@ -35,6 +36,8 @@ const HttpToast = ({
   const [apiTimeP, setApiTimeP] = React.useState<string>(
     DateTime.now().toISO()
   );
+
+  codeP;
   // hooks
 
   React.useEffect(() => {
@@ -44,6 +47,11 @@ const HttpToast = ({
     setApiTimeP(apiTime);
     setAPIUrlP(APIUrl);
     setAPIBodyP(APIBody);
+    setIsError(
+      code !== API_RESPONSE_CODE.SUCCESS_GEN &&
+        code !== API_RESPONSE_CODE.SUCCESS_CREATE &&
+        code !== API_RESPONSE_CODE.SUCCESS_UPDATE
+    );
   }, [code, displayMsg, errMsg, apiTime, APIUrl, APIBody]);
 
   React.useEffect(() => {
@@ -91,9 +99,9 @@ const HttpToast = ({
         >
           <div>{codeP}</div>
           <div>{displayMsgP}</div>
-          <div>{errMsgP}</div>
-          <div>{APIUrlP}</div>
-          {APIBodyP && (
+          {isError && <div>{errMsgP}</div>}
+          {isError && <div>{APIUrlP}</div>}
+          {isError && APIBodyP && (
             <JsonView
               style={{ width: "20%", height: "5%" }}
               displaySize={"collapsed"}

@@ -120,7 +120,7 @@ function Validate() {
       HttpCreateOneRequestBody<XModel>
     >(requestDataCreate, store, navigate);
 
-    if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+    if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS_CREATE) {
       getDataAll().then(() => {
         setReset(true);
       });
@@ -147,7 +147,7 @@ function Validate() {
       HttpUpdateOneRequestBody<XModel>
     >(requestDataCreate, store, navigate);
 
-    if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+    if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
       getDataAll().then(() => {
         setReset(true);
       });

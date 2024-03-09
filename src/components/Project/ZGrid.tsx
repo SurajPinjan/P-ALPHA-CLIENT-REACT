@@ -274,7 +274,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
         HttpUpdateOneRequestBody<ZModel>
       >(requestDataCreate, store, navigate);
 
-      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
         setPageState((old) => ({
           ...old,
           page: 0,
@@ -304,7 +304,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
         HttpCreateOneRequestBody<ZModel>
       >(requestDataCreate, store, navigate);
 
-      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS_CREATE) {
         setPageState((old) => ({
           ...old,
           page: 0,

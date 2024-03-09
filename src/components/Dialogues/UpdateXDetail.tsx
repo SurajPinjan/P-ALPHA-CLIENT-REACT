@@ -86,7 +86,7 @@ export default function UpdateXDetailDialogue(params: {
           HttpUpdateOneRequestBody<XDetailModel>
         >(requestDataCreate, store, navigate);
 
-      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
         params.onUpdate();
         setOpen(false);
       }

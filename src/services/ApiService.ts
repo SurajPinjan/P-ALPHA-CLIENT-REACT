@@ -15,7 +15,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
   store: Store<GlobalState, ActionInterface, unknown>,
   navigate: NavigateFunction
 ): Promise<T> {
-  const url: string = `http:
+  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
     import.meta.env.VITE_BACKEND_PORT
   }/app/${import.meta.env.VITE_API_VERSION}/${params.entityName}/${
     params.operation
@@ -43,7 +43,18 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
       }
     })
     .then((res: T) => {
-      if (res && res.responseCode === API_RESPONSE_CODE.SUCCESS) {
+      if (
+        res &&
+        (res.responseCode === API_RESPONSE_CODE.SUCCESS_GEN ||
+          res.responseCode === API_RESPONSE_CODE.SUCCESS_CREATE ||
+          res.responseCode === API_RESPONSE_CODE.SUCCESS_UPDATE)
+      ) {
+        if (
+          params.operation === OPERATION.CREATE_ONE ||
+          params.operation === OPERATION.UPDATE_ONE
+        ) {
+          toastDispatcher(store, JSON.stringify(params.body), url, res);
+        }
         return res;
       } else {
         if (res instanceof Object && "errorMessage" in res) {
@@ -60,7 +71,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
 export async function makeMultiPartHttpCall(
   params: HttpRequestData<FormData>
 ): Promise<HttpMultiPartResponseBody> {
-  const url: string = `http:
+  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
     import.meta.env.VITE_BACKEND_PORT
   }/app/${import.meta.env.VITE_API_VERSION}/file/${OPERATION.UPLOAD}`;
   const authToken: string | null = localStorage.getItem("token");

@@ -203,7 +203,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
         HttpUpdateOneRequestBody<MediaModel>
       >(requestDataCreate, store, navigate);
 
-      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
         setPageState((old) => ({
           ...old,
           page: 0,
@@ -233,7 +233,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
         HttpCreateOneRequestBody<MediaModel>
       >(requestDataCreate, store, navigate);
 
-      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS_CREATE) {
         setImgRw(undefined);
         setIsOpenUpload(false);
         getDataAll();

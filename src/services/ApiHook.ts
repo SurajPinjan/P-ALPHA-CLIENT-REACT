@@ -43,7 +43,11 @@ export const useHttpCall = <T extends HttpResponseBody, G>(
         const responseData: T = await response.json();
         toastDispatcher(store, JSON.stringify(params.body), url, responseData);
 
-        if (responseData.responseCode === API_RESPONSE_CODE.SUCCESS) {
+        if (
+          responseData.responseCode === API_RESPONSE_CODE.SUCCESS_GEN ||
+          responseData.responseCode === API_RESPONSE_CODE.SUCCESS_CREATE ||
+          responseData.responseCode === API_RESPONSE_CODE.SUCCESS_UPDATE
+        ) {
           setData(responseData);
         } else {
           if (

@@ -136,6 +136,7 @@ const App = () => {
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
+    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
   ];
 
   React.useEffect(() => {

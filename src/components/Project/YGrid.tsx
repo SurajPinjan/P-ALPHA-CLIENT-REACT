@@ -292,7 +292,7 @@ const YGrid: React.FC<YProps> = (props) => {
         HttpUpdateOneRequestBody<YModel>
       >(requestDataCreate, store, navigate);
 
-      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
         setPageState((old) => ({
           ...old,
           page: 0,
@@ -322,7 +322,7 @@ const YGrid: React.FC<YProps> = (props) => {
         HttpCreateOneRequestBody<YModel>
       >(requestDataCreate, store, navigate);
 
-      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS_CREATE) {
         setPageState((old) => ({
           ...old,
           page: 0,

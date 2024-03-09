@@ -212,7 +212,7 @@ function FixMediaGrid() {
         HttpUpdateOneRequestBody<MediaModel>
       >(requestDataCreate, store, navigate);
 
-      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS) {
+      if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
         setPageState((old) => ({
           ...old,
           page: 0,
