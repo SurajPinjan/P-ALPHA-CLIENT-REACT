@@ -348,7 +348,7 @@ export default function FullFeaturedCrudGrid(props: {
               imgRw.url = data.url;
             }
           }}
-          onSave={() => {}}
+          onSave={onClose}
         ></FileUpload>
       )}
       <Box

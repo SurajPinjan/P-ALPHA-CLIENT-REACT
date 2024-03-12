@@ -311,6 +311,9 @@ const ZGrid: React.FC<ZProps> = (props) => {
           pageSize: 2,
         }));
         getDataAll();
+      } else {
+        setUpdateId(-1);
+        setToUpdated(false);
       }
     },
     [getDataAll, navigate]
@@ -481,7 +484,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
               imgRw.url = data.url;
             }
           }}
-          onSave={() => {}}
+          onSave={onClose}
         ></FileUpload>
       )}
       <Box

@@ -342,6 +342,9 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
           pageSize: 2,
         }));
         getDataAll();
+      } else {
+        setUpdateId(-1);
+        setToUpdated(false);
       }
     },
     [getDataAll, navigate]
@@ -551,7 +554,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
               imgRw.url = data.url;
             }
           }}
-          onSave={() => {}}
+          onSave={onClose}
         ></FileUpload>
       )}
       <Box>

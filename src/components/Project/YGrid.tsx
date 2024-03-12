@@ -329,6 +329,9 @@ const YGrid: React.FC<YProps> = (props) => {
           pageSize: 2,
         }));
         getDataAll();
+      } else {
+        setUpdateId(-1);
+        setToUpdated(false);
       }
     },
     [getDataAll, navigate]
@@ -531,7 +534,7 @@ const YGrid: React.FC<YProps> = (props) => {
               imgRw.url = data.url;
             }
           }}
-          onSave={() => {}}
+          onSave={onClose}
         ></FileUpload>
       )}
       <Box>

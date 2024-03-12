@@ -232,6 +232,9 @@ const MediaGridFix: React.FC<MediaProps> = (props) => {
         setImgRw(undefined);
         setIsOpenUpload(false);
         getDataAll();
+      } else {
+        setUpdateId(-1);
+        setToUpdated(false);
       }
     },
     [getDataAll, navigate]
