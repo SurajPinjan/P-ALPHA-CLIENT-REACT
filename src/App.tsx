@@ -46,6 +46,7 @@ const menuItems: MenuItem[] = [
   { title: "Y With X", path: "project" },
   { title: "Media Grid", path: "media" },
   { title: "Training", path: "project_details" },
+  { title: "Role Permissions", path: "permission_manage" },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -119,7 +120,7 @@ const Drawer = styled(MuiDrawer, {
 
 const App = () => {
   // states
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [isLoggedIn] = React.useState(true);
   const [problem, setProblem] = React.useState<null | HTMLElement>(null);
 
@@ -136,6 +137,8 @@ const App = () => {
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
     () => <img src={Training} alt="bar chart" width={20} height={20} />,
+    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
+    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
     () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
   ];
 
@@ -162,14 +165,14 @@ const App = () => {
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setOpen(true);
   };
 
   const handleMenuClick = () => {
     if (isLoggedIn) {
       // setIsLoggedIn(false);
       navigate("/dashboard/home");
-      setOpen(false);
+      setOpen(true);
       setProblem(null);
     } else {
       // setIsLoggedIn(true);

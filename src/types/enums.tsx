@@ -24,6 +24,10 @@ export enum ENTITY_NAME {
   X = "x",
   Y = "y",
   Z = "z",
+  ROLE = "role",
+  DEFAULTPERMS = "defaultperms",
+  ROLEDEFAULTPERMS = "roledefaultperms",
+  PERMISSION = "permission",
   YWITHX = "yWithX",
   XDETAILWITHX = "xDetailWithX",
   XDETAIL = "xDetail",
@@ -49,6 +53,13 @@ export enum OPERATION {
 }
 
 export const BLANK = "";
+
+// permission types
+
+export enum PERMISSION_TYPES {
+  READ_ONLY = "read",
+  WRITE = "write",
+}
 
 // Roles enum
 

@@ -1,12 +1,12 @@
 import { Button } from "@mui/material";
 import React from "react";
-import pdfMake from "pdfmake/build/pdfmake";
 import {
   _JSONToPDFtransformer,
   jsonToMap,
 } from "../../services/JSONToPDFTransformer";
-// import pdfFonts from "pdfmake/build/vfs_fonts";
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import { pdfMakefonts } from "../../fonts";
+import pdfMake from "pdfmake/build/pdfmake.js";
+pdfMake.vfs = pdfMakefonts;
 
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { urlToBase64 } from "../../services/ApiService";
