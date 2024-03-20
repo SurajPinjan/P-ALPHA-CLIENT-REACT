@@ -114,7 +114,7 @@ const pdfContent = async () => {
         columns: [
           {
             image: await urlToBase64(
-              "http://localhost:3000/uploads/istockphoto-2.jpg"
+              "http://localhost:3001/uploads/istockphoto-2.jpg"
             ),
             width: 130,
             margin: [

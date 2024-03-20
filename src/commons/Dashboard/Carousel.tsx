@@ -16,17 +16,17 @@ function SwipeableTextMobileStepper(props: { baners: XView[] | undefined }) {
     HTMLImageElement
   >[] = [
     <img
-      src="http://localhost:3000/uploads/istockphoto-5.jpg"
+      src="http://localhost:3001/uploads/istockphoto-5.jpg"
       onDragStart={handleDragStart}
       role="presentation"
     />,
     <img
-      src="http://localhost:3000/uploads/istockphoto-3.jpg"
+      src="http://localhost:3001/uploads/istockphoto-3.jpg"
       onDragStart={handleDragStart}
       role="presentation"
     />,
     <img
-      src="http://localhost:3000/uploads/istockphoto-4.jpg"
+      src="http://localhost:3001/uploads/istockphoto-4.jpg"
       onDragStart={handleDragStart}
       role="presentation"
     />,

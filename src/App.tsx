@@ -29,7 +29,14 @@ import SixSigma from "../src/assets/images/sixSigma.png";
 import Problem from "../src/assets/images/solve-the-problem.svg";
 import Training from "../src/assets/images/training.svg";
 import HttpToastWithState from "./commons/Dialogues/HttpToastWithState";
-import { BLANK } from "./types/enums";
+import { BLANK, ENTITY_NAME, HTTP_METHOD, OPERATION } from "./types/enums";
+import { makeHttpCall } from "./services/ApiService";
+import store from "./services/GlobalStateService";
+import {
+  HttpRequestData,
+  HttpGetAllRequestBody,
+  HttpResponseGetAll,
+} from "./types/httpTypes";
 const drawerWidth = 200;
 
 interface MenuItem {
@@ -142,6 +149,20 @@ const App = () => {
     () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
   ];
 
+  const ping = React.useCallback(async () => {
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
+      entityName: ENTITY_NAME.AUTH,
+      method: HTTP_METHOD.POST,
+      operation: OPERATION.PING,
+    };
+
+    makeHttpCall<HttpResponseGetAll<{ empty: string }>, HttpGetAllRequestBody>(
+      requestDataAll,
+      store,
+      navigate
+    );
+  }, [navigate]);
+
   React.useEffect(() => {
     const data = [
       {
@@ -157,6 +178,10 @@ const App = () => {
     const stringifiedData = JSON.stringify(data);
     localStorage.setItem("data", stringifiedData);
   }, []);
+
+  React.useEffect(() => {
+    setInterval(ping, 60 * 1000);
+  }, [ping]);
 
   // event handlers
 

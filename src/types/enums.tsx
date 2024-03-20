@@ -9,6 +9,8 @@ export enum API_RESPONSE_CODE {
   SUCCESS_GEN = "S001",
   SUCCESS_CREATE = "S002",
   SUCCESS_UPDATE = "S003",
+  LDAP_LOGIN_SUCCESS = "S004",
+  SUCCESS_PING = "S005",
   ERROR = "ER001",
   NOT_FOUND = "ER002",
   REQUEST_INVALID = "ER003",
@@ -43,6 +45,8 @@ export enum OPERATION {
   GET_ALL = "getall",
   GET_ONE = "getone",
   UPDATE_ONE = "updateone",
+
+  PING = "ping",
 
   // AUTH
   LOGIN = "login",

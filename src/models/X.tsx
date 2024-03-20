@@ -3,6 +3,7 @@ import { DateTime } from "luxon";
 import { Model } from "./Model";
 import { View } from "./View";
 import { SELECT_VALUES } from "../types/enums";
+import { YModel, YView, getModelFromViewY, getViewFromModelY } from "./Y";
 
 export type XModel = Model & {
   columnDate: string;
@@ -19,6 +20,10 @@ export type XView = View & {
   columnSelect: SELECT_VALUES;
   columnMultiValue: string[];
 };
+
+export interface FullXModelAttributes extends XModel {
+  yList: YModel[];
+}
 
 export function getViewFromModelX(a: XModel): XView {
   return {
@@ -47,5 +52,33 @@ export function getModelFromViewX(a: XView): XModel {
     updateDate: randomCreatedDate(),
     updateBy: "B_User_ID",
     isDeleted: a.isDeleted,
+  };
+}
+
+// Full X Model
+
+export interface FullXModelAttributes extends XModel {
+  yList: YModel[];
+}
+
+export interface FullXViewAttributes extends XView {
+  yList: YView[];
+}
+
+export function getFullModelFromViewX(
+  a: FullXViewAttributes
+): FullXModelAttributes {
+  return {
+    ...getModelFromViewX(a),
+    yList: a.yList.map((y) => getModelFromViewY(y)),
+  };
+}
+
+export function getFullViewFromModelX(
+  a: FullXModelAttributes
+): FullXViewAttributes {
+  return {
+    ...getViewFromModelX(a),
+    yList: a.yList.map((y) => getViewFromModelY(y)),
   };
 }
