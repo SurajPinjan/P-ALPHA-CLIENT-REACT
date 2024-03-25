@@ -1,14 +1,6 @@
 function camelCaseToPretty(input: string): string {
-  const snakeCase = input.replace(
-    /[A-Z]/g,
-    (match) => `_${match.toLowerCase()}`
-  );
-
-  const upperCase = snakeCase.toUpperCase();
-
-  const result = upperCase.replace(/_/g, " ");
-
-  return result.replace(/\s+/g, " ").trim();
+  const result = input.replace(/([a-z])([A-Z])/g, "$1 $2");
+  return result.toUpperCase();
 }
 
 export { camelCaseToPretty };

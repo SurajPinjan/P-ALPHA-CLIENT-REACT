@@ -20,6 +20,7 @@ import "./index.css";
 import store from "./services/GlobalStateService.ts";
 import ReportGrid from "./components/Project/ReportGrid.tsx";
 import SimpleReportGrid from "./components/Project/SimpleReportGrid.tsx";
+import { UserRoleProvider } from "./contexts/userContext.tsx";
 
 const routes = [
   {
@@ -96,8 +97,10 @@ const root = document.getElementById("root")!;
 
 ReactDOM.createRoot(root).render(
   <Provider store={store}>
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
+    <UserRoleProvider>
+      <React.StrictMode>
+        <RouterProvider router={router} />
+      </React.StrictMode>
+    </UserRoleProvider>
   </Provider>
 );

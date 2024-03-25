@@ -79,7 +79,14 @@ const Login = () => {
       if (fetchData.userInfo.uid) {
         localStorage.setItem("userid", fetchData.userInfo.uid.toString());
       }
-      localStorage.setItem("userrole", fetchData.userInfo.urole);
+      localStorage.setItem("userrole", fetchData.userInfo.role_name);
+
+      if (fetchData.userInfo.permissions) {
+        localStorage.setItem(
+          "permissions",
+          JSON.stringify(fetchData.userInfo.permissions)
+        );
+      }
 
       setTimeout(() => {
         navigate("/dashboard/problem_bank");

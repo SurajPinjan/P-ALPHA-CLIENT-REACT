@@ -27,6 +27,7 @@ export enum ENTITY_NAME {
   Y = "y",
   Z = "z",
   ROLE = "role",
+  USER = "user",
   DEFAULTPERMS = "defaultperms",
   ROLEDEFAULTPERMS = "roledefaultperms",
   PERMISSION = "permission",

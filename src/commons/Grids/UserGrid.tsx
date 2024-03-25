@@ -1,19 +1,14 @@
 import CancelIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ImageIcon from "@mui/icons-material/Image";
 import SaveIcon from "@mui/icons-material/Save";
-import {
-  AppBar,
-  Box,
-  Container,
-  Stack,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
+  GridColDef,
   GridEventListener,
   GridPaginationModel,
   GridRowEditStopReasons,
@@ -22,28 +17,29 @@ import {
   GridRowModes,
   GridRowModesModel,
   GridRowParams,
-  GridRowsProp,
   GridSortModel,
   GridValidRowModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import FileUpload from "../../commons/Dialogues/FileUpload";
-import ImagePreview from "../../commons/Dialogues/ImagePreview";
+import FileUpload from "../Dialogues/FileUpload";
+import ImagePreview from "../Dialogues/ImagePreview";
+import EditToolbar from "../../components/Project/ProjectStages/EditToolbarV2";
+import { RoleModel, RoleView, getViewFromModelRole } from "../../models/Role";
 import {
-  YWithXModel,
-  YWithXView,
-  getViewFromModelYWithX,
-} from "../../models/DataTransfer/YWithX";
-import { XView } from "../../models/X";
-import { YModel, YView, getModelFromViewY } from "../../models/Y";
+  User,
+  UserView,
+  getModelFromViewUser,
+  getViewFromModelUser,
+} from "../../models/User";
 import { makeHttpCall } from "../../services/ApiService";
 import store from "../../services/GlobalStateService";
+import { camelCaseToPretty } from "../../services/textUtils";
 import {
   API_RESPONSE_CODE,
-  BLANK,
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
@@ -58,50 +54,26 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
-import { SortableGridColDef, sortGridColDef } from "../../types/types";
-import EditToolbar from "./ProjectStages/EditToolbar";
-import { useUserRole } from "../../contexts/userContext";
+import { FileInfo, GlobalState, Page } from "../../types/types";
 
-export interface Page {
-  isLoading: boolean;
-  data: GridRowsProp;
-  total: number;
-  page: number;
-  pageSize: number;
-}
-
-interface YProps {
+interface UserProps {
   isCompare?: boolean;
   saveHandler?: (newData: GridValidRowModel) => void;
   updateHandler?: (editData: GridValidRowModel) => void;
-  saveData: YView;
-  xOptions: XView[];
 }
 
-const YGrid: React.FC<YProps> = (props) => {
+const UserGrid = (props: UserProps & { sidePannelExpand?: boolean }) => {
   // constants
-  const navigate = useNavigate();
-  const userRole = useUserRole();
-  const columns: SortableGridColDef[] = [];
-  columns.push({
-    field: "columnText",
-    headerName: "Text",
-    width: 240,
-    editable: true,
-    order: 0,
-  });
+  const columns = [];
 
   columns.push({
-    field: "x_columnDate",
-    headerName: "Date",
+    field: "username",
+    headerName: "User Name",
     width: 240,
-    type: "date",
-    editable: false,
-    order: 1,
+    editable: true,
   });
 
   // states
-  const [sorts, setSorts] = React.useState<GridSortModel>([]);
   const [pageState, setPageState] = useState<Page>({
     isLoading: false,
     data: [],
@@ -109,6 +81,7 @@ const YGrid: React.FC<YProps> = (props) => {
     page: 0,
     pageSize: 2,
   });
+  const [roles, setRoles] = useState<RoleView[]>([]);
   // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpenUpload, setIsOpenUpload] = React.useState(false);
@@ -119,41 +92,32 @@ const YGrid: React.FC<YProps> = (props) => {
 
   const [isCompare] = React.useState(props.isCompare);
   const [imgRw, setImgRw] = React.useState<GridValidRowModel | undefined>();
-  const [hasAttachment] = React.useState(true);
+  const [hasAttachment] = React.useState(false);
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [savedId, setSavedId] = React.useState<GridRowId>(-1);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
-  const [saveData, setSaveData] = React.useState<YView>({
-    isDeleted: false,
-    isNew: false,
-    columnText: BLANK,
-    x_id: 0,
-    uid: undefined,
-  });
-  const [tableTitle] = React.useState("Y");
+  const [sorts, setSorts] = React.useState<GridSortModel>([]);
+  const [buttonTitle] = React.useState("Add User");
+  const [tableTitle] = React.useState("Users");
 
-  const [xOptions, setXOptions] = React.useState<XView[]>([]);
+  // param states
 
-  // constants
-  const columnsDetails: SortableGridColDef[] = [...columns];
-
-  columnsDetails.push({
-    order: -1,
-    field: "x_id",
-    headerName: "X Entity FK",
-    width: 240,
+  columns.push({
+    field: "role_id",
+    headerName: "Roles",
+    width: 140,
     type: "singleSelect",
     editable: true,
     valueOptions: [
-      ...xOptions.map((x: XView) => {
-        return { value: x.uid, label: x.columnUText };
+      ...roles.map((x: RoleView) => {
+        return { value: x.uid, label: camelCaseToPretty(x.role_name) };
       }),
     ],
     valueFormatter: ({ value }: GridValueFormatterParams<number>) => {
-      for (let index = 0; index < xOptions.length; index++) {
-        const option: XView = xOptions[index];
+      for (let index = 0; index < roles.length; index++) {
+        const option: RoleView = roles[index];
         if (option.uid && option.uid === value) {
-          return option.columnUText;
+          return camelCaseToPretty(option.role_name);
         }
       }
 
@@ -161,15 +125,39 @@ const YGrid: React.FC<YProps> = (props) => {
     },
   });
 
+  // constants
+  const columnsDetails: GridColDef[] = [...columns];
+
   if (hasAttachment) {
     columnsDetails.push({
-      order: 3,
-      field: "x_url",
+      field: "url",
       headerName: "Url",
       type: "actions",
       width: 100,
       cellClassName: "attachment",
       getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<FileUploadIcon />}
+              label="Upload"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={() => {
+                setImgRw(undefined);
+                setTimeout(() => {
+                  const dat = findById(id);
+                  setImgRw(dat);
+                  setIsOpenUpload(true);
+                }, 200);
+              }}
+            />,
+          ];
+        }
+
         return [
           <GridActionsCellItem
             icon={<ImageIcon />}
@@ -190,55 +178,56 @@ const YGrid: React.FC<YProps> = (props) => {
     });
   }
 
-  const isY = userRole.permissions.findIndex((p) => p.permission === "Y");
-  if (isY !== -1)
-    columnsDetails.push({
-      order: 4,
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+  columnsDetails.push({
+    field: "actions",
+    type: "actions",
+    headerName: "Actions",
+    width: 100,
+    cellClassName: "actions",
+    getActions: ({ id }) => {
+      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
+      if (isInEditMode) {
         return [
           <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
+            icon={<SaveIcon />}
+            label="Save"
+            sx={{
+              color: "primary.main",
+            }}
+            onClick={handleSaveClick(id)}
           />,
           <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
+            icon={<CancelIcon />}
+            label="Cancel"
+            className="textPrimary"
+            onClick={handleCancelClick(id)}
             color="inherit"
           />,
         ];
-      },
-    });
+      }
+
+      return [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          className="textPrimary"
+          onClick={handleEditClick(id)}
+          color="inherit"
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={handleDeleteClick(id)}
+          color="inherit"
+        />,
+      ];
+    },
+  });
+
+  // 3rd party hooks
+
+  const navigate = useNavigate();
 
   //   data operations
   const getDataAll = useCallback(async () => {
@@ -246,7 +235,7 @@ const YGrid: React.FC<YProps> = (props) => {
     const filterArray: Filter[] = [];
 
     const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
-      entityName: ENTITY_NAME.YWITHX,
+      entityName: ENTITY_NAME.USER,
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
       body: {
@@ -256,15 +245,16 @@ const YGrid: React.FC<YProps> = (props) => {
         pageNumber: pageState.page,
       },
     };
+    console.log("requestDataAll in user== ", requestDataAll);
 
-    const fetchData: HttpResponseGetAll<YWithXModel> = await makeHttpCall<
-      HttpResponseGetAll<YWithXModel>,
+    const fetchData: HttpResponseGetAll<User> = await makeHttpCall<
+      HttpResponseGetAll<User>,
       HttpGetAllRequestBody
     >(requestDataAll, store, navigate);
 
-    const dat: YWithXView[] = fetchData.data
-      ? fetchData.data.map((row: YWithXModel) => {
-          const data: YWithXView = getViewFromModelYWithX(row);
+    const dat: UserView[] = fetchData.data
+      ? fetchData.data.map((row: User) => {
+          const data: UserView = getViewFromModelUser(row);
           return data;
         })
       : [];
@@ -278,21 +268,20 @@ const YGrid: React.FC<YProps> = (props) => {
   }, [navigate, pageState.page, pageState.pageSize, sorts]);
 
   const updateData = useCallback(
-    async (viewData: YView) => {
-      const requestDataCreate: HttpRequestData<
-        HttpUpdateOneRequestBody<YModel>
-      > = {
-        entityName: ENTITY_NAME.Y,
-        method: HTTP_METHOD.POST,
-        operation: OPERATION.UPDATE_ONE,
-        body: {
-          data: getModelFromViewY(viewData),
-        },
-      };
+    async (viewData: UserView) => {
+      const requestDataCreate: HttpRequestData<HttpUpdateOneRequestBody<User>> =
+        {
+          entityName: ENTITY_NAME.USER,
+          method: HTTP_METHOD.POST,
+          operation: OPERATION.UPDATE_ONE,
+          body: {
+            data: getModelFromViewUser(viewData),
+          },
+        };
 
-      const updatedData: HttpResponseUpdateOne<YModel> = await makeHttpCall<
-        HttpResponseUpdateOne<YModel>,
-        HttpUpdateOneRequestBody<YModel>
+      const updatedData: HttpResponseUpdateOne<User> = await makeHttpCall<
+        HttpResponseUpdateOne<User>,
+        HttpUpdateOneRequestBody<User>
       >(requestDataCreate, store, navigate);
 
       if (updatedData.responseCode == API_RESPONSE_CODE.SUCCESS_UPDATE) {
@@ -308,21 +297,20 @@ const YGrid: React.FC<YProps> = (props) => {
   );
 
   const createData = useCallback(
-    async (viewData: YView) => {
-      const requestDataCreate: HttpRequestData<
-        HttpCreateOneRequestBody<YModel>
-      > = {
-        entityName: ENTITY_NAME.Y,
-        method: HTTP_METHOD.POST,
-        operation: OPERATION.CREATE_ONE,
-        body: {
-          data: getModelFromViewY(viewData),
-        },
-      };
+    async (viewData: UserView) => {
+      const requestDataCreate: HttpRequestData<HttpCreateOneRequestBody<User>> =
+        {
+          entityName: ENTITY_NAME.USER,
+          method: HTTP_METHOD.POST,
+          operation: OPERATION.CREATE_ONE,
+          body: {
+            data: getModelFromViewUser(viewData),
+          },
+        };
 
-      const createdData: HttpResponseCreateOne<YModel> = await makeHttpCall<
-        HttpResponseCreateOne<YModel>,
-        HttpCreateOneRequestBody<YModel>
+      const createdData: HttpResponseCreateOne<User> = await makeHttpCall<
+        HttpResponseCreateOne<User>,
+        HttpCreateOneRequestBody<User>
       >(requestDataCreate, store, navigate);
 
       if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS_CREATE) {
@@ -333,15 +321,42 @@ const YGrid: React.FC<YProps> = (props) => {
         }));
         getDataAll();
       } else {
-        setUpdateId(-1);
-        setToUpdated(false);
+        getDataAll();
       }
     },
     [getDataAll, navigate]
   );
 
-  // anonymous functions
+  const getDataAllRole = useCallback(async () => {
+    setPageState((old) => ({ ...old, isLoading: true }));
+    const filterArray: Filter[] = [];
 
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
+      entityName: ENTITY_NAME.ROLE,
+      method: HTTP_METHOD.POST,
+      operation: OPERATION.GET_ALL,
+      body: {
+        filters: filterArray,
+        sorts: sorts,
+      },
+    };
+
+    const fetchData: HttpResponseGetAll<RoleModel> = await makeHttpCall<
+      HttpResponseGetAll<RoleModel>,
+      HttpGetAllRequestBody
+    >(requestDataAll, store, navigate);
+
+    const dat: RoleView[] = fetchData.data
+      ? fetchData.data.map((row: RoleModel) => {
+          const data: RoleView = getViewFromModelRole(row);
+          return data;
+        })
+      : [];
+
+    setRoles(dat);
+  }, [navigate, sorts]);
+
+  // anonymous functions
   const findById = useCallback(
     (id: GridRowId): GridValidRowModel | undefined => {
       for (let index = 0; index < pageState.data.length; index++) {
@@ -354,7 +369,6 @@ const YGrid: React.FC<YProps> = (props) => {
     },
     [pageState.data]
   );
-
   // event handlers
 
   const onClose = () => {
@@ -362,28 +376,15 @@ const YGrid: React.FC<YProps> = (props) => {
     setIsOpenUpload(false);
   };
 
-  const handleSortModelChange = (newSortModel: GridSortModel) => {
-    setSorts(_.cloneDeep(newSortModel));
-  };
-
   //   hooks
-
-  useEffect(() => {
-    setSavedId(1);
-    setSaveData((old) => ({
-      ...old,
-      columnText: props.saveData.columnText,
-      x_id: props.saveData.x_id,
-    }));
-  }, [props.saveData, props.saveData.columnText]);
 
   useEffect(() => {
     getDataAll();
   }, [getDataAll, pageState.page, pageState.pageSize]);
 
   useEffect(() => {
-    setXOptions(props.xOptions);
-  }, [getDataAll, props.xOptions]);
+    getDataAllRole();
+  }, [getDataAllRole]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
@@ -394,21 +395,15 @@ const YGrid: React.FC<YProps> = (props) => {
       savedId != -1
     ) {
       createData({
-        columnText: entityFound.columnText,
+        username: entityFound.username,
+        password: "Password123",
+        role_id: entityFound.role_id,
         isDeleted: false,
-        x_id: entityFound.x_id,
         isNew: entityFound.isNew,
       });
       // props.saveHandler(entityFound);
     }
   }, [createData, findById, props, savedId]);
-
-  React.useEffect(() => {
-    if (savedId != -1 && saveData.columnText !== BLANK && saveData.x_id !== 0) {
-      setSavedId(-1);
-      createData(saveData);
-    }
-  }, [createData, saveData, savedId]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(updateId);
@@ -425,8 +420,9 @@ const YGrid: React.FC<YProps> = (props) => {
       setToUpdated(false);
       updateData({
         uid: entityFound.uid,
-        x_id: entityFound.x_id,
-        columnText: entityFound.columnText,
+        username: entityFound.username,
+        password: entityFound.password,
+        role_id: entityFound.role_id,
         isDeleted: entityFound.isDeleted == 0 ? false : true,
         isNew: entityFound.isNew,
       });
@@ -477,6 +473,10 @@ const YGrid: React.FC<YProps> = (props) => {
     setRowModesModel(newRowModesModel);
   };
 
+  const handleSortModelChange = (newSortModel: GridSortModel) => {
+    setSorts(_.cloneDeep(newSortModel));
+  };
+
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
     event
@@ -487,7 +487,7 @@ const YGrid: React.FC<YProps> = (props) => {
   };
 
   const handleRowClick: GridEventListener<"rowClick"> = (
-    params: GridRowParams<YView>,
+    params: GridRowParams<UserView>,
     event
   ) => {
     console.log(event.isTrusted);
@@ -523,34 +523,38 @@ const YGrid: React.FC<YProps> = (props) => {
           urlExisting={imgRw.url}
           isOpen={isOpenUpload}
           onClose={onClose}
-          onUpload={(
-            data:
-              | {
-                  url: string;
-                  filesize: number;
-                  filetype: string;
-                  filename: string;
-                }
-              | undefined
-          ) => {
+          onUpload={(data: FileInfo | undefined) => {
             if (imgRw && data) {
               imgRw.url = data.url;
             }
           }}
-          onSave={onClose}
+          onSave={() => {}}
         ></FileUpload>
       )}
-      <Box>
-        <AppBar>
-          <Toolbar>
-            <Typography variant="h6" component="div">
-              Y Grid
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Container style={{ marginTop: 100, marginBottom: 100 }}>
+      <Box
+        sx={{
+          height: "auto",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
+        }}
+      >
+        <div
+          style={{
+            width: props.sidePannelExpand
+              ? `calc(100vw - 37rem)`
+              : `calc(-26.6rem + 100vw)`,
+            overflow: "auto",
+          }}
+        >
           <DataGrid
-            sx={{ border: "none", padding: "15px" }}
+            sx={{ border: "none", padding: "5px", overflow: "auto" }}
             autoHeight
             editMode="row"
             rowModesModel={rowModesModel}
@@ -575,7 +579,7 @@ const YGrid: React.FC<YProps> = (props) => {
               page: pageState.page,
             }}
             paginationMode="server"
-            columns={columnsDetails.sort(sortGridColDef)}
+            columns={columnsDetails}
             slots={{
               toolbar: EditToolbar,
               noRowsOverlay: () => (
@@ -602,16 +606,21 @@ const YGrid: React.FC<YProps> = (props) => {
                 setPageState,
                 setRowModesModel,
                 tableTitle,
-                columnList: [],
+                buttonTitle,
               },
             }}
             sortingMode="server"
             onSortModelChange={handleSortModelChange}
           />
-        </Container>
+        </div>
       </Box>
     </>
   );
 };
 
-export default YGrid;
+const mapStateToProps = (state: GlobalState) => ({
+  selectUId: state.selectUId,
+});
+
+const UserGridWithState = connect(mapStateToProps)(UserGrid);
+export default UserGridWithState;
