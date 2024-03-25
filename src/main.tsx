@@ -20,7 +20,7 @@ import "./index.css";
 import store from "./services/GlobalStateService.ts";
 import ReportGrid from "./components/Project/ReportGrid.tsx";
 import SimpleReportGrid from "./components/Project/SimpleReportGrid.tsx";
-import { UserRoleProvider } from "./contexts/userContext.tsx";
+import { UserRoleProvider } from "./contexts/userContextProvider.tsx";
 
 const routes = [
   {
