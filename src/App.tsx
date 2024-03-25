@@ -54,6 +54,8 @@ const menuItems: MenuItem[] = [
   { title: "Media Grid", path: "media" },
   { title: "Training", path: "project_details" },
   { title: "Role Permissions", path: "permission_manage" },
+  { title: "Report", path: "reporting" },
+  { title: "Simple Report", path: "simple_reporting" },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -137,17 +139,21 @@ const App = () => {
 
   // non state variables
   const openMenuProblem = Boolean(problem);
-  const menus: React.ComponentType<HTMLImageElement>[] = [
-    () => <img src={Problem} alt="bar chart" width={20} height={20} />,
-    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
-    () => <img src={Training} alt="bar chart" width={20} height={20} />,
-    () => <img src={Training} alt="bar chart" width={20} height={20} />,
-    () => <img src={Training} alt="bar chart" width={20} height={20} />,
-    () => <img src={Training} alt="bar chart" width={20} height={20} />,
-    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
-    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
-    () => <img src={SixSigma} alt="bar chart" width={20} height={20} />,
-  ];
+  const menus: React.ComponentType<HTMLImageElement>[] = [];
+
+  const images = [Problem, SixSigma, Training];
+
+  for (let i = 0; i < 5; i++) {
+    menus.push(() => (
+      <img src={images[i]} alt="bar chart" width={20} height={20} />
+    ));
+  }
+
+  for (let i = 0; i < 6; i++) {
+    menus.push(() => (
+      <img src={SixSigma} alt="bar chart" width={20} height={20} />
+    ));
+  }
 
   const ping = React.useCallback(async () => {
     const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
@@ -180,7 +186,7 @@ const App = () => {
   }, []);
 
   React.useEffect(() => {
-    setInterval(ping, 60 * 1000);
+    setInterval(ping, 5 * 60 * 1000);
   }, [ping]);
 
   // event handlers

@@ -30,6 +30,7 @@ export enum ENTITY_NAME {
   DEFAULTPERMS = "defaultperms",
   ROLEDEFAULTPERMS = "roledefaultperms",
   PERMISSION = "permission",
+  REPORT = "report",
   YWITHX = "yWithX",
   XDETAILWITHX = "xDetailWithX",
   XDETAIL = "xDetail",

@@ -14,14 +14,21 @@ import ProjectDetails from "./components/Project/ProjectDetails.tsx";
 import YGridWrapper from "./components/Project/YPage.tsx";
 import ZGridWrapper from "./components/Project/ZPage.tsx";
 import RolePermissions from "./components/RolePermissions.tsx";
+import SessionTimeout from "./components/SessionExpire.tsx";
 import Training from "./components/Training/Training.tsx";
 import "./index.css";
 import store from "./services/GlobalStateService.ts";
+import ReportGrid from "./components/Project/ReportGrid.tsx";
+import SimpleReportGrid from "./components/Project/SimpleReportGrid.tsx";
 
 const routes = [
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/session_timeout",
+    element: <SessionTimeout />,
   },
   {
     path: "/dashboard",
@@ -70,6 +77,14 @@ const routes = [
       {
         path: "permission_manage",
         element: <RolePermissions />,
+      },
+      {
+        path: "reporting",
+        element: <ReportGrid />,
+      },
+      {
+        path: "simple_reporting",
+        element: <SimpleReportGrid />,
       },
     ],
   },

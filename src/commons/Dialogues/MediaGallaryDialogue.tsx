@@ -21,11 +21,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function MediaGallary(params: {
   url: string | undefined;
   isOpen: boolean;
+  addTag?: boolean;
   compare?: boolean;
   onClose: () => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [fullWidth] = React.useState(true);
+  const [addTag, setAddTag] = React.useState(false);
   const [maxWidth] = React.useState<DialogProps["maxWidth"]>("md");
   const handleClose = () => {
     setOpen(false);
@@ -35,6 +37,10 @@ export default function MediaGallary(params: {
   React.useEffect(() => {
     if (params.isOpen) setOpen(true);
   }, [params.isOpen]);
+
+  React.useEffect(() => {
+    if (params.addTag) setAddTag(params.addTag);
+  }, [params.addTag]);
 
   return (
     <React.Fragment>
@@ -61,7 +67,7 @@ export default function MediaGallary(params: {
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
-          <MediaGrid></MediaGrid>
+          <MediaGrid addTag={addTag}></MediaGrid>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>

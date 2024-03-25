@@ -72,7 +72,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
           toastDispatcher(store, JSON.stringify(params.body), url, res);
           if (res.responseCode === API_RESPONSE_CODE.ERROR_INVALID_TOKEN) {
             console.log("DEBUG-POINT- #11");
-            navigate("/");
+            navigate("/session_timeout");
           }
         }
         return res;

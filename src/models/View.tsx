@@ -5,3 +5,7 @@ export type View = GridValidRowModel & {
   isNew: boolean;
   isDeleted: boolean;
 };
+
+export type ReportView = GridValidRowModel & {
+  uid?: number;
+};

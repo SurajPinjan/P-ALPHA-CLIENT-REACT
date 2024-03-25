@@ -1,13 +1,23 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
+import SaveIcon from "@mui/icons-material/Save";
+import EditIcon from "@mui/icons-material/Edit";
+import CancelIcon from "@mui/icons-material/Close";
+
 import { Box, Container, Stack } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
   GridPaginationModel,
   GridRowId,
+  GridRowModes,
   GridSortModel,
   GridValidRowModel,
+  GridRowModesModel,
+  GridRowEditStopReasons,
+  GridEventListener,
+  GridRowParams,
+  GridRowModel,
 } from "@mui/x-data-grid";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -43,6 +53,7 @@ import MediaToolbar from "./MediaToolbar";
 
 interface MediaProps {
   isCompare?: boolean;
+  addTag?: boolean;
   saveHandler?: (newData: GridValidRowModel) => void;
   updateHandler?: (editData: GridValidRowModel) => void;
 }
@@ -50,15 +61,30 @@ interface MediaProps {
 const MediaGrid: React.FC<MediaProps> = (props) => {
   // constants
   const navigate = useNavigate();
+  const [addTag, setAddTag] = React.useState(false);
   const columns: SortableGridColDef[] = [];
+  const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
+  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
+    {}
+  );
 
-  columns.push({
-    order: 0,
-    field: "filename",
-    headerName: "File Name",
-    width: 240,
-    editable: false,
-  });
+  if (addTag) {
+    columns.push({
+      order: 0,
+      field: "tag",
+      headerName: "Tag",
+      width: 180,
+      editable: true,
+    });
+  } else {
+    columns.push({
+      order: 0,
+      field: "filename",
+      headerName: "File Name",
+      width: 240,
+      editable: false,
+    });
+  }
 
   columns.push({
     order: 1,
@@ -94,7 +120,6 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   const [isCompare] = React.useState(props.isCompare);
   const [imgRw, setImgRw] = React.useState<GridValidRowModel | undefined>();
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
-  const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
   const [tableTitle] = React.useState("Media Gallary");
   const [buttonTitle] = React.useState("Add File");
   // constants
@@ -130,9 +155,9 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
 
   columnsDetails.push({
     order: 4,
-    field: "actions",
+    field: "delete",
     type: "actions",
-    headerName: "Actions",
+    headerName: "Delete",
     editable: false,
     width: 100,
     cellClassName: "actions",
@@ -147,6 +172,50 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
       ];
     },
   });
+
+  if (addTag) {
+    columnsDetails.push({
+      order: 4,
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 100,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+        ];
+      },
+    });
+  }
 
   //   data operations
   const getDataAll = useCallback(async () => {
@@ -272,6 +341,9 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
   };
 
   //   hooks
+  React.useEffect(() => {
+    if (props.addTag) setAddTag(props.addTag);
+  }, [props.addTag]);
 
   useEffect(() => {
     if (isOpenUpload) setImgRw({});
@@ -296,6 +368,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
       setToUpdated(false);
       updateData({
         uid: entityFound.uid,
+        tag: entityFound.tag,
         filename: entityFound.filename,
         filesize: entityFound.filesize,
         fileurl: entityFound.fileurl,
@@ -309,10 +382,72 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
     }
   }, [findById, props, toDeleted, toUpdated, updateData, updateId]);
 
+  const handleSaveClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+
+    setTimeout(() => {
+      setUpdateId(id);
+    }, 500);
+  };
+
+  const handleCancelClick = (id: GridRowId) => () => {
+    setToUpdated(false);
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = pageState.data.find((row) => row.id === id);
+    if (editedRow!.isNew) {
+      setPageState((old) => ({
+        ...old,
+        data: pageState.data.filter((row) => row.id !== id),
+      }));
+    }
+  };
+
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    setToUpdated(true);
+  };
+
   const handleDeleteClick = (id: GridRowId) => () => {
     setToUpdated(true);
     setToDeleted(true);
     setUpdateId(id);
+  };
+
+  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event
+  ) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const handleRowClick: GridEventListener<"rowClick"> = (
+    params: GridRowParams<MediaView>,
+    event
+  ) => {
+    console.log(event.isTrusted);
+    const selectedRowData = params.row;
+    if (params.row) {
+      console.log("Clicked row:", selectedRowData);
+    }
+  };
+
+  const processRowUpdate = (newRow: GridRowModel) => {
+    const updatedRow = { ...newRow, isNew: false };
+    setPageState((old) => ({
+      ...old,
+      data: old.data.map((row) => (row.id === newRow.id ? updatedRow : row)),
+    }));
+    return updatedRow;
   };
 
   const handleSave = (
@@ -346,6 +481,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
         filesize: imgRw.filesize,
         fileurl: imgRw.fileurl,
         filetype: imgRw.filetype,
+        tag: addTag ? "-Give Tag-" : undefined,
         entityId: -1,
         entityType: ENTITY_NAME.X,
         isDeleted: false,
@@ -381,6 +517,11 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
             sx={{ border: "none", padding: "15px" }}
             autoHeight
             editMode="row"
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            onRowEditStop={handleRowEditStop}
+            onRowClick={handleRowClick}
+            processRowUpdate={processRowUpdate}
             rows={pageState.data}
             rowCount={pageState.total}
             loading={pageState.isLoading}

@@ -39,6 +39,7 @@ const MediaGridWrapper: React.FC<MediaGridWrapperProps> = () => {
   return (
     <>
       <MediaGallary
+        addTag={true}
         url={entityId.toString()}
         isOpen={isOpen}
         onClose={onClose}

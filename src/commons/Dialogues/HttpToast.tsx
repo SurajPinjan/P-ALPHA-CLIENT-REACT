@@ -101,7 +101,7 @@ const HttpToast = ({
           <div>{displayMsgP}</div>
           {isError && <div>{errMsgP}</div>}
           {isError && <div>{APIUrlP}</div>}
-          {isError && APIBodyP && (
+          {APIBodyP && (
             <JsonView
               style={{ width: "20%", height: "5%" }}
               displaySize={"collapsed"}
