@@ -33,7 +33,11 @@ const routes = [
   },
   {
     path: "/dashboard",
-    element: <App />,
+    element: (
+      <UserRoleProvider>
+        <App />
+      </UserRoleProvider>
+    ),
     children: [
       {
         path: "home",
@@ -97,10 +101,8 @@ const root = document.getElementById("root")!;
 
 ReactDOM.createRoot(root).render(
   <Provider store={store}>
-    <UserRoleProvider>
-      <React.StrictMode>
-        <RouterProvider router={router} />
-      </React.StrictMode>
-    </UserRoleProvider>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
   </Provider>
 );
