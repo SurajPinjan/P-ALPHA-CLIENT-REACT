@@ -25,9 +25,11 @@ import Admin from "./Project";
 import store from "../../services/GlobalStateService";
 import { useNavigate } from "react-router-dom";
 
-interface AdminWrapperProps {}
+interface AdminWrapperProps {
+  udpateSwitch?: () => void;
+}
 
-const AdminWrapper: React.FC<AdminWrapperProps> = () => {
+const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
   // constants
   const navigate = useNavigate();
   // states
@@ -133,7 +135,7 @@ const AdminWrapper: React.FC<AdminWrapperProps> = () => {
         </CardContent>
       </Card>
 
-      <Admin filters={filters}></Admin>
+      <Admin filters={filters} udpateSwitch={props.udpateSwitch}></Admin>
     </>
   );
 };

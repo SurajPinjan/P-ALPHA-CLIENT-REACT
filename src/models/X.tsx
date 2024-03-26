@@ -9,6 +9,7 @@ export type XModel = Model & {
   columnDate: string;
   url: string;
   columnUText: string;
+  columnNumber: number;
   columnSelect: SELECT_VALUES;
   columnMultiValue: string;
 };
@@ -17,6 +18,7 @@ export type XView = View & {
   columnDate: Date;
   url: string;
   columnUText: string;
+  columnNumber: number;
   columnSelect: SELECT_VALUES;
   columnMultiValue: string[];
 };
@@ -30,6 +32,7 @@ export function getViewFromModelX(a: XModel): XView {
     id: randomId(),
     uid: a.uid,
     url: a.url,
+    columnNumber: a.columnNumber,
     columnSelect: a.columnSelect,
     columnUText: a.columnUText,
     columnDate: DateTime.fromMillis(parseInt(a.columnDate)).toJSDate(),
@@ -44,6 +47,7 @@ export function getModelFromViewX(a: XView): XModel {
     uid: a.uid,
     columnDate: DateTime.fromJSDate(a.columnDate).toMillis().toString(),
     url: a.url,
+    columnNumber: a.columnNumber,
     columnUText: a.columnUText,
     columnSelect: a.columnSelect,
     columnMultiValue: JSON.stringify(a.columnMultiValue),

@@ -85,6 +85,7 @@ interface AdminProps {
   saveHandler?: (newData: GridValidRowModel) => void;
   updateHandler?: (editData: GridValidRowModel) => void;
   filters: MasterView;
+  udpateSwitch?: () => void;
 }
 
 const optionsList: string[] = ["A", "B", "C", "AD"];
@@ -187,6 +188,15 @@ const Admin: React.FC<AdminProps> = (props) => {
     headerName: "Unique Text",
     width: 240,
     editable: true,
+  });
+
+  columns.push({
+    field: "columnNumber",
+    headerName: "Column Number",
+    width: 240,
+    type: "number",
+    editable: true,
+    order: 0,
   });
 
   columns.push({
@@ -473,9 +483,11 @@ const Admin: React.FC<AdminProps> = (props) => {
           pageSize: 2,
         }));
         getDataAll();
+
+        if (props.udpateSwitch) props.udpateSwitch();
       }
     },
-    [getDataAll, navigate]
+    [getDataAll, navigate, props]
   );
 
   const createData = useCallback(
@@ -503,12 +515,13 @@ const Admin: React.FC<AdminProps> = (props) => {
           pageSize: 2,
         }));
         getDataAll();
+        if (props.udpateSwitch) props.udpateSwitch();
       } else {
         setUpdateId(-1);
         setToUpdated(false);
       }
     },
-    [getDataAll, navigate]
+    [getDataAll, navigate, props]
   );
 
   const findById = useCallback(
@@ -546,6 +559,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     if (entityFound && savedId != -1) {
       createData({
         columnDate: entityFound.columnDate,
+        columnNumber: entityFound.columnNumber,
         columnSelect: entityFound.columnSelect,
         columnUText: entityFound.columnUText,
         columnMultiValue: entityFound.columnMultiValue,
@@ -567,6 +581,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       updateData({
         uid: entityFound.uid,
         url: entityFound.url,
+        columnNumber: entityFound.columnNumber,
         columnUText: entityFound.columnUText,
         columnMultiValue: entityFound.columnMultiValue,
         columnSelect: entityFound.columnSelect,

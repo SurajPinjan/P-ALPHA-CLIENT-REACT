@@ -62,7 +62,7 @@ const SessionTimeout = () => {
                 justifyContent={"center"}
                 marginBottom={1}
               >
-                <h4>SESSION TIMEOUT</h4>
+                <h4>SESSION EXPIRED</h4>
               </Box>
               <Box
                 width={"100%"}
