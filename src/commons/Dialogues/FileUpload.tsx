@@ -26,6 +26,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function FileUpload(params: {
   urlExisting: string | undefined;
+  existingFileType: string | undefined;
   onUpload: (data: {
     url: string;
     filesize: number;
@@ -40,11 +41,15 @@ export default function FileUpload(params: {
   const [fullWidth] = React.useState(true);
   const [maxWidth] = React.useState<DialogProps["maxWidth"]>("md");
   const [url, setUrl] = React.useState<string | undefined>(params.urlExisting);
+  const [fileType, setFileType] = React.useState<string | undefined>(
+    params.existingFileType
+  );
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
   const handleClose = () => {
     setOpen(false);
     setUrl(undefined);
+    setFileType(undefined);
     params.onClose();
   };
 
@@ -58,10 +63,55 @@ export default function FileUpload(params: {
 
   const uploadFile = async () => {
     if (selectedFile != null) {
+      if (
+        selectedFile.type === "video/mp4" ||
+        selectedFile.type === "video/quicktime"
+      ) {
+        const requestDataUpdateOne: HttpRequestData<FormData> = {
+          entityName: ENTITY_NAME.FILE,
+          method: HTTP_METHOD.POST,
+          operation: OPERATION.UPLOAD,
+          body: new FormData(),
+        };
+
+        requestDataUpdateOne.body?.append("file", selectedFile);
+        const data: HttpMultiPartResponseBody = await makeMultiPartHttpCall(
+          requestDataUpdateOne
+        );
+        setUrl(data.url);
+        setFileType(selectedFile.type);
+        params.onUpload({
+          filename: selectedFile.name,
+          filesize: selectedFile.size,
+          filetype: selectedFile.type,
+          url: data.url,
+        });
+      }
+      if (selectedFile.type === "application/pdf") {
+        const requestDataUpdateOne: HttpRequestData<FormData> = {
+          entityName: ENTITY_NAME.FILE,
+          method: HTTP_METHOD.POST,
+          operation: OPERATION.UPLOAD,
+          body: new FormData(),
+        };
+
+        requestDataUpdateOne.body?.append("file", selectedFile);
+        const data: HttpMultiPartResponseBody = await makeMultiPartHttpCall(
+          requestDataUpdateOne
+        );
+        setUrl(data.url);
+        setFileType(selectedFile.type);
+        params.onUpload({
+          filename: selectedFile.name,
+          filesize: selectedFile.size,
+          filetype: selectedFile.type,
+          url: data.url,
+        });
+      }
       const image: string = URL.createObjectURL(selectedFile);
+
       const img = new Image();
       img.onload = async () => {
-        // if (img.width === 2 * img.height) {
         if (img) {
           const requestDataUpdateOne: HttpRequestData<FormData> = {
             entityName: ENTITY_NAME.FILE,
@@ -69,12 +119,12 @@ export default function FileUpload(params: {
             operation: OPERATION.UPLOAD,
             body: new FormData(),
           };
-
           requestDataUpdateOne.body?.append("file", selectedFile);
           const data: HttpMultiPartResponseBody = await makeMultiPartHttpCall(
             requestDataUpdateOne
           );
           setUrl(data.url);
+          setFileType(selectedFile.type);
           params.onUpload({
             filename: selectedFile.name,
             filesize: selectedFile.size,
@@ -119,13 +169,24 @@ export default function FileUpload(params: {
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
-          <CardMedia component="img" height="140" image={url} />
+          {(typeof fileType === "undefined" || fileType.includes("image")) && (
+            <CardMedia component="img" height="140" image={url} />
+          )}
+          {fileType && !fileType.includes("image") && (
+            <iframe
+              src={url}
+              width={440 * 2}
+              height={200 * 2}
+              allow="autoplay"
+            ></iframe>
+          )}
+
           <CardContent>
             <Typography style={{ textAlign: "right" }}>
               <input
                 id="file-input-1"
                 type="file"
-                accept=".png, .jpg, .jpeg"
+                accept=".png, .jpg, .jpeg, .pdf, .mp4, .mov"
                 onChange={(e) => handleFileInputChange(e.target.files)}
               />
               <button

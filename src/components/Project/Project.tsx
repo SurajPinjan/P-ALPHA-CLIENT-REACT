@@ -687,6 +687,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       {imgRw && (
         <ImagePreview
           url={imgRw.url}
+          type={imgRw.filetype}
           isOpen={isOpen}
           compare={isCompare}
           onClose={onClose}
@@ -695,6 +696,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.url}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={(

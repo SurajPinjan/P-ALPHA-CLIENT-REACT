@@ -530,6 +530,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
       {imgRw && (
         <ImagePreview
           url={imgRw.url}
+          type={imgRw.filetype}
           isOpen={isOpen}
           compare={isCompare}
           onClose={onClose}
@@ -538,6 +539,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.url}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={(

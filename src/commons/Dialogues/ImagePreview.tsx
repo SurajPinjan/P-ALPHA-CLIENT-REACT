@@ -22,6 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function ImagePreview(params: {
   url: string | undefined;
+  type: string | undefined;
   isOpen: boolean;
   compare?: boolean;
   onClose: () => void;
@@ -30,6 +31,7 @@ export default function ImagePreview(params: {
   const [compare] = React.useState(params.compare);
   const [fullWidth] = React.useState(true);
   const [imageUrl] = React.useState<string | undefined>(params.url);
+  const [imageType] = React.useState<string | undefined>(params.type);
   const [maxWidth] = React.useState<DialogProps["maxWidth"]>("md");
   const handleClose = () => {
     setOpen(false);
@@ -68,16 +70,37 @@ export default function ImagePreview(params: {
           <Grid container spacing={2}>
             <Grid item xs={compare ? 6 : 12}>
               <Typography gutterBottom>
-                <img
-                  src={imageUrl}
-                  style={{ width: compare ? 400 : 400 * 2.1652 }}
-                ></img>
+                {(typeof imageType === "undefined" ||
+                  imageType.includes("image")) && (
+                  <img
+                    src={imageUrl}
+                    style={{ width: compare ? 400 : 400 * 2.1652 }}
+                  ></img>
+                )}
+                {imageType && !imageType.includes("image") && (
+                  <iframe
+                    src={imageUrl}
+                    width={compare ? 400 : 400 * 2.1652}
+                    allow="autoplay"
+                  ></iframe>
+                )}
               </Typography>
             </Grid>
             {compare && (
               <Grid item xs={6}>
                 <Typography gutterBottom>
-                  <img src={image2} style={{ width: 400 }}></img>
+                  {(typeof imageType === "undefined" ||
+                    imageType.includes("image")) && (
+                    <img src={image2} style={{ width: 400 }}></img>
+                  )}
+                  {typeof imageType !== "undefined" &&
+                    !imageType.includes("image") && (
+                      <iframe
+                        src={image2}
+                        width={400}
+                        allow="autoplay"
+                      ></iframe>
+                    )}
                 </Typography>
               </Grid>
             )}

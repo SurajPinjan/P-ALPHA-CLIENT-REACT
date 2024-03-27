@@ -481,7 +481,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
         filesize: imgRw.filesize,
         fileurl: imgRw.fileurl,
         filetype: imgRw.filetype,
-        tag: addTag ? "-Give Tag-" : undefined,
+        tag: addTag ? "NO TAG" : undefined,
         entityId: -1,
         entityType: ENTITY_NAME.X,
         isDeleted: false,
@@ -496,6 +496,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
     <>
       {imgRw && (
         <ImagePreview
+          type={imgRw.filetype}
           url={imgRw.fileurl}
           isOpen={isOpen}
           compare={isCompare}
@@ -505,6 +506,7 @@ const MediaGrid: React.FC<MediaProps> = (props) => {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.fileurl}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={handleSave}

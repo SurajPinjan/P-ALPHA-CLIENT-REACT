@@ -513,6 +513,7 @@ const YGrid: React.FC<YProps> = (props) => {
       {imgRw && (
         <ImagePreview
           url={imgRw.url}
+          type={imgRw.filetype}
           isOpen={isOpen}
           compare={isCompare}
           onClose={onClose}
@@ -521,6 +522,7 @@ const YGrid: React.FC<YProps> = (props) => {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.url}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={(

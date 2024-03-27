@@ -488,6 +488,7 @@ const PermissionGrid: React.FC<PermissionProps> = (props) => {
       {imgRw && (
         <ImagePreview
           url={imgRw.url}
+          type={imgRw.filetype}
           isOpen={isOpen}
           compare={isCompare}
           onClose={onClose}
@@ -496,6 +497,7 @@ const PermissionGrid: React.FC<PermissionProps> = (props) => {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.url}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={(data: FileInfo | undefined) => {

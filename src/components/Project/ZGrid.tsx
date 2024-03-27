@@ -469,6 +469,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
       {imgRw && (
         <ImagePreview
           url={imgRw.url}
+          type={imgRw.filetype}
           isOpen={isOpen}
           compare={isCompare}
           onClose={onClose}
@@ -477,6 +478,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.url}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={(data: FileInfo | undefined) => {

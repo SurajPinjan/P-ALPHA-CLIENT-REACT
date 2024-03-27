@@ -242,6 +242,7 @@ function FixMediaGrid() {
     <>
       {imgRw && (
         <ImagePreview
+          type={imgRw.filetype}
           url={imgRw.fileurl}
           isOpen={isOpen}
           compare={isCompare}
@@ -251,6 +252,7 @@ function FixMediaGrid() {
       {imgRw && (
         <FileUpload
           urlExisting={imgRw.fileurl}
+          existingFileType={imgRw.filetype}
           isOpen={isOpenUpload}
           onClose={onClose}
           onUpload={handleSave}
