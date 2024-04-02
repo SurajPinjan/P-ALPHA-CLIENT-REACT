@@ -30,6 +30,7 @@ interface EditToolbarProps {
 }
 
 export default function EditToolbar(props: EditToolbarProps) {
+  console.info("[32mBLK-[0]-DPTH-[1][0m");
   const ButtonStyle = styled(Button)`
     background-color: #005f71;
     color: #fff;
@@ -46,14 +47,17 @@ export default function EditToolbar(props: EditToolbarProps) {
   const [columnVisibility, setColumnVisibility] = useState<{
     [key: string]: boolean;
   }>(() => {
+    console.info("[32mBLK-[0]-DPTH-[2][0m");
     const initialVisibility: { [key: string]: boolean } = {};
     props.columnList.forEach((column) => {
+      console.info("[32mBLK-[0]-DPTH-[3][0m");
       initialVisibility[column.field] = true;
     });
     return initialVisibility;
   });
 
   const handleCheckboxChange = (column: string) => {
+    console.info("[32mBLK-[1]-DPTH-[2][0m");
     setColumnVisibility((prevState) => ({
       ...prevState,
       [column]: !prevState[column],
@@ -69,13 +73,16 @@ export default function EditToolbar(props: EditToolbarProps) {
   } = props;
 
   const handleClick = () => {
+    console.info("[32mBLK-[2]-DPTH-[2][0m");
     const id = randomId();
     // setRows((oldRows) => [...oldRows, { id, isNew: true }]);
 
-    setPageState((old) => ({
-      ...old,
-      data: [...old.data, { id, [columnMultiField]: [], isNew: true }],
-    }));
+    if (setPageState) {
+      setPageState((old) => ({
+        ...old,
+        data: [...old.data, { id, [columnMultiField]: [], isNew: true }],
+      }));
+    }
     setRowModesModel((oldModel) => ({
       ...oldModel,
       [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
@@ -88,7 +95,12 @@ export default function EditToolbar(props: EditToolbarProps) {
 
   return (
     <>
-      <Box sx={{ justifyContent: "space-between", display: "flex" }}>
+      <Box
+        sx={{
+          justifyContent: "space-between",
+          display: "flex",
+        }}
+      >
         <Typography
           gutterBottom
           variant="h5"
@@ -121,7 +133,9 @@ export default function EditToolbar(props: EditToolbarProps) {
           <ButtonStyle
             variant="contained"
             onClick={handleClick}
-            style={{ marginRight: "5px" }}
+            style={{
+              marginRight: "5px",
+            }}
           >
             {buttonTitle}
           </ButtonStyle>

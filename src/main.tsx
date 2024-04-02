@@ -21,6 +21,7 @@ import store from "./services/GlobalStateService.ts";
 import ReportGrid from "./components/Project/ReportGrid.tsx";
 import SimpleReportGrid from "./components/Project/SimpleReportGrid.tsx";
 import { UserRoleProvider } from "./contexts/userContextProvider.tsx";
+import XYParent from "./components/Project/GridHirarchy/XYParent.tsx";
 
 const routes = [
   {
@@ -90,6 +91,10 @@ const routes = [
       {
         path: "simple_reporting",
         element: <SimpleReportGrid />,
+      },
+      {
+        path: "grid_hirarchy",
+        element: <XYParent />,
       },
     ],
   },

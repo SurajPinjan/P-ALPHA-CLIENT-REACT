@@ -21,12 +21,12 @@ import {
   GridRowModesModel,
   GridRowParams,
   GridRowsProp,
+  GridValidRowModel,
 } from "@mui/x-data-grid";
-import EditToolbar from "./EditToolbar";
-import ImagePreview from "../../../commons/Dialogues/ImagePreview";
 import FileUpload from "../../../commons/Dialogues/FileUpload";
-import { GridValidRowModel } from "@mui/x-data-grid";
+import ImagePreview from "../../../commons/Dialogues/ImagePreview";
 import { TabType, TableType } from "../../../types/types";
+import EditToolbarV2 from "./EditToolbarV2";
 
 export default function FullFeaturedCrudGrid(props: {
   updateHandler?: (editData: GridValidRowModel) => void;
@@ -54,6 +54,7 @@ export default function FullFeaturedCrudGrid(props: {
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   );
+
   const [savedId, setSavedId] = React.useState<GridRowId>(-1);
   const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
@@ -375,7 +376,7 @@ export default function FullFeaturedCrudGrid(props: {
           onRowEditStop={handleRowEditStop}
           processRowUpdate={processRowUpdate}
           slots={{
-            toolbar: EditToolbar,
+            toolbar: EditToolbarV2,
             noRowsOverlay: () => (
               <Stack height="100%" alignItems="center" justifyContent="center">
                 No Details
@@ -390,6 +391,19 @@ export default function FullFeaturedCrudGrid(props: {
           onRowClick={(params: GridRowParams) => {
             handleDetailsClick(params.row.subData);
           }}
+          //         buttonTitle?: string;
+          // columnList: GridColDef[];
+          // setClmnVisibility?: React.Dispatch<
+          //   React.SetStateAction<{
+          //     [key: string]: boolean;
+          //   }>
+          // >;
+          // tableTitle: string;
+          // columnMultiField: string;
+          // setPageState: (newPageState: (oldPageState: Page) => Page) => void;
+          // setRowModesModel: (
+          //   newModel: (oldModel: GridRowModesModel) => GridRowModesModel
+          // ) => void;
           slotProps={{
             toolbar: {
               setRows,

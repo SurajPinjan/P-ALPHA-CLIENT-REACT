@@ -149,7 +149,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
   columnsDetails.push({
     order: 2,
     field: "x_id",
-    headerName: "X Entity FK",
+    headerName: "X Entity FKK",
     width: 240,
     type: "singleSelect",
     editable: true,
@@ -249,6 +249,7 @@ const XDetailGrid = (props: XDetailProps & { selectUId?: number }) => {
 
   //   data operations
   const getDataAll = useCallback(async () => {
+    if (xId === -1) return;
     setPageState((old) => ({ ...old, isLoading: true }));
     const filterArray: Filter[] = [];
     filterArray.push({ column_name: "x_id", operator: "=", value: xId });

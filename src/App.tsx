@@ -56,6 +56,7 @@ const menuItems: MenuItem[] = [
   { title: "Role Permissions", path: "permission_manage" },
   { title: "Report", path: "reporting" },
   { title: "Simple Report", path: "simple_reporting" },
+  { title: "Grid Hirarchy", path: "grid_hirarchy" },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -149,7 +150,7 @@ const App = () => {
     ));
   }
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 7; i++) {
     menus.push(() => (
       <img src={SixSigma} alt="bar chart" width={20} height={20} />
     ));
