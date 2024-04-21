@@ -52,6 +52,7 @@ import {
 } from "../../types/httpTypes";
 import { FileInfo } from "../../types/types";
 import EditToolbar from "./ProjectStages/EditToolbar";
+import ItemSavedPopup from "../../commons/Dialogues/ItemSavedDialogue";
 
 export interface Page {
   isLoading: boolean;
@@ -87,6 +88,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
     page: 0,
     pageSize: 2,
   });
+  const [savedZID, setSavedZID] = React.useState<string | undefined>();
   // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpenUpload, setIsOpenUpload] = React.useState(false);
@@ -305,6 +307,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
       >(requestDataCreate, store, navigate);
 
       if (createdData.responseCode == API_RESPONSE_CODE.SUCCESS_CREATE) {
+        if (createdData.data.uid) setSavedZID(createdData.data.uid.toString());
         setPageState((old) => ({
           ...old,
           page: 0,
@@ -466,6 +469,14 @@ const ZGrid: React.FC<ZProps> = (props) => {
 
   return (
     <>
+      {savedZID && (
+        <ItemSavedPopup
+          isOpen={true}
+          itemName={`Z`}
+          itemId={savedZID}
+          onClose={() => {}}
+        ></ItemSavedPopup>
+      )}
       {imgRw && (
         <ImagePreview
           url={imgRw.url}
