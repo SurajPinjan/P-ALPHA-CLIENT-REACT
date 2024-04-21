@@ -50,6 +50,7 @@ import {
 } from "../../../types/httpTypes";
 import { GlobalState, Page } from "../../../types/types";
 import EditToolbar from "../ProjectStages/EditToolbarV2";
+import { PageSizes0 } from "../../../types/constants";
 
 interface YProps {
   isCompare?: boolean;
@@ -68,7 +69,7 @@ const YGrid: React.FC<YProps> = (props: YProps & { selectUId?: number }) => {
     data: [],
     total: 0,
     page: 0,
-    pageSize: 2,
+    pageSize: PageSizes0[0],
   });
   // states
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
@@ -242,7 +243,7 @@ const YGrid: React.FC<YProps> = (props: YProps & { selectUId?: number }) => {
         setPageState((old) => ({
           ...old,
           page: 0,
-          pageSize: 2,
+          pageSize: PageSizes0[0],
         }));
         getDataAll();
       }
@@ -272,7 +273,7 @@ const YGrid: React.FC<YProps> = (props: YProps & { selectUId?: number }) => {
         setPageState((old) => ({
           ...old,
           page: 0,
-          pageSize: 2,
+          pageSize: PageSizes0[0],
         }));
         getDataAll();
       } else {
@@ -313,6 +314,8 @@ const YGrid: React.FC<YProps> = (props: YProps & { selectUId?: number }) => {
       // props.saveHandler &&
       savedId != -1
     ) {
+      setSavedId(-1);
+      setUpdateId(-1);
       createData({
         ...entityFound,
         ...{ x_id: xId ? xId : -1, isDeleted: false },
@@ -332,6 +335,8 @@ const YGrid: React.FC<YProps> = (props: YProps & { selectUId?: number }) => {
       updateId !== -1 &&
       toUpdated
     ) {
+      setSavedId(-1);
+      setUpdateId(-1);
       if (toDeleted) {
         setToDeleted(false);
         entityFound.isDeleted = 1;
@@ -470,56 +475,66 @@ const YGrid: React.FC<YProps> = (props: YProps & { selectUId?: number }) => {
           },
         }}
       >
-        <DataGrid
-          sx={{ border: "none", padding: "15px" }}
-          autoHeight
-          editMode="row"
-          rowModesModel={rowModesModel}
-          onRowModesModelChange={handleRowModesModelChange}
-          onRowEditStop={handleRowEditStop}
-          processRowUpdate={processRowUpdate}
-          rows={pageState.data}
-          rowCount={pageState.total}
-          loading={pageState.isLoading}
-          pageSizeOptions={[1, 2, 3]}
-          pagination
-          onPaginationModelChange={(paginationModel: GridPaginationModel) => {
-            setPageState((old) => ({
-              ...old,
-              page: paginationModel.page,
-              pageSize: paginationModel.pageSize,
-            }));
-          }}
-          paginationModel={{
-            pageSize: pageState.pageSize,
-            page: pageState.page,
-          }}
-          paginationMode="server"
-          columns={columnsDetails as GridColDef[]}
-          slots={{
-            toolbar: EditToolbar,
-            noRowsOverlay: () => (
-              <Stack height="100%" alignItems="center" justifyContent="center">
-                No Details
-              </Stack>
-            ),
-            noResultsOverlay: () => (
-              <Stack height="100%" alignItems="center" justifyContent="center">
-                No Result
-              </Stack>
-            ),
-          }}
-          slotProps={{
-            toolbar: {
-              setPageState,
-              setRowModesModel,
-              tableTitle,
-              buttonTitle,
-            },
-          }}
-          sortingMode="server"
-          onSortModelChange={handleSortModelChange}
-        />
+        {xId !== -1 && (
+          <DataGrid
+            sx={{ border: "none", padding: "15px" }}
+            autoHeight
+            editMode="row"
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            onRowEditStop={handleRowEditStop}
+            processRowUpdate={processRowUpdate}
+            rows={pageState.data}
+            rowCount={pageState.total}
+            loading={pageState.isLoading}
+            pageSizeOptions={PageSizes0}
+            pagination
+            onPaginationModelChange={(paginationModel: GridPaginationModel) => {
+              setPageState((old) => ({
+                ...old,
+                page: paginationModel.page,
+                pageSize: paginationModel.pageSize,
+              }));
+            }}
+            paginationModel={{
+              pageSize: pageState.pageSize,
+              page: pageState.page,
+            }}
+            paginationMode="server"
+            columns={columnsDetails as GridColDef[]}
+            slots={{
+              toolbar: EditToolbar,
+              noRowsOverlay: () => (
+                <Stack
+                  height="100%"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  No Details
+                </Stack>
+              ),
+              noResultsOverlay: () => (
+                <Stack
+                  height="100%"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  No Result
+                </Stack>
+              ),
+            }}
+            slotProps={{
+              toolbar: {
+                setPageState,
+                setRowModesModel,
+                tableTitle,
+                buttonTitle,
+              },
+            }}
+            sortingMode="server"
+            onSortModelChange={handleSortModelChange}
+          />
+        )}
       </Box>
     </>
   );

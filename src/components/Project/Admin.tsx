@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  Checkbox,
   FormControl,
   Grid,
   InputLabel,
@@ -15,7 +16,12 @@ import {
   getViewFromModelMaster,
 } from "../../models/Master";
 import { makeHttpCall } from "../../services/ApiService";
-import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../types/enums";
+import {
+  ENTITY_NAME,
+  HTTP_METHOD,
+  OPERATION,
+  SELECT_VALUES,
+} from "../../types/enums";
 import {
   HttpGetAllRequestBody,
   HttpRequestData,
@@ -33,6 +39,7 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
   // constants
   const navigate = useNavigate();
   // states
+  const [checked, setChecked] = React.useState(false);
   const [masters, setMasters] = React.useState<MasterView[]>([]);
   const [filters, setFilters] = React.useState<MasterView>({
     isDeleted: false,
@@ -73,6 +80,10 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
 
   // event handlers
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+
   const formikSubmitHandler = (
     values: MasterView,
     { setSubmitting }: FormikHelpers<MasterView>
@@ -91,6 +102,10 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
 
   return (
     <>
+      <div>
+        <Checkbox checked={checked} onChange={handleChange} color="primary" />
+        <span>{checked ? "Checked" : "Unchecked"}</span>
+      </div>
       <Card sx={{ width: "100%" }} className="outerContainer">
         <CardContent>
           <Formik
@@ -100,37 +115,50 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
             }}
             onSubmit={formikSubmitHandler}
           >
-            <Form>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <FormControl variant="standard" sx={{ minWidth: "100%" }}>
-                    <InputLabel id="demo-simple-select-standard-label">
-                      {" "}
-                      Master
-                    </InputLabel>
-                    <Field
-                      as={Select}
-                      labelId="master"
-                      name="master"
-                      id="master"
-                      label="master"
-                    >
-                      {masters.map((master) => (
-                        <MenuItem key={master.uid} value={master.master}>
-                          {master.master}
-                        </MenuItem>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      component="div"
-                      className="error"
-                      name="selectedOption"
-                    />
-                  </FormControl>
+            {({ setValues, submitForm, values }) => (
+              <Form>
+                <Grid container spacing={2}>
+                  <Grid item xs={4}>
+                    <FormControl variant="standard" sx={{ minWidth: "100%" }}>
+                      <InputLabel id="demo-simple-select-standard-label">
+                        {" "}
+                        Master
+                      </InputLabel>
+                      <Field
+                        as={Select}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLSelectElement>
+                        ) => {
+                          if (checked)
+                            setValues({
+                              ...values,
+                              master: event.target.value as SELECT_VALUES,
+                            }).then(() => {
+                              submitForm();
+                            });
+                        }}
+                        labelId="master"
+                        name="master"
+                        id="master"
+                        label="master"
+                      >
+                        {masters.map((master) => (
+                          <MenuItem key={master.uid} value={master.master}>
+                            {master.master}
+                          </MenuItem>
+                        ))}
+                      </Field>
+                      <ErrorMessage
+                        component="div"
+                        className="error"
+                        name="selectedOption"
+                      />
+                    </FormControl>
+                  </Grid>
                 </Grid>
-              </Grid>
-              <button type="submit">Filter</button>
-            </Form>
+                <button type="submit">Filter</button>
+              </Form>
+            )}
           </Formik>
         </CardContent>
       </Card>
