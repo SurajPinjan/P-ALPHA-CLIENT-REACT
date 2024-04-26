@@ -29,6 +29,7 @@ export type DateProps = {
 };
 
 export type GlobalState = {
+  loading?: boolean;
   code: string;
   displayMsg: string;
   apiTime: string;

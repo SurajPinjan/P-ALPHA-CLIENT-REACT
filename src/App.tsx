@@ -28,13 +28,14 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import SixSigma from "../src/assets/images/sixSigma.png";
 import Problem from "../src/assets/images/solve-the-problem.svg";
 import Training from "../src/assets/images/training.svg";
+import APILoaderWithState from "./commons/APILoaderWithState";
 import HttpToastWithState from "./commons/Dialogues/HttpToastWithState";
-import { BLANK, ENTITY_NAME, HTTP_METHOD, OPERATION } from "./types/enums";
 import { makeHttpCall } from "./services/ApiService";
 import store from "./services/GlobalStateService";
+import { BLANK, ENTITY_NAME, HTTP_METHOD, OPERATION } from "./types/enums";
 import {
-  HttpRequestData,
   HttpGetAllRequestBody,
+  HttpRequestData,
   HttpResponseGetAll,
 } from "./types/httpTypes";
 const drawerWidth = 200;
@@ -130,6 +131,7 @@ const Drawer = styled(MuiDrawer, {
 
 const App = () => {
   // states
+
   const [open, setOpen] = React.useState(true);
   const [isLoggedIn] = React.useState(true);
   const [problem, setProblem] = React.useState<null | HTMLElement>(null);
@@ -271,6 +273,7 @@ const App = () => {
 
   return (
     <>
+      <APILoaderWithState />
       <HttpToastWithState />
       <Box sx={{ display: "flex" }}>
         <CssBaseline />

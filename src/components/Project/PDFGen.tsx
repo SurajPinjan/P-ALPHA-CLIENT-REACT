@@ -11,6 +11,7 @@ pdfMake.vfs = pdfMakefonts;
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { urlToBase64 } from "../../services/ApiService";
 import { MakePDFCellData } from "../../types/types";
+import store from "../../services/GlobalStateService";
 
 const pdfContent = async () => {
   const _content: TDocumentDefinitions = {
@@ -114,7 +115,8 @@ const pdfContent = async () => {
         columns: [
           {
             image: await urlToBase64(
-              "http://localhost:3001/uploads/istockphoto-2.jpg"
+              "http://localhost:3001/uploads/istockphoto-2.jpg",
+              store
             ),
             width: 130,
             margin: [

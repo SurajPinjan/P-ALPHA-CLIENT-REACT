@@ -18,6 +18,7 @@ import {
   OPERATION,
 } from "../../../types/enums";
 import { HttpRequestData } from "../../../types/httpTypes";
+import store from "../../../services/GlobalStateService";
 
 const ButtonStyle = styled(Button)`
   background-color: #005f71;
@@ -54,7 +55,7 @@ function MeasureTest() {
       };
 
       requestDataUpdateOne.body?.append("file", selectedFile);
-      const data = await makeMultiPartHttpCall(requestDataUpdateOne);
+      const data = await makeMultiPartHttpCall(requestDataUpdateOne, store);
       console.log(data);
     }
   };

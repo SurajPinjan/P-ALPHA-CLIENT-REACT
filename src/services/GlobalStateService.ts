@@ -3,6 +3,7 @@ import { Action, legacy_createStore as createStore } from "redux";
 import { DateTime } from "luxon";
 import { BLANK } from "../types/enums";
 const initialState: GlobalState = {
+  loading: false,
   code: BLANK,
   displayMsg: BLANK,
   apiTime: DateTime.now().toISO(),
@@ -13,6 +14,7 @@ const initialState: GlobalState = {
 };
 
 export interface ActionInterface extends Action {
+  _loading?: boolean;
   _Code: string;
   _DisplayMsg: string;
   _ErrMsg?: string;
@@ -32,7 +34,8 @@ const globalReducer = (state = initialState, action: ActionInterface) => {
     "_APIBody" in action &&
     "_APIUrl" in action &&
     "apiTime" in action &&
-    "_SelectUId" in action
+    "_SelectUId" in action &&
+    "_loading" in action
   ) {
     const return_state = {
       ...state,
@@ -43,6 +46,7 @@ const globalReducer = (state = initialState, action: ActionInterface) => {
       APIBody: action._APIBody,
       APIUrl: action._APIUrl,
       selectUId: action._SelectUId,
+      loading: action._loading,
     };
 
     return return_state;
@@ -52,5 +56,4 @@ const globalReducer = (state = initialState, action: ActionInterface) => {
 };
 
 const store = createStore(globalReducer);
-
 export default store;

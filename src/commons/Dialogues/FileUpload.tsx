@@ -14,6 +14,7 @@ import {
 } from "../../types/httpTypes";
 import { ENTITY_NAME, HTTP_METHOD, OPERATION } from "../../types/enums";
 import { makeMultiPartHttpCall } from "../../services/ApiService";
+import store from "../../services/GlobalStateService";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -76,7 +77,8 @@ export default function FileUpload(params: {
 
         requestDataUpdateOne.body?.append("file", selectedFile);
         const data: HttpMultiPartResponseBody = await makeMultiPartHttpCall(
-          requestDataUpdateOne
+          requestDataUpdateOne,
+          store
         );
         setUrl(data.url);
         setFileType(selectedFile.type);
@@ -97,7 +99,8 @@ export default function FileUpload(params: {
 
         requestDataUpdateOne.body?.append("file", selectedFile);
         const data: HttpMultiPartResponseBody = await makeMultiPartHttpCall(
-          requestDataUpdateOne
+          requestDataUpdateOne,
+          store
         );
         setUrl(data.url);
         setFileType(selectedFile.type);
@@ -121,7 +124,8 @@ export default function FileUpload(params: {
           };
           requestDataUpdateOne.body?.append("file", selectedFile);
           const data: HttpMultiPartResponseBody = await makeMultiPartHttpCall(
-            requestDataUpdateOne
+            requestDataUpdateOne,
+            store
           );
           setUrl(data.url);
           setFileType(selectedFile.type);

@@ -29,6 +29,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
     headers.append("Authorization", `Bearer ${authToken}`);
   }
 
+  toastDispatcherL(store, true);
   return fetch(url, {
     credentials: "include",
     method: params.method,
@@ -36,6 +37,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
     body: JSON.stringify(params.body),
   })
     .then((res) => {
+      toastDispatcherL(store, false);
       if (!res.ok) {
         return res.json();
       } else {
@@ -50,11 +52,10 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
           res.responseCode === API_RESPONSE_CODE.SUCCESS_PING ||
           res.responseCode === API_RESPONSE_CODE.SUCCESS_UPDATE)
       ) {
-        // if (
-        //   params.operation === OPERATION.CREATE_ONE ||
-        //   params.operation === OPERATION.UPDATE_ONE
-        // )
-        {
+        if (
+          params.operation === OPERATION.CREATE_ONE ||
+          params.operation === OPERATION.UPDATE_ONE
+        ) {
           toastDispatcher(store, JSON.stringify(params.body), url, res);
         }
         return res;
@@ -72,7 +73,8 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
 }
 
 export async function makeMultiPartHttpCall(
-  params: HttpRequestData<FormData>
+  params: HttpRequestData<FormData>,
+  store: Store<GlobalState, ActionInterface, unknown>
 ): Promise<HttpMultiPartResponseBody> {
   const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
     import.meta.env.VITE_BACKEND_PORT
@@ -84,6 +86,7 @@ export async function makeMultiPartHttpCall(
     headers.append("Authorization", `Bearer ${authToken}`);
   }
 
+  toastDispatcherL(store, true);
   return fetch(url, {
     credentials: "include",
     method: params.method,
@@ -91,6 +94,7 @@ export async function makeMultiPartHttpCall(
     headers: headers,
   })
     .then((res) => {
+      toastDispatcherL(store, false);
       if (!res.ok) {
         alert(res.statusText);
       } else {
@@ -102,12 +106,17 @@ export async function makeMultiPartHttpCall(
     });
 }
 
-export async function urlToBase64(url: string): Promise<string> {
+export async function urlToBase64(
+  url: string,
+  store: Store<GlobalState, ActionInterface, unknown>
+): Promise<string> {
+  toastDispatcherL(store, true);
   return fetch(url, {
     credentials: "include",
     method: "GET",
   })
     .then(async (res) => {
+      toastDispatcherL(store, false);
       if (!res.ok) {
         return res.json();
       } else {
@@ -141,7 +150,8 @@ export function toastDispatcher(
   store: Store<GlobalState, ActionInterface, unknown>,
   APIBody: string,
   APIUrl: string,
-  fetchData: HttpResponseBody
+  fetchData: HttpResponseBody,
+  loading: boolean = false
 ) {
   const toast = () => ({
     type: "DUMMYTYPE",
@@ -157,6 +167,27 @@ export function toastDispatcher(
     _APIBody: APIBody,
     _APIUrl: APIUrl,
     _SelectUId: -1,
+    _loading: loading,
+  });
+
+  store.dispatch(toast());
+}
+
+export function toastDispatcherL(
+  store: Store<GlobalState, ActionInterface, unknown>,
+  loading: boolean
+) {
+  const toast = () => ({
+    type: "DUMMYTYPE",
+    _Code: "",
+    _DisplayMsg: "",
+    apiTime: DateTime.now().toISO(),
+    _ErrMsg: undefined,
+    _APIBody: "",
+    _APIUrl: "",
+    _SelectUId: -1,
+    _SidePannelExpand: false,
+    _loading: loading,
   });
 
   store.dispatch(toast());

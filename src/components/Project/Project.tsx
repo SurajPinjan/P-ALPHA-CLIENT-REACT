@@ -659,6 +659,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       const selectedRowData = params.row;
       const toast = () => ({
         type: "DUMMYTYPE",
+        _loading: false,
         _Code: BLANK,
         _DisplayMsg: BLANK,
         apiTime: DateTime.now().toISO(),

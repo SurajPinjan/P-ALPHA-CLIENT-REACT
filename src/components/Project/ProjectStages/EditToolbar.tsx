@@ -29,7 +29,9 @@ interface EditToolbarProps {
   ) => void;
 }
 
-export default function EditToolbar(props: EditToolbarProps) {
+export default function EditToolbar(
+  props: EditToolbarProps
+): JSX.Element | null | undefined {
   console.info("[32mBLK-[0]-DPTH-[1][0m");
   const ButtonStyle = styled(Button)`
     background-color: #005f71;
