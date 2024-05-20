@@ -1,5 +1,4 @@
 import CancelIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ImageIcon from "@mui/icons-material/Image";
@@ -24,8 +23,10 @@ import {
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DeleteButton from "../../commons/Dialogues/DeleteButton";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
+import ItemSavedPopup from "../../commons/Dialogues/ItemSavedDialogue";
 import {
   ZModel,
   ZView,
@@ -52,7 +53,6 @@ import {
 } from "../../types/httpTypes";
 import { FileInfo } from "../../types/types";
 import EditToolbar from "./ProjectStages/EditToolbar";
-import ItemSavedPopup from "../../commons/Dialogues/ItemSavedDialogue";
 
 export interface Page {
   isLoading: boolean;
@@ -197,12 +197,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
           onClick={handleEditClick(id)}
           color="inherit"
         />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={handleDeleteClick(id)}
-          color="inherit"
-        />,
+        <DeleteButton onClick={handleDeleteClick(id)}/>
       ];
     },
   });
