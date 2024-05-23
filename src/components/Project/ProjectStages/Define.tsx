@@ -30,6 +30,7 @@ import Textarea from "../../../commons/Textarea";
 import { BLANK } from "../../../types/enums";
 import { Panel } from "../ProjectDetails";
 import ProjectSchedule from "./SimpleTableGrid";
+import ProjectScheduleInlineEdit from "./SimpleTableGridInlineEdit";
 
 // end project schedule
 
@@ -172,6 +173,7 @@ function Define() {
           <Tab label="Upload Files" style={{ color: "#000" }} />
           <Tab label="project Schedule" style={{ color: "#000" }} />
           <Tab label=" Team (Manage Resource)" style={{ color: "#000" }} />
+          <Tab label=" P Schedule Inline Edit" style={{ color: "#000" }} />
         </Tabs>
       </AppBar>
       <Panel value={index} index={0}>
@@ -408,6 +410,20 @@ function Define() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+      </Panel>
+
+      <Panel value={index} index={3}>
+        <Paper sx={{ width: "100%" }}></Paper>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          style={{ textAlign: "right", marginTop: "2rem" }}
+        >
+          <ButtonStyle variant="contained">Save & Next</ButtonStyle>
+        </Grid>
+        {/* project schedule */}
+        <ProjectScheduleInlineEdit></ProjectScheduleInlineEdit>
       </Panel>
     </BoxStyled>
   );
