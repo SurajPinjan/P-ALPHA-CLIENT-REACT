@@ -10,6 +10,7 @@ import {
   GridColDef,
   GridEventListener,
   GridPaginationModel,
+  GridRenderEditCellParams,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModel,
@@ -53,6 +54,8 @@ import {
 } from "../../types/httpTypes";
 import { FileInfo } from "../../types/types";
 import EditToolbar from "./ProjectStages/EditToolbar";
+import EditMonthYearCell from "../../commons/MonthPicker";
+import { DateTime } from "luxon";
 
 export interface Page {
   isLoading: boolean;
@@ -80,6 +83,21 @@ const ZGrid: React.FC<ZProps> = (props) => {
     editable: true,
   });
 
+
+  columns.push({
+    field: "monthColumn",
+    headerName: "Month",
+    width: 240,
+    editable: true,
+    type: "date",
+    valueFormatter: (params: { value: Date }) => {
+      if (params.value !== null) {
+        return DateTime.fromJSDate(params.value).toFormat('yyyy-LLL');
+      }
+      return '';
+    },
+    renderEditCell: (params: GridRenderEditCellParams) => <EditMonthYearCell {...params} />,
+  });
   // states
   const [pageState, setPageState] = useState<Page>({
     isLoading: false,
@@ -197,7 +215,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
           onClick={handleEditClick(id)}
           color="inherit"
         />,
-        <DeleteButton onClick={handleDeleteClick(id)}/>
+        <DeleteButton onClick={handleDeleteClick(id)} />
       ];
     },
   });
@@ -240,9 +258,9 @@ const ZGrid: React.FC<ZProps> = (props) => {
 
     const dat: ZView[] = fetchData.data
       ? fetchData.data.map((row: ZModel) => {
-          const data: ZView = getViewFromModelZ(row);
-          return data;
-        })
+        const data: ZView = getViewFromModelZ(row);
+        return data;
+      })
       : [];
 
     setPageState((old) => ({
@@ -355,6 +373,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
       createData({
         columnText: entityFound.columnText,
         isDeleted: false,
+        monthColumn: entityFound.monthColumn,
         isNew: entityFound.isNew,
       });
       // props.saveHandler(entityFound);
@@ -377,6 +396,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
       updateData({
         uid: entityFound.uid,
         columnText: entityFound.columnText,
+        monthColumn: entityFound.monthColumn,
         isDeleted: entityFound.isDeleted == 0 ? false : true,
         isNew: entityFound.isNew,
       });
@@ -469,7 +489,7 @@ const ZGrid: React.FC<ZProps> = (props) => {
           isOpen={true}
           itemName={`Z`}
           itemId={savedZID}
-          onClose={() => {}}
+          onClose={() => { }}
         ></ItemSavedPopup>
       )}
       {imgRw && (
