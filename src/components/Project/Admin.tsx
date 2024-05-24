@@ -30,6 +30,7 @@ import {
 import Admin from "./Project";
 import store from "../../services/GlobalStateService";
 import { useNavigate } from "react-router-dom";
+import InfiniteScrollSearch from "../Autocompletes/InfiniteScrollSearch";
 
 interface AdminWrapperProps {
   udpateSwitch?: () => void;
@@ -154,6 +155,9 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
                         name="selectedOption"
                       />
                     </FormControl>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <InfiniteScrollSearch></InfiniteScrollSearch>
                   </Grid>
                 </Grid>
                 <button type="submit">Filter</button>
