@@ -1,51 +1,49 @@
-import Autocomplete, { AutocompleteRenderOptionState } from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
-import TextField from '@mui/material/TextField';
-import { throttle } from 'lodash';
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MenuItem, Select, TextField } from '@mui/material';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { User, UserView, getViewFromModelUser } from '../../models/User';
 import { makeHttpCall } from '../../services/ApiService';
 import store from '../../services/GlobalStateService';
 import { ENTITY_NAME, HTTP_METHOD, OPERATION } from '../../types/enums';
-import { HttpGetAllRequestBody, HttpRequestData, HttpResponseGetAll } from '../../types/httpTypes';
+import { HttpRequestData, HttpGetAllRequestBody, HttpResponseGetAll } from '../../types/httpTypes';
 import { useNavigate } from 'react-router-dom';
+import { Filter } from '../../types/filterTypes';
 
-const DEFAULT_PAGE_SIZE = 20;
-
-// State Variables
 interface Option {
+  id: string;
   label: string;
-  value: string;
 }
 
-const InfiniteScrollSearch: React.FC = () => {
-  const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState<string>('');
+export const InfiniteScrollSearch = () => {
   const [options, setOptions] = useState<Option[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const listboxRef = useRef<HTMLUListElement | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastOptionRef = useRef<HTMLLIElement | null>(null);
+  const navigate = useNavigate();
 
-  // Hooks
- 
-  // API Functions
-  const getDataAll = useCallback(async (reset = false) => {
-    setLoading(true);
-    const offset = reset ? 0 : options.length;
+  const fetchData = useCallback(async (page: number) => {
+
+    const filters :Filter[] = [];
+
+    if(searchQuery !== '') {
+      filters.push({
+        column_name: 'username',
+        value: searchQuery,
+        operator: 'LIKE',
+      });
+    }
+    
+    setIsLoading(true);
     const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
       entityName: ENTITY_NAME.USER,
       method: HTTP_METHOD.POST,
       operation: OPERATION.GET_ALL,
       body: {
-        filters: [{
-          column_name: 'username',
-          operator: 'LIKE',
-          value: searchValue,
-        }],
+        filters: filters,
         sorts: [],
-        pageNumber: offset,
-        pageSize: DEFAULT_PAGE_SIZE,
+        pageNumber: page,
+        pageSize: 20,
       },
     };
 
@@ -55,114 +53,91 @@ const InfiniteScrollSearch: React.FC = () => {
         HttpGetAllRequestBody
       >(requestDataAll, store, navigate);
 
-      const newOptions = fetchData.data
+      const newOptions: Option[] = fetchData.data
         ? fetchData.data.map((row: User) => {
             const data: UserView = getViewFromModelUser(row);
-            return { label: data.username, value: data.id };
+            return { id: data.id, label: data.username}
           })
         : [];
 
-      setOptions((prevOptions) => reset ? newOptions : [...prevOptions, ...newOptions]);
-      setHasMore(fetchData.totalCount > offset + newOptions.length);
+        setOptions((prevOptions) => page === 0 ? newOptions : [...prevOptions, ...newOptions]);
+
+      
     } catch (error) {
-      setHasMore(false);
+      console.error('Error fetching data:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [navigate, options.length, searchValue]);
-
-  // Event Handler Functions
-  const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      getDataAll();
-    }
-  }, [loading, hasMore, getDataAll]);
-
-  const handleScroll = useCallback(throttle(() => {
-    if (listboxRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listboxRef.current;
-      if (scrollHeight - scrollTop === clientHeight) {
-        loadMore();
-      }
-    }
-  }, 200), [loadMore]);
+  }, [navigate, searchQuery]);
 
   useEffect(() => {
-    return () => {
-      handleScroll.cancel();
-    };
-  }, [handleScroll]);
+    setCurrentPage(0);
+  }, []);
 
   useEffect(() => {
-    if (searchValue.trim() === '') {
-      setOptions([]);
-      setHasMore(true);
-      return;
-    }
+      fetchData(0);
+  }, [searchQuery, fetchData]);
 
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    debounceRef.current = setTimeout(() => {
-      setOptions([]);
-      getDataAll(true);
-    }, 500);
+  useEffect(() => {
+    if(currentPage)
+    fetchData(currentPage);
+  }, [currentPage, fetchData]);
 
-    // Cleanup on unmount
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+
+    const handleObserver = (entries: IntersectionObserverEntry[]) => {
+      if (entries[0].isIntersecting && !isLoading) {
+        // setCurrentPage((prevPage) => prevPage + 1);
       }
     };
-  }, [searchValue, getDataAll]);
 
+    observer.current = new IntersectionObserver(handleObserver);
+    if (lastOptionRef.current) {
+      observer.current.observe(lastOptionRef.current);
+    }
 
-  const renderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: Option, state: AutocompleteRenderOptionState) => {
-    console.log(state.index);
-    return (
-      <li {...props} key={option.value}>
-        {option.label}
-      </li>
-    );
+    return () => {
+      if (observer.current) observer.current.disconnect();
+    };
+  }, [isLoading]);
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(0); // Reset the current page when the search query changes
+    };
+
+  const setLastOptionRef = (element: HTMLLIElement | null) => {
+    if (lastOptionRef.current) {
+      observer.current?.unobserve(lastOptionRef.current);
+    }
+    if (element) {
+      observer.current?.observe(element);
+    }
+    lastOptionRef.current = element;
   };
 
-  // UI Code Block
-  const ListboxComponent = useMemo(
-    () =>
-      forwardRef<HTMLUListElement, React.HTMLAttributes<HTMLUListElement>>((props, ref) => (
-        <ul
-          {...props}
-          ref={(node) => {
-            listboxRef.current = node;
-            if (typeof ref === 'function') {
-              ref(node);
-            } else if (ref) {
-              (ref as React.MutableRefObject<HTMLUListElement | null>).current = node;
-            }
-          }}
-          style={{ maxHeight: 300, overflow: 'auto' }}
-          onScroll={handleScroll}
-        />
-      )),
-    [handleScroll]
-  );
-
   return (
-    <Autocomplete<Option, false, false, false>
-      options={options}
-      getOptionLabel={(option) => option.label}
-      loading={loading}
-      loadingText={<CircularProgress size={20} />}
-      noOptionsText="No options found"
-      onInputChange={(event, newValue) => {
-        console.log(event.isTrusted);
-        setSearchValue(newValue);
-      }}
-      renderInput={(params) => <TextField {...params} label="Search" variant="outlined" />}
-      renderOption={renderOption}
-      ListboxComponent={ListboxComponent}
-    />
+    <div>
+      <TextField
+        label="Search"
+        value={searchQuery}
+        onChange={handleSearch}
+        variant="outlined"
+        fullWidth
+      />
+      <Select fullWidth>
+        {options.map((option, index) => (
+          <MenuItem
+            key={option.id}
+            value={option.id}
+            ref={index === options.length - 1 ? setLastOptionRef : null}
+          >
+            {option.label}
+          </MenuItem>
+        ))}
+        {isLoading && <MenuItem disabled>Loading...</MenuItem>}
+      </Select>
+    </div>
   );
 };
-
-export default InfiniteScrollSearch;

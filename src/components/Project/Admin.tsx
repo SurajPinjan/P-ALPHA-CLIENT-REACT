@@ -30,7 +30,7 @@ import {
 import Admin from "./Project";
 import store from "../../services/GlobalStateService";
 import { useNavigate } from "react-router-dom";
-import InfiniteScrollSearch from "../Autocompletes/InfiniteScrollSearch";
+import { InfiniteScrollSearch } from "../Autocompletes/InfiniteScrollSearch";
 
 interface AdminWrapperProps {
   udpateSwitch?: () => void;
