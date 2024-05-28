@@ -145,7 +145,7 @@ function ScrollPage(props: ScrollPageProps) {
     useEffect(() => {
         if(selectedOption)
         props.onChange(selectedOption.label);
-    }, [selectedOption, props.onChange])
+    }, [selectedOption, props])
 
 
     useEffect(() => {
