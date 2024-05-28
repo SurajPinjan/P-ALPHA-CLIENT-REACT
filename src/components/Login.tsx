@@ -10,6 +10,7 @@ import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { makeHttpCall } from "../services/ApiService";
+import store from "../services/GlobalStateService";
 import {
   API_RESPONSE_CODE,
   ENTITY_NAME,
@@ -21,7 +22,6 @@ import {
   HttpRequestData,
   HttpResponseLogin,
 } from "../types/httpTypes";
-import store from "../services/GlobalStateService";
 const ButtonStyle = styled(Button)`
   background-color: #115e6e !important;
   color: white;

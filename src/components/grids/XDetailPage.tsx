@@ -23,8 +23,9 @@ import {
   HttpResponseGetAll,
 } from "../../types/httpTypes";
 import XDetailGridWithState from "./XDetailGrid";
+import ScrollPage from "../Autocompletes/ScrollPage";
 
-interface XDetailGridWrapperProps {}
+interface XDetailGridWrapperProps { }
 
 const XDetailGridWrapper: React.FC<XDetailGridWrapperProps> = () => {
   // constants
@@ -101,6 +102,7 @@ const XDetailGridWrapper: React.FC<XDetailGridWrapperProps> = () => {
               x_id: 0,
               isDeleted: false,
               isNew: false,
+              username: BLANK,
             }}
             onSubmit={formikSubmitHandler}
           >
@@ -151,6 +153,21 @@ const XDetailGridWrapper: React.FC<XDetailGridWrapperProps> = () => {
                         style={{ width: "100%" }}
                         label="Column Text"
                         variant="standard"
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <FormControl variant="standard" sx={{ minWidth: "100%" }}>
+                      <Field
+                        as={ScrollPage}
+                        labelId="user"
+                        name="user"
+                        style={{ width: "100%" }}
+                        label="Users"
+                        variant="standard"
+                        onChange={(value: string) => {
+                          console.log(value);
+                        }}
                       />
                     </FormControl>
                   </Grid>

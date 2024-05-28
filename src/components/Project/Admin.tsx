@@ -10,12 +10,14 @@ import {
 } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import React, { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MasterModel,
   MasterView,
   getViewFromModelMaster,
 } from "../../models/Master";
 import { makeHttpCall } from "../../services/ApiService";
+import store from "../../services/GlobalStateService";
 import {
   ENTITY_NAME,
   HTTP_METHOD,
@@ -28,9 +30,6 @@ import {
   HttpResponseGetAll,
 } from "../../types/httpTypes";
 import Admin from "./Project";
-import store from "../../services/GlobalStateService";
-import { useNavigate } from "react-router-dom";
-import { InfiniteScrollSearch } from "../Autocompletes/InfiniteScrollSearch";
 
 interface AdminWrapperProps {
   udpateSwitch?: () => void;
@@ -47,6 +46,7 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
     isNew: false,
   });
 
+  
   // constants
 
   // data operations
@@ -155,9 +155,6 @@ const AdminWrapper: React.FC<AdminWrapperProps> = (props) => {
                         name="selectedOption"
                       />
                     </FormControl>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <InfiniteScrollSearch></InfiniteScrollSearch>
                   </Grid>
                 </Grid>
                 <button type="submit">Filter</button>
