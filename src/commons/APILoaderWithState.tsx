@@ -3,6 +3,7 @@ import { GlobalState } from "../types/types";
 import APILoader from "./APILoader";
 
 const mapStateToProps = (state: GlobalState) => ({
+  type: state.type,
   loading: state.loading,
   code: state.code,
   displayMsg: state.displayMsg,

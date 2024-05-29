@@ -487,6 +487,7 @@ const XGrid: React.FC<XProps> = (props) => {
       const selectedRowData = params.row;
       const toast = () => ({
         type: "DUMMYTYPE",
+_type: "DUMMYTYPE",
         _Code: "",
         _DisplayMsg: "",
         apiTime: DateTime.now().toISO(),

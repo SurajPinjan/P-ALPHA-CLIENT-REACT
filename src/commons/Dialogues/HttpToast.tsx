@@ -19,6 +19,7 @@ const HttpToast = ({
   apiTime,
   APIBody,
   APIUrl,
+  type,
 }: GlobalState) => {
   // constants
   const initialState: ToastState = {
@@ -28,6 +29,7 @@ const HttpToast = ({
   //   states
   const [isError, setIsError] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(initialState.isOpen);
+  const [typeP, setTypeP] = React.useState<string>(BLANK);
   const [codeP, setCodeP] = React.useState<string>(BLANK);
   const [displayMsgP, setDisplayMsgP] = React.useState<string>(BLANK);
   const [errMsgP, setErrMsgP] = React.useState<string | undefined>();
@@ -37,26 +39,52 @@ const HttpToast = ({
     DateTime.now().toISO()
   );
 
-  codeP;
   // hooks
 
   React.useEffect(() => {
-    setCodeP(code);
-    setDisplayMsgP(displayMsg);
-    setErrMsgP(errMsg);
-    setApiTimeP(apiTime);
-    setAPIUrlP(APIUrl);
+    if(type !== 'API_COMPLETE')
     setAPIBodyP(APIBody);
-    setIsError(
-      code !== API_RESPONSE_CODE.SUCCESS_GEN &&
-        code !== API_RESPONSE_CODE.SUCCESS_CREATE &&
-        code !== API_RESPONSE_CODE.SUCCESS_UPDATE
-    );
-  }, [code, displayMsg, errMsg, apiTime, APIUrl, APIBody]);
+  }, [APIBody, type]);
 
   React.useEffect(() => {
-    if (codeP !== BLANK) setOpen(true);
-  }, [codeP, displayMsgP, errMsgP, apiTimeP, APIUrlP, APIBodyP]);
+    if(type !== 'API_COMPLETE')
+    setCodeP(code);
+  }, [code, type]);
+
+  React.useEffect(() => {
+    if(type !== 'API_COMPLETE')
+    setDisplayMsgP(displayMsg);
+  }, [displayMsg, type]);
+
+  React.useEffect(() => {
+    if(type !== 'API_COMPLETE')
+    setErrMsgP(errMsg);
+  }, [errMsg, type]);
+
+  React.useEffect(() => {
+    if(type !== 'API_COMPLETE')
+    setApiTimeP(apiTime);
+  }, [apiTime, type]);
+
+  React.useEffect(() => {
+    setTypeP(type);
+  }, [type]);
+
+  React.useEffect(() => {
+    if(type !== 'API_COMPLETE')
+    setAPIUrlP(APIUrl);
+  }, [APIUrl, type]);
+
+  React.useEffect(() => {  
+    if(type !== 'API_COMPLETE')  
+    setIsError(
+      codeP !== API_RESPONSE_CODE.SUCCESS_GEN &&
+      codeP !== API_RESPONSE_CODE.SUCCESS_CREATE &&
+      codeP !== API_RESPONSE_CODE.SUCCESS_UPDATE
+    );
+
+    if (codeP !== BLANK && type !== 'API_COMPLETE') setOpen(true);
+  }, [codeP, displayMsgP, errMsgP, apiTimeP, APIUrlP, APIBodyP, typeP, type]);
 
   // event handlers
 

@@ -9,6 +9,7 @@ const mapStateToProps = (state: GlobalState) => ({
   apiTime: state.apiTime,
   APIBody: state.APIBody,
   APIUrl: state.APIUrl,
+  type: state.type,
 });
 
 const HttpToastWithState = connect(mapStateToProps)(HttpToast);

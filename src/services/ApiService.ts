@@ -15,11 +15,9 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
   store: Store<GlobalState, ActionInterface, unknown>,
   navigate: NavigateFunction
 ): Promise<T> {
-  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
-    import.meta.env.VITE_BACKEND_PORT
-  }/app/${import.meta.env.VITE_API_VERSION}/${params.entityName}/${
-    params.operation
-  }`;
+  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${import.meta.env.VITE_BACKEND_PORT
+    }/app/${import.meta.env.VITE_API_VERSION}/${params.entityName}/${params.operation
+    }`;
   const authToken: string | null = localStorage.getItem("token");
 
   const headers: Headers = new Headers();
@@ -56,13 +54,17 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
           params.operation === OPERATION.CREATE_ONE ||
           params.operation === OPERATION.UPDATE_ONE
         ) {
-          toastDispatcher(store, JSON.stringify(params.body), url, res);
+          setTimeout(() => {
+            toastDispatcher(store, JSON.stringify(params.body), url, res);
+          }, 400);
         }
         return res;
       } else {
-        // if (res instanceof Object && "errorMessage" in res) {
-        {
-          toastDispatcher(store, JSON.stringify(params.body), url, res);
+        if (res instanceof Object && "errorMessage" in res) {
+          setTimeout(() => {
+            toastDispatcher(store, JSON.stringify(params.body), url, res);
+          }, 400);
+          
           if (res.responseCode === API_RESPONSE_CODE.ERROR_INVALID_TOKEN) {
             navigate("/session_timeout");
           }
@@ -76,9 +78,8 @@ export async function makeMultiPartHttpCall(
   params: HttpRequestData<FormData>,
   store: Store<GlobalState, ActionInterface, unknown>
 ): Promise<HttpMultiPartResponseBody> {
-  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${
-    import.meta.env.VITE_BACKEND_PORT
-  }/app/${import.meta.env.VITE_API_VERSION}/file/${OPERATION.UPLOAD}`;
+  const url: string = `http://${import.meta.env.VITE_BACKEND_IP}:${import.meta.env.VITE_BACKEND_PORT
+    }/app/${import.meta.env.VITE_API_VERSION}/file/${OPERATION.UPLOAD}`;
   const authToken: string | null = localStorage.getItem("token");
   const headers: Headers = new Headers();
 
@@ -134,9 +135,8 @@ export async function urlToBase64(
       return new Promise<string>((resolve, reject) => {
         reader.onloadend = () => {
           if (typeof reader.result === "string") {
-            const base64WithMetadata = `data:${_result.content_type};base64,${
-              reader.result.split(",")[1]
-            }`;
+            const base64WithMetadata = `data:${_result.content_type};base64,${reader.result.split(",")[1]
+              }`;
             resolve(base64WithMetadata);
           } else {
             reject("Failed to read image data.");
@@ -153,15 +153,16 @@ export function toastDispatcher(
   fetchData: HttpResponseBody,
   loading: boolean = false
 ) {
-  const toast = () => ({
-    type: "DUMMYTYPE",
+  const toastD = () => ({
+    type: "API_RESPONSE",
+    _type: "API_RESPONSE",
     _Code: fetchData.responseCode,
     _DisplayMsg: fetchData.displayMsg,
     apiTime: DateTime.now().toISO(),
     _ErrMsg:
       fetchData instanceof Object &&
-      "errorMessage" in fetchData &&
-      typeof fetchData.errorMessage === "string"
+        "errorMessage" in fetchData &&
+        typeof fetchData.errorMessage === "string"
         ? fetchData.errorMessage
         : undefined,
     _APIBody: APIBody,
@@ -170,7 +171,7 @@ export function toastDispatcher(
     _loading: loading,
   });
 
-  store.dispatch(toast());
+  store.dispatch(toastD());
 }
 
 export function toastDispatcherL(
@@ -178,7 +179,8 @@ export function toastDispatcherL(
   loading: boolean
 ) {
   const toast = () => ({
-    type: "DUMMYTYPE",
+    type: "API_COMPLETE",
+    _type: "API_COMPLETE",
     _Code: "",
     _DisplayMsg: "",
     apiTime: DateTime.now().toISO(),

@@ -445,9 +445,9 @@ const Admin: React.FC<AdminProps> = (props) => {
 
     const dat: XView[] = fetchData.data
       ? fetchData.data.map((row: XModel) => {
-          const data: XView = getViewFromModelX(row);
-          return data;
-        })
+        const data: XView = getViewFromModelX(row);
+        return data;
+      })
       : [];
 
     setPageState((old) => ({
@@ -551,7 +551,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     getDataAll();
   }, [getDataAll, pageState.page, pageState.pageSize, filters]);
 
-  useEffect(() => {}, [props.filters, props.filters.master]);
+  useEffect(() => { }, [props.filters, props.filters.master]);
 
   React.useEffect(() => {
     const entityFound: GridValidRowModel | undefined = findById(savedId);
@@ -659,6 +659,7 @@ const Admin: React.FC<AdminProps> = (props) => {
       const selectedRowData = params.row;
       const toast = () => ({
         type: "DUMMYTYPE",
+        _type: "DUMMYTYPE",
         _loading: false,
         _Code: BLANK,
         _DisplayMsg: BLANK,
@@ -703,11 +704,11 @@ const Admin: React.FC<AdminProps> = (props) => {
           onUpload={(
             data:
               | {
-                  url: string;
-                  filesize: number;
-                  filetype: string;
-                  filename: string;
-                }
+                url: string;
+                filesize: number;
+                filetype: string;
+                filename: string;
+              }
               | undefined
           ) => {
             if (imgRw && data) {
