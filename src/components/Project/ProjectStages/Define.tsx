@@ -36,7 +36,7 @@ import ProjectScheduleInlineEdit from "./SimpleTableGridInlineEdit";
 
 // manage resource
 
-interface resourceData {
+export interface resourceData {
   id: number;
   name: string;
   calories: number;
@@ -82,7 +82,7 @@ const tableRows = [
 
 // manage resource
 
-const ButtonStyle = styled(Button)`
+export const ButtonStyle = styled(Button)`
   background-color: #005f71;
   color: #fff;
   border: none;
@@ -94,31 +94,32 @@ const ButtonStyle = styled(Button)`
     background-color: #115e6e;
   }
 `;
-const GridStyled = styled(Grid)({
+export const GridStyled = styled(Grid)({
   textAlign: "left",
 });
-const TableHeadStyled = styled("thead")({
+export const TableHeadStyled = styled("thead")({
   background: "#00B0AB",
   borderBottom: "none",
   color: "#ffffff",
 });
 
-const SubTableCellStyled = styled(TableCell)({
+export const SubTableCellStyled = styled(TableCell)({
   padding: "5px",
-  borderRight: "1px solid #ddd",
-  lineHeight: "0.5",
-});
-
-const SubTableCell = styled(TableCell)({
-  marginTop: "0",
-  padding: "10px",
-  border: "none",
   borderRight: "1px solid #ddd",
   position: "sticky",
   textAlign: "center",
+  
 });
 
-const BoxStyled = styled(Box)``;
+export const SubTableCell = styled(TableCell)({
+  marginTop: "0",
+  padding: "5px",
+ border: "none",
+  borderRight: "1px solid #ddd",
+
+});
+
+export const BoxStyled = styled(Box)``;
 
 function Define() {
   const [index, setIndex] = useState(0);

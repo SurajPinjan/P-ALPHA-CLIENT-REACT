@@ -58,6 +58,7 @@ const menuItems: MenuItem[] = [
   { title: "Report", path: "reporting" },
   { title: "Simple Report", path: "simple_reporting" },
   { title: "Grid Hirarchy", path: "grid_hirarchy" },
+  { title: "Grid+Table", path: "grid_table" },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -146,7 +147,7 @@ const App = () => {
 
   const images = [Problem, SixSigma, Training];
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     menus.push(() => (
       <img src={images[i]} alt="bar chart" width={20} height={20} />
     ));

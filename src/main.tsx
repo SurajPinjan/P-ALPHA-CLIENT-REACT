@@ -22,6 +22,7 @@ import ReportGrid from "./components/Project/ReportGrid.tsx";
 import SimpleReportGrid from "./components/Project/SimpleReportGrid.tsx";
 import { UserRoleProvider } from "./contexts/userContextProvider.tsx";
 import XYParent from "./components/Project/GridHirarchy/XYParent.tsx";
+import GridTable from "./components/GridTable.tsx";
 
 const routes = [
   {
@@ -31,6 +32,10 @@ const routes = [
   {
     path: "/session_timeout",
     element: <SessionTimeout />,
+  },
+  {
+    path: "grid_table",
+    element: <GridTable />,
   },
   {
     path: "/dashboard",

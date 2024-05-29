@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   CardContent,
   FormControl,
@@ -24,7 +25,7 @@ import {
 } from "../../types/httpTypes";
 import YGrid from "./YGrid";
 
-interface YGridWrapperProps {}
+interface YGridWrapperProps { }
 
 const YGridWrapper: React.FC<YGridWrapperProps> = () => {
   // constants
@@ -37,6 +38,15 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
     isDeleted: false,
     isNew: false,
   });
+
+  const openInNewTab = (url: string) => {
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+    if (newWindow) newWindow.focus(); // Optionally focus the new window
+  };
+
+  const handleClick = () => {
+    openInNewTab('/grid_table'); // Replace with your route path
+  };
 
   // constants
 
@@ -161,7 +171,7 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
           </Formik>
         </CardContent>
       </Card>
-
+      <Button onClick={handleClick}>Open in New Tab (Programmatic)</Button>
       <YGrid saveData={y} xOptions={xs}></YGrid>
     </>
   );
