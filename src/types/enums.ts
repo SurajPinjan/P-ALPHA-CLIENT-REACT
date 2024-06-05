@@ -60,12 +60,6 @@ export enum OPERATION {
 
 export const BLANK = "";
 
-// permission types
-
-export enum PERMISSION_TYPES {
-  READ_ONLY = "read",
-  WRITE = "write",
-}
 
 // Roles enum
 

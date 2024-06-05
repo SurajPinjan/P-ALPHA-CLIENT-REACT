@@ -11,6 +11,7 @@ import { styled } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
+import _ from "lodash";
 import {
   DefaultPermsModel,
   getModelFromViewDefaultPerms,
@@ -37,7 +38,6 @@ import {
   HttpResponseUpdateOne,
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
-import _ from "lodash";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -61,6 +61,7 @@ export default function RolePermissionDialogue(params: {
   const [allPermissions, setAllPermissions] = React.useState<
     RoleDefaultPermsView[]
   >([]);
+  const [permTypes, setPermTypes] = React.useState<string[]>();
   const [allPermissionsNew, setAllPermissionsNew] = React.useState<
     RoleDefaultPermsView[]
   >([]);
@@ -93,12 +94,17 @@ export default function RolePermissionDialogue(params: {
 
       const dat: RoleDefaultPermsView[] = fetchData.data
         ? fetchData.data.map((row: RoleDefaultPermsModel) => {
-            const data: RoleDefaultPermsView =
-              getViewFromModelRoleDefaultPerms(row);
-            return data;
-          })
+          const data: RoleDefaultPermsView =
+            getViewFromModelRoleDefaultPerms(row);
+          return data;
+        })
         : [];
 
+
+      // create a string array of unique permission types
+      const permTypes: string[] = Array.from(new Set(dat.map((x) => x.perm_type)));
+      // set the perm type array  to a state
+      setPermTypes(permTypes);
       setAllPermissions(dat);
       setAllPermissionsNew(_.cloneDeep(dat));
     }
@@ -219,21 +225,31 @@ export default function RolePermissionDialogue(params: {
             <Grid item xs={compare ? 6 : 12}>
               <Typography gutterBottom>
                 <Grid container spacing={2}>
-                  {allPermissionsNew.map((permission, index) => {
+                  {permTypes && permTypes.map((permType) => {
                     return (
-                      <Grid item xs={3}>
-                        <Checkbox
-                          checked={permission.dp_uid !== null}
-                          onChange={() => {
-                            checkboxClickHandler(index, permission);
-                          }}
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                        {camelCaseToPretty(permission.permission)}{" "}
-                        {permission.perm_type}
-                      </Grid>
+                      <>
+                        <Grid item xs={12}>{permType}</Grid>
+                        {allPermissionsNew
+                          .filter((x) => x.perm_type === permType)
+                          .map((permission) => {
+                            return (
+                              <Grid item xs={6}>
+                                <Checkbox
+                                  checked={permission.dp_uid !== null}
+                                  onChange={() => {
+                                    checkboxClickHandler(permission);
+                                  }}
+                                  inputProps={{ "aria-label": "controlled" }}
+                                />
+                                {camelCaseToPretty(permission.permission)}{" "}
+                              </Grid>
+                            );
+                          })}
+                      </>
                     );
-                  })}
+
+                  }
+                  )}
                 </Grid>
               </Typography>
             </Grid>
@@ -250,10 +266,10 @@ export default function RolePermissionDialogue(params: {
 
   // event handlers
   function checkboxClickHandler(
-    index: number,
     permission: RoleDefaultPermsView
   ) {
-    if (allPermissions[index].dp_uid === null) {
+    const found = allPermissions.find((p) => p.permission === permission.permission);
+    if (found && found.dp_uid === null) {
       createData(permission);
     } else {
       deleteData(permission);

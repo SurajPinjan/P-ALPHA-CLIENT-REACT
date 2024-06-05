@@ -1,16 +1,15 @@
 import { randomCreatedDate, randomId } from "@mui/x-data-grid-generator";
 import { Model } from "./Model";
 import { View } from "./View";
-import { PERMISSION_TYPES } from "../types/enums";
 
 export type PermissionModel = Model & {
   permission: string;
-  perm_type: PERMISSION_TYPES;
+  perm_type: string;
 };
 
 export type PermissionView = View & {
   permission: string;
-  perm_type: PERMISSION_TYPES;
+  perm_type: string;
 };
 
 export function getViewFromModelPermission(a: PermissionModel): PermissionView {

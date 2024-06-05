@@ -1,25 +1,17 @@
-import CancelIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import ImageIcon from "@mui/icons-material/Image";
-import SaveIcon from "@mui/icons-material/Save";
 import { Box, Stack } from "@mui/material";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridColDef,
   GridEventListener,
   GridPaginationModel,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModel,
-  GridRowModes,
   GridRowModesModel,
   GridRowParams,
   GridRowsProp,
   GridSortModel,
-  GridValidRowModel,
+  GridValidRowModel
 } from "@mui/x-data-grid";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -39,7 +31,6 @@ import {
   ENTITY_NAME,
   HTTP_METHOD,
   OPERATION,
-  PERMISSION_TYPES,
 } from "../../types/enums";
 import { Filter } from "../../types/filterTypes";
 import {
@@ -53,7 +44,6 @@ import {
 } from "../../types/httpTypes";
 import { FileInfo } from "../../types/types";
 import EditToolbar from "./ProjectStages/EditToolbar";
-import { camelCaseToPretty } from "../../services/textUtils";
 
 export interface Page {
   isLoading: boolean;
@@ -84,12 +74,6 @@ const PermissionGrid: React.FC<PermissionProps> = (props) => {
   columns.push({
     field: "perm_type",
     headerName: "Permission Type",
-    type: "singleSelect",
-    valueOptions: [PERMISSION_TYPES.READ_ONLY, PERMISSION_TYPES.WRITE].map(
-      (value) => {
-        return camelCaseToPretty(value);
-      }
-    ),
     width: 240,
     editable: true,
   });
@@ -111,114 +95,15 @@ const PermissionGrid: React.FC<PermissionProps> = (props) => {
   const [toDeleted, setToDeleted] = React.useState<boolean>(false);
 
   const [isCompare] = React.useState(props.isCompare);
-  const [imgRw, setImgRw] = React.useState<GridValidRowModel | undefined>();
-  const [hasAttachment] = React.useState(false);
+  const [imgRw] = React.useState<GridValidRowModel | undefined>();
   const [toUpdated, setToUpdated] = React.useState<boolean>(false);
   const [savedId, setSavedId] = React.useState<GridRowId>(-1);
-  const [updateId, setUpdateId] = React.useState<GridRowId>(-1);
+  const [updateId] = React.useState<GridRowId>(-1);
   const [sorts, setSorts] = React.useState<GridSortModel>([]);
-  const [buttonTitle] = React.useState("Add Permission");
   const [tableTitle] = React.useState("Permission");
 
   // constants
   const columnsDetails: GridColDef[] = [...columns];
-
-  if (hasAttachment) {
-    columnsDetails.push({
-      field: "url",
-      headerName: "Url",
-      type: "actions",
-      width: 100,
-      cellClassName: "attachment",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<FileUploadIcon />}
-              label="Upload"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={() => {
-                setImgRw(undefined);
-                setTimeout(() => {
-                  const dat = findById(id);
-                  setImgRw(dat);
-                  setIsOpenUpload(true);
-                }, 200);
-              }}
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            icon={<ImageIcon />}
-            label="Edit"
-            className="textPrimary"
-            color="inherit"
-            onClick={() => {
-              setImgRw(undefined);
-              setTimeout(() => {
-                const dat = findById(id);
-                setImgRw(dat);
-                setIsOpen(true);
-              }, 200);
-            }}
-          />,
-        ];
-      },
-    });
-  }
-
-  columnsDetails.push({
-    field: "actions",
-    type: "actions",
-    headerName: "Actions",
-    width: 100,
-    cellClassName: "actions",
-    getActions: ({ id }) => {
-      const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-      if (isInEditMode) {
-        return [
-          <GridActionsCellItem
-            icon={<SaveIcon />}
-            label="Save"
-            sx={{
-              color: "primary.main",
-            }}
-            onClick={handleSaveClick(id)}
-          />,
-          <GridActionsCellItem
-            icon={<CancelIcon />}
-            label="Cancel"
-            className="textPrimary"
-            onClick={handleCancelClick(id)}
-            color="inherit"
-          />,
-        ];
-      }
-
-      return [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Edit"
-          className="textPrimary"
-          onClick={handleEditClick(id)}
-          color="inherit"
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={handleDeleteClick(id)}
-          color="inherit"
-        />,
-      ];
-    },
-  });
 
   const [clmnVisibility, setClmnVisibility] = useState<{
     [key: string]: boolean;
@@ -405,44 +290,6 @@ const PermissionGrid: React.FC<PermissionProps> = (props) => {
     }
   }, [findById, props, toDeleted, toUpdated, updateData, updateId]);
 
-  const handleSaveClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-
-    setTimeout(() => {
-      if (toUpdated) {
-        setUpdateId(id);
-      } else {
-        setSavedId(id);
-      }
-    }, 500);
-  };
-
-  const handleCancelClick = (id: GridRowId) => () => {
-    setToUpdated(false);
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = pageState.data.find((row) => row.id === id);
-    if (editedRow!.isNew) {
-      setPageState((old) => ({
-        ...old,
-        data: pageState.data.filter((row) => row.id !== id),
-      }));
-    }
-  };
-
-  const handleEditClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    setToUpdated(true);
-  };
-
-  const handleDeleteClick = (id: GridRowId) => () => {
-    setToUpdated(true);
-    setToDeleted(true);
-    setUpdateId(id);
-  };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
@@ -570,7 +417,6 @@ const PermissionGrid: React.FC<PermissionProps> = (props) => {
               columnList: columnsDetails,
               columnMultiField: "none",
               tableTitle,
-              buttonTitle,
             },
           }}
           sortingMode="server"

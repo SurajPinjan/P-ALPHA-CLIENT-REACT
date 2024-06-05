@@ -39,7 +39,7 @@ const Login = () => {
   const [disabled, setDisabled] = React.useState(false);
   const [username, setUsername] = React.useState("admin");
   const [password, setPassword] = React.useState("Password@123");
-
+  const [loginMsg, setLoginMsg] = React.useState<string | undefined>();
   // constants
   const navigate = useNavigate();
 
@@ -73,6 +73,7 @@ const Login = () => {
       HttpLoginRequestBody
     >(requestDataAll, store, navigate);
 
+    setLoginMsg(fetchData.displayMsg);
     if (fetchData.responseCode == API_RESPONSE_CODE.SUCCESS_GEN) {
       // save to localstore
       localStorage.setItem("token", fetchData.token);
@@ -137,6 +138,7 @@ const Login = () => {
                   onChange={(event: {
                     target: { value: React.SetStateAction<string> };
                   }) => {
+                    setLoginMsg(undefined);
                     setUsername(event.target.value);
                   }}
                 />
@@ -153,6 +155,7 @@ const Login = () => {
                   onChange={(event: {
                     target: { value: React.SetStateAction<string> };
                   }) => {
+                    setLoginMsg(undefined);
                     setPassword(event.target.value);
                   }}
                 />
@@ -171,6 +174,12 @@ const Login = () => {
                   Login
                 </ButtonStyle>
               </Box>
+              <Box textAlign={"center"} fontSize={12}>
+                <div>{`Forgot Password ?`}</div>
+              </Box>
+              {loginMsg && <Box textAlign={"center"} color={'red'} fontSize={12}>
+                <div>{loginMsg}</div>
+              </Box>}
             </CardContent>
           </Card>
         </Box>
