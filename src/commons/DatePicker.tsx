@@ -1,18 +1,36 @@
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DateProps } from "../types/types";
+import { GridRenderEditCellParams } from "@mui/x-data-grid";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-export default function BasicDatePicker(props: DateProps) {
+const BasicDatePicker: React.FC<GridRenderEditCellParams> = (params) => {
+
+  const { row, value, api, field, label } = params;
+
+  const handleChange = (newValue: Date | null) => {
+    // api.setEditCellValue({ id, field, value: newValue });
+    api.setEditCellValue({
+      id: row.id,
+      field,
+      value: newValue,
+    }, {
+      unstable_skipValidation: true,
+    });
+  };
+
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        label={props.label}
-        value={props.value}
-        sx={{ width: "100%" }}
-        onChange={props.onChange}
+        value={value}
+        onChange={handleChange}
+        maxDate={new Date()}
+        label={label}
         slotProps={{ textField: { variant: "standard" } }}
       />
     </LocalizationProvider>
   );
-}
+};
+
+
+export default BasicDatePicker;

@@ -15,7 +15,7 @@ import {
   Stack,
   TextField,
   Toolbar,
-  Typography,
+  Typography
 } from "@mui/material";
 import {
   DataGrid,
@@ -23,6 +23,7 @@ import {
   GridColDef,
   GridEventListener,
   GridPaginationModel,
+  GridRenderEditCellParams,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModel,
@@ -39,6 +40,7 @@ import _ from "lodash";
 import { DateTime } from "luxon";
 import React, { Ref, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BasicDatePicker from "../../commons/DatePicker";
 import FileUpload from "../../commons/Dialogues/FileUpload";
 import ImagePreview from "../../commons/Dialogues/ImagePreview";
 import { MasterView } from "../../models/Master";
@@ -71,7 +73,6 @@ import {
   HttpUpdateOneRequestBody,
 } from "../../types/httpTypes";
 import EditToolbar from "./ProjectStages/EditToolbar";
-
 export interface Page {
   isLoading: boolean;
   data: GridRowsProp;
@@ -181,6 +182,7 @@ const Admin: React.FC<AdminProps> = (props) => {
     width: 240,
     type: "date",
     editable: true,
+    renderEditCell: (params: GridRenderEditCellParams) => <BasicDatePicker {...params} />,
   });
 
   columns.push({
