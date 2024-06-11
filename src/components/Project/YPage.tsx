@@ -173,6 +173,9 @@ const YGridWrapper: React.FC<YGridWrapperProps> = () => {
       </Card>
       <Button onClick={handleClick}>Open in New Tab (Programmatic)</Button>
       <YGrid saveData={y} xOptions={xs}></YGrid>
+
+      {/* excel preview */}
+
     </>
   );
 };
