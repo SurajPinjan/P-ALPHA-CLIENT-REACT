@@ -42,28 +42,28 @@ const HttpToast = ({
   // hooks
 
   React.useEffect(() => {
-    if(type !== 'API_COMPLETE')
-    setAPIBodyP(APIBody);
+    if (type !== 'API_COMPLETE')
+      setAPIBodyP(APIBody);
   }, [APIBody, type]);
 
   React.useEffect(() => {
-    if(type !== 'API_COMPLETE')
-    setCodeP(code);
+    if (type !== 'API_COMPLETE')
+      setCodeP(code);
   }, [code, type]);
 
   React.useEffect(() => {
-    if(type !== 'API_COMPLETE')
-    setDisplayMsgP(displayMsg);
+    if (type !== 'API_COMPLETE')
+      setDisplayMsgP(displayMsg);
   }, [displayMsg, type]);
 
   React.useEffect(() => {
-    if(type !== 'API_COMPLETE')
-    setErrMsgP(errMsg);
+    if (type !== 'API_COMPLETE')
+      setErrMsgP(errMsg);
   }, [errMsg, type]);
 
   React.useEffect(() => {
-    if(type !== 'API_COMPLETE')
-    setApiTimeP(apiTime);
+    if (type !== 'API_COMPLETE')
+      setApiTimeP(apiTime);
   }, [apiTime, type]);
 
   React.useEffect(() => {
@@ -71,17 +71,17 @@ const HttpToast = ({
   }, [type]);
 
   React.useEffect(() => {
-    if(type !== 'API_COMPLETE')
-    setAPIUrlP(APIUrl);
+    if (type !== 'API_COMPLETE')
+      setAPIUrlP(APIUrl);
   }, [APIUrl, type]);
 
-  React.useEffect(() => {  
-    if(type !== 'API_COMPLETE')  
-    setIsError(
-      codeP !== API_RESPONSE_CODE.SUCCESS_GEN &&
-      codeP !== API_RESPONSE_CODE.SUCCESS_CREATE &&
-      codeP !== API_RESPONSE_CODE.SUCCESS_UPDATE
-    );
+  React.useEffect(() => {
+    if (type !== 'API_COMPLETE')
+      setIsError(
+        codeP !== API_RESPONSE_CODE.SUCCESS_GEN &&
+        codeP !== API_RESPONSE_CODE.SUCCESS_CREATE &&
+        codeP !== API_RESPONSE_CODE.SUCCESS_UPDATE
+      );
 
     if (codeP !== BLANK && type !== 'API_COMPLETE') setOpen(true);
   }, [codeP, displayMsgP, errMsgP, apiTimeP, APIUrlP, APIBodyP, typeP, type]);
@@ -124,6 +124,10 @@ const HttpToast = ({
         <MuiAlert
           onClose={handleClose}
           severity={errMsgP ? "error" : "success"}
+          sx={{
+            border: '2px solid !important',
+            borderRadius: '10px',
+          }}
         >
           <div>{codeP}</div>
           <div>{displayMsgP}</div>
