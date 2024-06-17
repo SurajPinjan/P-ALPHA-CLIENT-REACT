@@ -31,6 +31,7 @@ import { BLANK } from "../../../types/enums";
 import { Panel } from "../ProjectDetails";
 import ProjectSchedule from "./SimpleTableGrid";
 import ProjectScheduleInlineEdit from "./SimpleTableGridInlineEdit";
+import RichTextEditor from "../../../commons/RichTextEditor";
 
 // end project schedule
 
@@ -108,13 +109,13 @@ export const SubTableCellStyled = styled(TableCell)({
   borderRight: "1px solid #ddd",
   position: "sticky",
   textAlign: "center",
-  
+
 });
 
 export const SubTableCell = styled(TableCell)({
   marginTop: "0",
   padding: "5px",
- border: "none",
+  border: "none",
   borderRight: "1px solid #ddd",
 
 });
@@ -129,6 +130,8 @@ function Define() {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const [richText, setRichText] = useState<string>("");
 
   const handleChangePage = (event: unknown, newPage: number) => {
     console.log(event);
@@ -190,7 +193,10 @@ function Define() {
                 >
                   Suspected Scientific Reasons / Phenomena
                 </Typography>
-                <Textarea label="Enter Your Message Here" row={3} />
+                {/* <Textarea label="Enter Your Message Here" row={3} /> */}
+                <RichTextEditor value={richText} onChange={function (value: string): void {
+                  setRichText(value);
+                }}></RichTextEditor>
                 <Box display={"flex"} justifyContent={"center"} marginTop={2}>
                   <ButtonStyle variant="contained">
                     Click here to upload
