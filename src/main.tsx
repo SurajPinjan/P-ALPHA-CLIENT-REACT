@@ -23,6 +23,7 @@ import SimpleReportGrid from "./components/Project/SimpleReportGrid.tsx";
 import { UserRoleProvider } from "./contexts/userContextProvider.tsx";
 import XYParent from "./components/Project/GridHirarchy/XYParent.tsx";
 import GridTable from "./components/GridTable.tsx";
+import ChatInterface from "./components/Project/GridHirarchy/ChatInterface.tsx";
 
 const routes = [
   {
@@ -100,6 +101,10 @@ const routes = [
       {
         path: "grid_hirarchy",
         element: <XYParent />,
+      },
+      {
+        path: "chat_interface",
+        element: <ChatInterface />,
       },
     ],
   },

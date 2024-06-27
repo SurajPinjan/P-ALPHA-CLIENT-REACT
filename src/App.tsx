@@ -32,7 +32,7 @@ import APILoaderWithState from "./commons/APILoaderWithState";
 import HttpToastWithState from "./commons/Dialogues/HttpToastWithState";
 import { makeHttpCall } from "./services/ApiService";
 import store from "./services/GlobalStateService";
-import { BLANK, ENTITY_NAME, HTTP_METHOD, OPERATION } from "./types/enums";
+import { API_RESPONSE_CODE, BLANK, ENTITY_NAME, HTTP_METHOD, OPERATION } from "./types/enums";
 import {
   HttpGetAllRequestBody,
   HttpRequestData,
@@ -58,7 +58,7 @@ const menuItems: MenuItem[] = [
   { title: "Report", path: "reporting" },
   { title: "Simple Report", path: "simple_reporting" },
   { title: "Grid Hirarchy", path: "grid_hirarchy" },
-  { title: "Grid+Table", path: "grid_table" },
+  { title: "Chat Interface", path: "chat_interface" },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -172,6 +172,30 @@ const App = () => {
       navigate
     );
   }, [navigate]);
+
+  const logout = React.useCallback(async () => {
+    const requestDataAll: HttpRequestData<HttpGetAllRequestBody> = {
+      entityName: ENTITY_NAME.AUTH,
+      method: HTTP_METHOD.POST,
+      operation: OPERATION.LOGOUT,
+    };
+
+    const response = await makeHttpCall<HttpResponseGetAll<{ empty: string }>, HttpGetAllRequestBody>(
+      requestDataAll,
+      store,
+      navigate
+    );
+
+    if (response.responseCode === API_RESPONSE_CODE.SUCCESS_GEN) {
+
+      navigate("/");
+      setOpen(false);
+      setProblem(null);
+    }
+
+
+
+  }, [navigate, setOpen, setProblem]);
 
   React.useEffect(() => {
     const data = [
@@ -340,7 +364,7 @@ const App = () => {
                   <MenuItem onClick={handleMenuClick}>Login</MenuItem>
                 )}
                 {isLoggedIn && (
-                  <MenuItem onClick={handleMenuClick}>Logout</MenuItem>
+                  <MenuItem onClick={logout}>Logout</MenuItem>
                 )}
               </Menu>
             </div>
