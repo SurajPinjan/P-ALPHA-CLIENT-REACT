@@ -60,6 +60,12 @@ export enum OPERATION {
 
 export const BLANK = "";
 
+// permissions
+
+export enum PERMISSION_TYPES {
+  DASHBOARD = 'dashboard',
+}
+
 
 // Roles enum
 

@@ -15,22 +15,22 @@ function SwipeableTextMobileStepper(props: { baners: XView[] | undefined }) {
     React.ImgHTMLAttributes<HTMLImageElement>,
     HTMLImageElement
   >[] = [
-    <img
-      src="http://localhost:3001/uploads/istockphoto-5.jpg"
-      onDragStart={handleDragStart}
-      role="presentation"
-    />,
-    <img
-      src="http://localhost:3001/uploads/istockphoto-3.jpg"
-      onDragStart={handleDragStart}
-      role="presentation"
-    />,
-    <img
-      src="http://localhost:3001/uploads/istockphoto-4.jpg"
-      onDragStart={handleDragStart}
-      role="presentation"
-    />,
-  ];
+      <img
+        src="http://localhost:3001/uploads/istockphoto-5.jpg"
+        onDragStart={handleDragStart}
+        role="presentation"
+      />,
+      <img
+        src="http://localhost:3001/uploads/istockphoto-3.jpg"
+        onDragStart={handleDragStart}
+        role="presentation"
+      />,
+      <img
+        src="http://localhost:3001/uploads/istockphoto-4.jpg"
+        onDragStart={handleDragStart}
+        role="presentation"
+      />,
+    ];
 
   // States
   // const [activeStep, setActiveStep] = React.useState(0);
