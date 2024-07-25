@@ -25,6 +25,17 @@ export type HttpGetAllRequestBody = {
   filters?: Filter[];
 };
 
+// shri_ram - Tamtam,
+// bhakarwadi,
+// lilochivda,
+// dhuliram Peda
+
+export type HttpMailRequestBody = {
+  to: string[]
+  subject: string
+  text: string
+}
+
 export type HttpGetOneRequestBody = {
   uid: number;
 };

@@ -48,6 +48,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
         (res.responseCode === API_RESPONSE_CODE.SUCCESS_GEN ||
           res.responseCode === API_RESPONSE_CODE.SUCCESS_CREATE ||
           res.responseCode === API_RESPONSE_CODE.SUCCESS_PING ||
+          res.responseCode === API_RESPONSE_CODE.SUCCESS_MAIL_SENT ||
           res.responseCode === API_RESPONSE_CODE.SUCCESS_UPDATE)
       ) {
         if (
@@ -64,7 +65,7 @@ export async function makeHttpCall<T extends HttpResponseBody, G>(
           setTimeout(() => {
             toastDispatcher(store, JSON.stringify(params.body), url, res);
           }, 400);
-          
+
           if (res.responseCode === API_RESPONSE_CODE.ERROR_INVALID_TOKEN) {
             navigate("/session_timeout");
           }

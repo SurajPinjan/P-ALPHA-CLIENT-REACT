@@ -11,6 +11,7 @@ export enum API_RESPONSE_CODE {
   SUCCESS_UPDATE = "S003",
   LDAP_LOGIN_SUCCESS = "S004",
   SUCCESS_PING = "S005",
+  SUCCESS_MAIL_SENT = "S006",
   ERROR = "ER001",
   NOT_FOUND = "ER002",
   REQUEST_INVALID = "ER003",
@@ -20,6 +21,7 @@ export enum API_RESPONSE_CODE {
   ERROR_UPLOADING_FILE = "ER007",
   ERROR_INVALID_TOKEN = "ER008",
   ERROR_INVALID_ROLE = "ER009",
+  ERROR_SENDING_MAIL = "ER010",
 }
 
 export enum ENTITY_NAME {
@@ -39,6 +41,7 @@ export enum ENTITY_NAME {
   AUTH = "auth",
   MASTER = "master",
   MEDIA = "media",
+  MAIL = 'mail',
 }
 
 export enum OPERATION {
@@ -56,6 +59,9 @@ export enum OPERATION {
 
   // FILE
   UPLOAD = "upload",
+
+  // SEND MAIL
+  SEND_MAIL = 'sendmail',
 }
 
 export const BLANK = "";
