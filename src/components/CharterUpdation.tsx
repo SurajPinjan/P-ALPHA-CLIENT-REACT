@@ -8,7 +8,7 @@ import {
   styled,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import { GridValidRowModel } from "@mui/x-data-grid";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect } from "react";
